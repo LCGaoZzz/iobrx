@@ -66,5 +66,11 @@ include = [
 ]
 
 [tool.pytest.ini_options]
+# Default run = the 13 synthetic smoke tests only: the 11 official parity
+# gates are marked `full` and need the official data (IOBRX_TESTDATA or a
+# mirror download), so they are deselected by default. Opt in explicitly
+# with `pytest -m full` (or `pytest --run-full`, see tests/conftest.py);
+# a command-line -m overrides this addopts value.
+addopts = "-m 'not full'"
 markers = ["full: official-data parity gates (download or IOBRX_TESTDATA; slow)"]
 testpaths = ["tests"]
