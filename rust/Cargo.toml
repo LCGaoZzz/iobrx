@@ -1,0 +1,21 @@
+[package]
+name = "iobrx_rust"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "iobrx_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22.6", features = ["extension-module"] }
+numpy = { version = "0.22.0", features = ["half"] }
+rayon = "1.10"
+
+[build-dependencies]
+cc = "1.1"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+debug = false

@@ -1,0 +1,70 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "iobrx"
+version = "0.1.0"
+description = "Bit-exact, multithreaded acceleration layer for IOBRpy (CIBERSORT, signature scoring, TPM, EPIC, quanTIseq, MCP-counter, ESTIMATE, annotation)"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "iobrx contributors" }]
+requires-python = ">=3.11"
+keywords = ["bioinformatics", "deconvolution", "cibersort", "ssgsea", "iobr", "tumor-microenvironment"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "iobrpy>=0.2.0",
+    # Parity line: the ORIGINAL's reduction semantics moved in numpy 2.4
+    # (e.g. a global X.mean() differs by 1 ulp from 2.2.x, which flips NuSVR
+    # support sets in CIBERSORT). iobrx reproduces the frozen 2.2.x numbers;
+    # pin to the validated <2.3 line so original and fast stay bit-identical
+    # (see README Caveats).
+    "numpy>=1.22,<2.3",
+    "pandas>=1.5",
+    "scipy>=1.9",
+    # The vendored libsvm kernel is scikit-learn 1.7.2's svm.cpp; the
+    # ORIGINAL's NuSVR numerics drifted in sklearn 1.9.0, which would make
+    # iobrx bit-exact vs the frozen 1.7.2 references but NOT vs a >=1.8
+    # original. Pin to the validated 1.x<1.8 line (see README Caveats).
+    "scikit-learn>=1.2,<1.8",
+    "gseapy>=1.0.6",
+    "joblib>=1.1",
+    "pyarrow>=10.0",
+    "pyreadr>=0.4",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[project.urls]
+Homepage = "https://github.com/iobrx/iobrx"
+
+# Hybrid Python + Rust build.
+# - The Rust cdylib installs as the extension submodule `iobrx._rust`
+#   (module-name below; the `#[pymodule] fn _rust` in lib.rs matches the
+#   trailing component, as pyo3 requires). For compatibility with the
+#   historical top-level name, `import iobrx` registers the alias
+#   `sys.modules["iobrx_rust"]`, so `import iobrx_rust` keeps working once
+#   iobrx has been imported; documented in README.md ("The Rust extension
+#   module").
+# - `python-source = "src"` -> pure-Python part lives in src/iobrx/.
+[tool.maturin]
+python-source = "src"
+manifest-path = "rust/Cargo.toml"
+module-name = "iobrx._rust"
+include = [
+    { path = "rust/vendor/**", format = "sdist" },
+    { path = "rust/src/**", format = "sdist" },
+]
+
+[tool.pytest.ini_options]
+markers = ["full: official-data parity gates (download or IOBRX_TESTDATA; slow)"]
+testpaths = ["tests"]

@@ -1,0 +1,24 @@
+# build / dist
+target/
+dist/
+build/
+*.so
+*.egg-info/
+.venv/
+venv/
+
+# python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+
+# editors / os
+.idea/
+.vscode/
+.DS_Store
+
+# runtime caches
+src/iobrx/_fast/_pkgcache/
