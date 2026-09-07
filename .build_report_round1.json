@@ -1,0 +1,72 @@
+{
+  "round": 1,
+  "task": "package the finished fast stack as installable library 'iobrx' in a new GitHub-ready repo",
+  "datetime": "2026-09-08T00:45:22",
+  "repo": "/data/users/lianchong/workspace1/iobrx-github",
+  "git": {
+    "initial_commit": "afa892c",
+    "files_tracked": 58,
+    "note": "working iobrx/ tree untouched (read-only verified)"
+  },
+  "layout": {
+    "pyproject.toml": "maturin hybrid build; project iobrx 0.1.0; requires-python >=3.11; deps: iobrpy>=0.2.0, numpy>=1.22,<2.3, pandas>=1.5, scipy>=1.9, scikit-learn>=1.2,<1.8, gseapy>=1.0.6, joblib, pyarrow, pyreadr; [tool.maturin] python-source='src', manifest-path='rust/Cargo.toml', module-name='iobrx._rust'",
+    "src/iobrx/": "__init__.py (9 public functions, numpydoc, set_threads), _threads.py, _sites.py (dynamic bundled-OpenBLAS resolution), _fast/ (11 shim modules, import-path patches only; numeric logic untouched)",
+    "rust/": "Cargo.toml/.lock, build.rs (RELATIVE vendor paths; same flags), src/lib.rs (verbatim except #[pymodule] fn renamed iobrx_rust->_rust), wrapper.cpp, argsort_wrapper.cpp, vendor/ (svm.cpp+svm.h sklearn-1.7.2, 2 sklearn headers, x86-simd-sort/src 22 files, THIRD_PARTY_NOTICES.md)",
+    "tests/": "test_api_smoke.py (13 tests, synthetic, original-vs-fast bit parity, ~10s); test_parity_official.py (pytest.mark.full; 11 official gates, original-on-the-fly parity; IOBRX_TESTDATA parquet>rda>download data-v1.0)",
+    "examples/": "quickstart.py; full_workflow.py (11 stages, timing table, --verify-parity)",
+    "docs": "README.md (caveats incl. 4 documented + parity pins), BENCHMARKS.md placeholder, LICENSE MIT 2026, CHANGELOG 0.1.0, .gitignore"
+  },
+  "blockers": [
+    {
+      "id": 1,
+      "where": "fresh venv source install (pip install <repo>)",
+      "error": "maturin: \"python-source is set to .../src, but the python module at .../src/iobrx_rust does not exist\" -> metadata-generation-failed",
+      "cause": "maturin requires python-source/<module-name>/ to exist for a top-level module-name combined with python-source",
+      "fix": "module-name='iobrx._rust' + rename #[pymodule] fn iobrx_rust->_rust in lib.rs (single non-numeric identifier); shims import iobrx._rust; iobrx/__init__ registers sys.modules['iobrx_rust'] alias so the historical top-level import still works; documented in README + pyproject comments",
+      "status": "fixed in-repo, install rc=0"
+    },
+    {
+      "id": 2,
+      "where": "fresh venv creation (VERIFY step 1)",
+      "error": "'python3 -m venv' yields Python 3.10.12; iobrpy ships cp311-only wheels (0.2.1: cp311 manylinux2014) -> unresolvable dependency",
+      "cause": "system python3 is 3.10; iobrpy wheels are cp311-only",
+      "fix": "created the fresh venv with python3.11 (3.11.15 at /home/lianchong/.local/bin/python3.11); pyproject already requires-python>=3.11",
+      "status": "environment workaround, documented"
+    },
+    {
+      "id": 3,
+      "where": "full-marker cibersort gate, first full-suite run",
+      "error": "test_cibersort FAILED: weights/Corr/RMSE differ vs ORIGINAL by up to 5.7e-3 on 5/10 samples (fresh venv had resolved scikit-learn 1.9.0); fast side simultaneously bit-exact vs frozen refs (240/240)",
+      "cause": "scikit-learn 1.9.0 changed NuSVR/libsvm numerics vs the vendored 1.7.2 svm.cpp; the ORIGINAL moved, iobrx stayed on the frozen 1.7.2 numbers",
+      "fix": "pin scikit-learn>=1.2,<1.8 in pyproject + README caveat; downgraded venv to 1.7.2; gate still failed -> led to blocker 4",
+      "status": "fixed in-repo (pin), confirmed after blocker 4"
+    },
+    {
+      "id": 4,
+      "where": "full-marker cibersort gate, after the sklearn pin",
+      "error": "test_cibersort still FAILED with identical diff pattern under sklearn 1.7.2",
+      "cause": "numpy 2.4.6 reduction drift: bisected stage hashes (parsed mix/exp2/QN/argsort all identical) to X.mean(dtype=float64) over the 547x22 LM22 matrix returning 683.5351052486453 vs ...54 under numpy 2.2.6 (1 ulp), flipping NuSVR support sets (nSV 417 vs 420 at nu=0.75)",
+      "fix": "pin numpy>=1.22,<2.3 in pyproject + README caveat 5; rebuilt the wheel in the venv against numpy 2.2.6; all gates green afterward",
+      "status": "fixed in-repo (pin)"
+    }
+  ],
+  "test_design_fixes_non_blockers": [
+    "tests/test_api_smoke.py quantiseq: mixture genes wrongly taken from TIL10_signature's first DATA column (B.cells values) instead of its INDEX -> 0/153 gene overlap -> upstream ValueError; fixed to sig.index",
+    "tests/test_api_smoke.py estimate: asserted TumorPurity under platform='affy', but the upstream adds it only for platform='affymetrix' (parity itself had passed); parity switched to 'affymetrix'",
+    "examples/quickstart.py: removed a leftover editing-artifact line before commit"
+  ],
+  "verification": {
+    "fresh_env": "/tmp/iobrx_venv_fresh (python3.11.15); pip 26.2.1; first source install rc=0 in 124.4s (wheel 691KB, cp311); after parity pins the env runs numpy 2.2.6 / scikit-learn 1.7.2 / scipy 1.17.1 / pandas 2.3.3 / gseapy 1.3.1 / iobrpy 0.2.1 / iobrx 0.1.0 (rebuilt, rc=0)",
+    "quickstart": "rc=0, 1.9s wall (cibersort 348x25 0.095s, PCA 0.977s, ssGSEA 0.216s, MCP 0.004s) with IOBRX_TESTDATA=workspace testdata",
+    "pytest_non_full": "13/13 passed in 9.2-10.5s (budget: <2min)",
+    "pytest_full_marker": "11/11 passed in 112.7s (original-on-the-fly parity, official data; includes original cibersort n_jobs=1 ~100s)",
+    "bit_parity_spot_check": "cibersort(eset_stad_symbol, perm=100, QN=True, n_threads=64) vs iobrx/refs/cibersort.parquet: weights/Corr/RMSE max_abs_diff=0.0, 240/240 cells bit-identical; P-value column max_abs_diff=0.03 (ORIGINAL unseeded by design)",
+    "full_workflow_example": "rc=0, 11 stages TOTAL 15.0s at default n_threads=8 (cibersort 12.6s at 8T; matches the freeze scaling curve)"
+  },
+  "fresh_env_blockers_final": 0,
+  "notes": [
+    "dev-side pre-checks: cargo build --release of the relocated crate rc=0 (11.5s, only pre-existing dead-code warnings); grep confirmed zero absolute workspace paths in-repo",
+    "the 10 non-cibersort gates were bit-exact even under numpy 2.4.6/sklearn 1.9.0; only the two parity pins are needed",
+    "iobrpy 0.2.1 (PyPI) confirmed shipping iobrpy/resources pickles + workflow modules the shims depend on; numerically identical to the local 0.2.0 baseline per the freeze provenance"
+  ]
+}
