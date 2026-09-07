@@ -4,6 +4,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- README Quickstart now starts from a self-sufficient seeded synthetic cohort
+  (~200 genes × 20 samples; verified verbatim rc=0 in a fresh venv with no
+  testdata and no network); the official IMvigor210 path follows as a clearly
+  marked second block that skips cleanly when neither `IOBRX_TESTDATA` nor a
+  reachable mirror exists (round-3 review B1).
+- Official-data download now goes through a mirror list (github.com direct,
+  gh-proxy.com, ghproxy.net; override with `$IOBRX_TESTDATA_MIRRORS`) and
+  fails with `iobrx.OfficialDataUnavailable`, which spells out the
+  remediation, instead of a raw urllib traceback (B2). Shared by
+  `examples/`, the `full`-marker tests and the new public
+  `iobrx.load_official()`.
+- Plain `pytest -q` is green by default (pyproject `addopts = "-m 'not
+  full'"` deselects the 11 official-data gates); the documented `--run-full`
+  flag is now real (registered in `tests/conftest.py`) (B3, B4).
+- README badge row: the 404-linking `[PyPI 0.1.0]` badge is replaced by a
+  static version badge; Install states "not yet on PyPI — build from
+  source" (B5).
+- BENCHMARKS.md citation precision: stage-CV range stated for both the
+  fast/steady legs (0.0–1.7%) and all rep lists (0.0–28.5%);
+  `gates.GATE3_perf.mapping_steady_state_224T.median_ms`;
+  `findings.FINDING_5_quantile_normalize_np`; background-load range
+  corrected to 8.3–32.9 (`e2e.driver_loadavg`).
+
+### Added
+
+- `iobrx.load_official()` / `iobrx.OfficialDataUnavailable` public
+  data-resolution helper (env var → local cache → mirror download).
+- GitHub Actions CI (`.github/workflows/ci.yml`): ubuntu-latest, Python 3.11,
+  cargo cache, maturin wheel build via `pip install .[test]`, `pytest -q`.
+
 ## [0.1.0] - 2026-09-07
 
 ### Added
