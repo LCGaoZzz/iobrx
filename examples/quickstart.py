@@ -4,10 +4,15 @@ Loads the official imvigor210 cohort, then runs CIBERSORT (LM22), signature
 scoring (PCA + ssGSEA over ``signature_collection``) and MCP-counter, printing
 per-step timings.
 
-Data resolution for ``imvigor210_eset``:
-  1. ``$IOBRX_TESTDATA/imvigor210_eset.parquet``
-  2. ``$IOBRX_TESTDATA/imvigor210_eset.rda``        (pyreadr)
-  3. download from the IOBR ``data-v1.0`` GitHub release and cache locally
+Data resolution for ``imvigor210_eset`` (via :func:`iobrx.load_official`):
+  1. ``$IOBRX_TESTDATA/imvigor210_eset.parquet`` / ``.rda``  (or a local cache)
+  2. download from the IOBR ``data-v1.0`` release through a mirror list
+     (github.com direct, gh-proxy.com, ghproxy.net — override with
+     ``$IOBRX_TESTDATA_MIRRORS``); offline this raises
+     ``iobrx.OfficialDataUnavailable`` with the remediation spelled out
+
+No official data and no network? Run the synthetic quickstart in README.md
+instead — it needs neither.
 
 Run::
 
@@ -16,53 +21,23 @@ Run::
 """
 from __future__ import annotations
 
-import os
-import tempfile
-import time
 from time import perf_counter
 
 import pandas as pd
 
 import iobrx
 
-RELEASE = "https://github.com/IOBR/IOBR/releases/download/data-v1.0"
-
 
 def load_imvigor() -> pd.DataFrame:
-    env = os.environ.get("IOBRX_TESTDATA")
-    if env:
-        pq = os.path.join(env, "imvigor210_eset.parquet")
-        if os.path.exists(pq):
-            print(f"[data] {pq}")
-            return pd.read_parquet(pq)
-        rda = os.path.join(env, "imvigor210_eset.rda")
-        if os.path.exists(rda):
-            print(f"[data] {rda}")
-            import pyreadr
-
-            return next(iter(pyreadr.read_r(rda).values()))
-    cache = os.path.join(tempfile.gettempdir(), "iobrx_quickstart")
-    pq = os.path.join(cache, "imvigor210_eset.parquet")
-    if os.path.exists(pq):
-        print(f"[data] {pq} (cached)")
-        return pd.read_parquet(pq)
-    import urllib.request
-
-    import pyreadr
-
-    os.makedirs(cache, exist_ok=True)
-    rda = os.path.join(cache, "imvigor210_eset.rda")
-    print(f"[data] downloading {RELEASE}/imvigor210_eset.rda ...")
-    urllib.request.urlretrieve(f"{RELEASE}/imvigor210_eset.rda", rda)
-    df = next(iter(pyreadr.read_r(rda).values()))
-    df.to_parquet(pq)
-    print(f"[data] cached at {pq}")
-    return df
+    return iobrx.load_official("imvigor210_eset")
 
 
 def main() -> None:
     print(f"iobrx {iobrx.__version__}  (default n_threads={iobrx.get_threads()})\n")
-    eset = load_imvigor()
+    try:
+        eset = load_imvigor()
+    except iobrx.OfficialDataUnavailable as exc:
+        raise SystemExit(f"cannot load the official imvigor210 cohort:\n{exc}")
     print(f"eset: {eset.shape[0]} genes x {eset.shape[1]} samples\n")
 
     steps = []

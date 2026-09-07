@@ -12,7 +12,9 @@ ORIGINAL iobrpy implementations side by side and asserts bit-equality
 (CIBERSORT's unseeded P-value column excepted by design).
 
 Data resolution: ``--testdata DIR`` or ``$IOBRX_TESTDATA`` (parquet preferred,
-then .rda), falling back to the IOBR ``data-v1.0`` GitHub release.
+then .rda), then a local cache, then the IOBR ``data-v1.0`` release via the
+mirror list in :func:`iobrx.load_official` (github.com, gh-proxy.com,
+ghproxy.net); offline this raises ``iobrx.OfficialDataUnavailable``.
 
 Run::
 
@@ -25,45 +27,16 @@ from __future__ import annotations
 import argparse
 import os
 import tempfile
-import time
 from time import perf_counter
 
 import numpy as np
 import pandas as pd
 
-RELEASE = "https://github.com/IOBR/IOBR/releases/download/data-v1.0"
-_CACHE = os.path.join(tempfile.gettempdir(), "iobrx_official_data")
-
 
 def load(name: str, data_dir: str | None) -> pd.DataFrame:
-    d = data_dir or os.environ.get("IOBRX_TESTDATA")
-    if d:
-        pq = os.path.join(d, f"{name}.parquet")
-        if os.path.exists(pq):
-            print(f"[data] {pq}")
-            return pd.read_parquet(pq)
-        rda = os.path.join(d, f"{name}.rda")
-        if os.path.exists(rda):
-            print(f"[data] {rda}")
-            import pyreadr
+    import iobrx
 
-            return next(iter(pyreadr.read_r(rda).values()))
-    pq = os.path.join(_CACHE, f"{name}.parquet")
-    if os.path.exists(pq):
-        print(f"[data] {pq} (cached)")
-        return pd.read_parquet(pq)
-    import urllib.request
-
-    import pyreadr
-
-    os.makedirs(_CACHE, exist_ok=True)
-    rda = os.path.join(_CACHE, f"{name}.rda")
-    print(f"[data] downloading {RELEASE}/{name}.rda ...")
-    urllib.request.urlretrieve(f"{RELEASE}/{name}.rda", rda)
-    df = next(iter(pyreadr.read_r(rda).values()))
-    df.to_parquet(pq)
-    print(f"[data] cached at {pq}")
-    return df
+    return iobrx.load_official(name, data_dir)
 
 
 def num_diff(a: pd.DataFrame, b: pd.DataFrame) -> dict:

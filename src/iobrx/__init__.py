@@ -9,12 +9,12 @@ run in a Rust extension (rayon threads + vendored libsvm/OpenBLAS entry
 points); the remaining stages are vectorized numpy/pandas with per-process
 resource caching.
 
-Quick start::
+Quick start (self-sufficient; see README "Quickstart")::
 
-    import iobrx, pandas as pd
+    import iobrx
 
-    eset = pd.read_parquet("imvigor210_eset.parquet")        # genes x samples
-    cib = iobrx.cibersort(eset, perm=100, QN=True)           # ~50x faster
+    eset = iobrx.load_official("imvigor210_eset")  # $IOBRX_TESTDATA -> cache
+    cib = iobrx.cibersort(eset, perm=100, QN=True)  # ~50x faster
     scores = iobrx.calculate_sig_score(eset, "signature_collection",
                                        method="pca")
 
@@ -30,6 +30,7 @@ import os
 import sys
 
 from iobrx._threads import get_threads, resolve_threads, set_threads
+from iobrx._testdata import MIRRORS, OfficialDataUnavailable, load_official
 
 __version__ = "0.1.0"
 
@@ -52,6 +53,9 @@ __all__ = [
     "mcpcounter",
     "estimate_score",
     "anno_eset",
+    "load_official",
+    "OfficialDataUnavailable",
+    "MIRRORS",
     "set_threads",
     "get_threads",
     "__version__",

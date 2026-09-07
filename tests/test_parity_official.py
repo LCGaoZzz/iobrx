@@ -7,11 +7,14 @@ executed on the fly. Expected: max abs diff 0.0 everywhere except CIBERSORT's
 not reproducible run-to-run by design; the formula and its 1/perm granularity
 are identical).
 
-Data resolution order for each frame:
+Data resolution order for each frame (via :func:`iobrx.load_official`):
   1. ``$IOBRX_TESTDATA/<name>.parquet``
   2. ``$IOBRX_TESTDATA/<name>.rda`` (first object; via pyreadr)
-  3. download ``<name>.rda`` from the IOBR GitHub release ``data-v1.0``
-     (https://github.com/IOBR/IOBR/releases/tag/data-v1.0) into a local cache
+  3. a local cache, then download ``<name>.rda`` from the IOBR GitHub
+     release ``data-v1.0`` through the mirror list (github.com direct,
+     gh-proxy.com, ghproxy.net — override with ``$IOBRX_TESTDATA_MIRRORS``);
+     offline this raises ``iobrx.OfficialDataUnavailable`` with the
+     remediation spelled out.
 
 ``eset_stad_symbol`` is not distributed (404 upstream): it is derived with the
 ORIGINAL ``anno_eset`` from ``eset_stad`` x ``anno_grch38`` exactly as the
@@ -32,34 +35,11 @@ import pytest
 
 pytestmark = pytest.mark.full
 
-RELEASE = "https://github.com/IOBR/IOBR/releases/download/data-v1.0"
-_CACHE = os.path.join(tempfile.gettempdir(), "iobrx_official_data")
-
 
 def _load(name: str) -> pd.DataFrame:
-    env = os.environ.get("IOBRX_TESTDATA")
-    if env:
-        pq = os.path.join(env, f"{name}.parquet")
-        if os.path.exists(pq):
-            return pd.read_parquet(pq)
-        rda = os.path.join(env, f"{name}.rda")
-        if os.path.exists(rda):
-            import pyreadr
+    import iobrx
 
-            return next(iter(pyreadr.read_r(rda).values()))
-    pq = os.path.join(_CACHE, f"{name}.parquet")
-    if os.path.exists(pq):
-        return pd.read_parquet(pq)
-    import urllib.request
-
-    import pyreadr
-
-    os.makedirs(_CACHE, exist_ok=True)
-    rda = os.path.join(_CACHE, f"{name}.rda")
-    urllib.request.urlretrieve(f"{RELEASE}/{name}.rda", rda)
-    df = next(iter(pyreadr.read_r(rda).values()))
-    df.to_parquet(pq)
-    return df
+    return iobrx.load_official(name)
 
 
 @pytest.fixture(scope="module")
