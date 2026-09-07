@@ -1,0 +1,87 @@
+{
+  "round": 2,
+  "task": "finish iobrx-github docs: vendored evidence, BENCHMARKS.md numbers document with full traceability, final README with verbatim-verified quickstart, commit + report",
+  "datetime": "2026-09-08T01:05:00+08:00",
+  "repo": "/data/users/lianchong/workspace1/iobrx-github",
+  "git": {
+    "commit": "bc629e73ab74ce11292a5e8a5626ca6456fd4fba",
+    "parent": "9752579 (round-1 build report)",
+    "files_changed": 30,
+    "insertions": 17122,
+    "code_touched": false,
+    "note": "only README.md, BENCHMARKS.md, bench/* committed; src/, rust/, tests/, examples/, pyproject.toml untouched (verified via git show --stat)"
+  },
+  "what_changed": {
+    "bench/ (new, 28 files)": [
+      "27 verbatim artifacts copied from the dev workspace iobrx/bench/ (+ iobrx/refs/baseline_timing.json as bench/baseline_timing.json), 414 KiB total",
+      "the 8 named by the brief: FINAL_SUMMARY.json, rust_cibersort_results, rust_ssgsea_results, heldout_control_results, audit_precision.json, scaling_coldstart.json, literature_anchors.json, cold_builders_results, pool_hoist_results",
+      "additional cited artifacts so every number resolves inside the repo: bench_parallel_results, count2tpm_fast_results, quantiseq_fast_results, sig_compose_results, misc_fast_results, full_e2e_results, integration_rust_results, final_round9_results, fix_round11_results, forensic_blca_results, pypi_021_diff, tolerance_results, small_stages_results, audit_precision.prefix11.bak.json, final_freeze_gates, final_freeze_e2e_results, final_freeze_warm_and_scaling, baseline_timing",
+      "bench/README.md: index mapping each file to what it holds; states copies are verbatim and that absolute paths inside refer to the dev workspace"
+    ],
+    "BENCHMARKS.md (rewritten from placeholder, 28.2 KiB)": [
+      "S1 environment & protocol: machine, versions, wheel sha, baseline provenance (incl. pypi_021_diff no-re-baselining), official workflow definition, fresh-subprocess/median-of-3 protocol, honest replicate-CV statement",
+      "S2 route table R0/R1/R2/R3/R4/R5 + held-out BLCA row (route, what it is, total, speedup, precision verdict, notes-with-sources)",
+      "S3 R4 stepwise table (rust ssgsea, integration leg, cold builders, pool hoist, rust pca/zscore) each with measured effect + gates",
+      "S4 final per-stage table (11 stages + total): orig median vs fast freeze-t224 median vs computed speedup vs precision gate, plus a controlled same-process comparison column and reading notes on e2e-vs-controlled discrepancy for sub-30ms stages",
+      "S5 cibersort thread scaling 1/8/16/32/64/128/224 with bit-check column",
+      "S6 cold start (~3.1 s), memory (+277 MiB @224T / +9.5 MiB @1T, ~1.24 MiB/thread, 0.147 s pool build), wheel 501,213 B, build 9.74-13.71 s on 224 cores, 124.4 s fresh-venv install",
+      "S7 precision methodology: bit-exact definition; audit history 76 PASS pre-fix -> 79 PASS post-fix -> freeze rerun 77+2; the 2 contract-artifact FAILs (CB2/CB12) explained with the attribution probe; tolerance experiment (fractions move up to 0.0793 ~ 8pp); csv-parse finding and precise_xstrtod port validation; last-bit fixes (exp2 ulp, flat-F-order reduction); P-value nondeterminism; parity pins",
+      "S8 literature anchors A1-A12 with DOIs + explicit non-comparability note",
+      "S9 VERDICT: ships R5 frozen_stack_v1, dominates R1/R2 under the precision gate, fallbacks documented with the numbers that defeat them",
+      "S10 traceability statement with the audited counts"
+    ],
+    "README.md (rewritten to final form, 13.4 KiB)": [
+      "badges placeholders; 2-paragraph pitch (kept, tightened: ~95 s -> ~3 s cibersort framing from artifacts)",
+      "5-line benchmark summary table (rows cite BENCHMARKS.md sections)",
+      "install: source build, Rust toolchain, python>=3.11, THE VERSION PINS numpy<2.3 & scikit-learn<1.8 with one-sentence why",
+      "quickstart: 30 lines, REWRITTEN and verified verbatim (see verification)",
+      "API table (kept), Rust extension module section (kept), benchmarks link",
+      "caveats: existing 5 + new caveat 6 thread guidance (default min(8,cores), ~1.24 MiB/thread, 128T-vs-224T HT note, pointer to scaling table)",
+      "FAQ: why bit-exact (8pp tolerance argument), can I relax it, P-values upstream behavior, how to cite; Contributing (parity contract + bench/ frozen); License"
+    ]
+  },
+  "verification": {
+    "quickstart_verbatim": {
+      "method": "extracted the python block from the committed README.md programmatically and executed it verbatim in a clean scratch dir with the official imvigor210_eset.parquet / eset_stad.parquet / anno_grch38.parquet beside it, using the round-1 fresh venv (python 3.11.15, iobrx 0.1.0, numpy 2.2.6, sklearn 1.7.2)",
+      "rc": 0,
+      "wall_s": 3.0,
+      "output_shapes": "cib (348,25) | pca (348,60) | ssgsea (348,32) | integration (348,178) | estimate (3,348) | epic (10,8) | quantiseq (10,12) | mcp (10,10) | tpm (54658,10)",
+      "note": "brief's sketch ran iobrx.epic(eset) on the imvigor panel: EPIC upstream-raises ValueError there (0 TRef overlap on the curated 872-gene matrix; documented as README caveat 3), so the verified quickstart runs the reference-based deconvolvers on the STAD symbol matrix instead"
+    },
+    "docs_only": "git show --stat HEAD lists only README.md, BENCHMARKS.md, bench/* (30 files)"
+  },
+  "traceability": {
+    "scope": "BENCHMARKS.md (the numbers document)",
+    "method": "automated audit: every digit-bearing table data row and every prose line whose numeric tokens fall outside citation parentheses counts as a claim; a claim is traced if its line, or its logical block (bullet/paragraph/table incl. its 'All rows' source note), cites a bench/ artifact (.json), .build_report_round1.json, or an explicit computed tag (arithmetic over cited cells only)",
+    "counts": {
+      "numeric_claim_rows_and_lines": 136,
+      "traced": 136,
+      "untraceable": 0,
+      "logical_claim_blocks": 19,
+      "blocks_traced": 19,
+      "computed_tagged": "route totals 15.1s/23.5x/25.9x/20.17x/16.49x/25.07x/25.56x, per-stage speedup column, CV figures, 34.1x final-table row (94.9/2.7855), sum-of-medians notes"
+    },
+    "readme_note": "README's 5-line summary table is traced 2-hop: rows cite BENCHMARKS.md sections whose cells cite bench/ artifacts",
+    "brief_numbers_check": [
+      {"brief": "baseline 97.13 s = 1.0x", "status": "traced", "source": "literature_anchors.json internal_reference_point + FINAL_SUMMARY.json history.round_1"},
+      {"brief": "R1 best 6.4x @224 threads, dispatch negligible, GIL+coarse cap", "status": "traced as 6.42x", "source": "FINAL_SUMMARY.json history.round_2; bench_parallel_results.json derived_analysis/dispatch_benchmark (efficiency 0.704->0.217->0.082; stage 13.87x @224T)"},
+      {"brief": "R2 count2tpm 38.7x / quantiseq 16.9x stage", "status": "traced", "source": "count2tpm_fast_results.json timing.speedup_median 38.72; quantiseq_fast_results.json speedup_median 16.92"},
+      {"brief": "R3 34.1x stage @224T", "status": "adjusted to artifact-exact pairings", "detail": "no artifact pair yields exactly 34.1 for the R3-era stage; documented 34.3x @224T vs n_jobs=1 median 88.82 s (scaling_coldstart.json 1_thread_scaling) and 38.5x vs 87.17 s (rust_cibersort_results.json). The exact 34.1x appears in the S4 final table as computed 94.9/2.7855 (csv-protocol baseline vs freeze-t224 stage median)"},
+      {"brief": "R4 evolution 18.0->21.4->23.0->25.9x", "status": "traced", "source": "FINAL_SUMMARY.json history.per_round_best rounds 5-9 (18.01/21.35/22.14/23.03/25.89); step attribution via rust_ssgsea_results, integration_rust_results, cold_builders_results, pool_hoist_results, final_round9_results"},
+      {"brief": "R5 fresh 3.75-4.13 s = 23.5-25.9x, warm 3.63-3.80 s", "status": "traced", "source": "final_round9_results.json e2e.t224 3.7515; FINAL_SUMMARY.json e2e t224 4.1265 / warm 3.8005; cold_builders_results.json warm_inproc 3.6268; ratios computed"},
+      {"brief": "held-out BLCA 11.43x, cibersort 53.6x, count2tpm 48.8x, all stages bit-exact", "status": "traced", "source": "heldout_control_results.json stages/totals (53.56 / 48.84, max_abs_diff 0.0 all 11)"},
+      {"brief": "replicate CV 1.2%", "status": "DROPPED - not traceable to any artifact", "detail": "no bench artifact states a 1.2% CV; replaced with computed, cited figures: controlled in-process stage reps CV 0.0-1.7% (median 0.7%; computed from count2tpm_fast_results, quantiseq_fast_results, misc_fast_results rep lists), fresh-subprocess e2e totals CV 2.8-4.4% (computed from FINAL_SUMMARY.json e2e rep_totals_s)"},
+      {"brief": "audit '76->83 after fixes; 2 contract-artifact cases'", "status": "traced and made precise", "detail": "total was 83 cases throughout; PASS count 76 pre-fix (audit_precision.prefix11.bak.json) -> 79 after the 5 fixes (audit_precision.json; fix_round11_results.json) -> final freeze rerun 77 PASS + 2 FAIL (CB2/CB12) + 3 BOTH_ERROR_SAME_TYPE + 1 ORIG_ERROR_FAST_OK, with the 2 FAILs attributed to the csv-parse input-contract change and proven non-solver by the attribution probe (FINAL_SUMMARY.json audit)"},
+      {"brief": "tolerance experiment 'fractions up to 8pp'", "status": "traced", "source": "tolerance_results.json comparisons.fractions_1e-3_vs_1e-05 overall_max_abs_diff 0.0793"},
+      {"brief": "cold start 3.1 s; +277 MiB @224T vs +9.5 MiB @1T; wheel 501 KB; build ~14-124 s", "status": "traced", "source": "scaling_coldstart.json 2_cold_process_start/5_memory_peak_rss/4_wheel_build (283,520 KiB=276.9 MiB; 9,768 KiB=9.5 MiB; 13.71 s full build); pool_hoist_results.json wheel.bytes 501,213; .build_report_round1.json fresh install 124.4 s"}
+    ]
+  },
+  "untraceable_numbers": [
+    {"number": "replicate CV 1.2% (as a single headline figure from the brief)", "action": "dropped and replaced with computed, artifact-cited CV ranges; this is the only brief number that could not be traced"}
+  ],
+  "notes": [
+    "S4 ORIGINAAL typo introduced during drafting was caught and fixed pre-commit (grep-verified zero occurrences)",
+    "artifact files keep their dev-workspace absolute paths; bench/README.md explains this and that copies are verbatim",
+    "route table totals for R5 use the campaign-ledger 97.13 s denominator; S4 also notes the sum-of-orig-stage-medians (~103 s) vs ledger baseline discrepancy as run-to-run load noise, with both sources cited"
+  ]
+}
