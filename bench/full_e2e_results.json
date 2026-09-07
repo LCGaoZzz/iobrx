@@ -1,0 +1,404 @@
+{
+  "machine_cores": 224,
+  "datetime": "2026-09-07T21:00:08",
+  "protocol": "fresh subprocess per rep; data loaded once per subprocess (untimed); 11 official stages timed individually with perf_counter; 1 warmup subprocess + 3 timed subprocesses per cibersort thread config; medians reported",
+  "stage_order": [
+    "sig_pca",
+    "sig_zscore",
+    "sig_ssgsea",
+    "sig_integration",
+    "anno_eset",
+    "cibersort",
+    "epic",
+    "quantiseq",
+    "mcpcounter",
+    "estimate",
+    "count2tpm"
+  ],
+  "fast_paths": {
+    "sig_pca/sig_zscore/sig_ssgsea/sig_integration": "calculate_sig_score_fast (rust ssgsea_core leg for ssgsea+integration)",
+    "anno_eset": "ORIGINAL (per bench spec)",
+    "cibersort": "cibersort_fast (rust cibersort_core, n_threads per config)",
+    "epic": "ORIGINAL (per bench spec)",
+    "quantiseq": "quantiseq_fast (vectorized HGNC alias-map builder + per-process memoization)",
+    "mcpcounter": "ORIGINAL (per bench spec)",
+    "estimate": "ORIGINAL (per bench spec)",
+    "count2tpm": "count2tpm_fast (vectorized + disk-cached packaged refined refs)"
+  },
+  "verify": [
+    {
+      "stage": "sig_pca",
+      "ref": "sig_pca.parquet",
+      "shape": [
+        348,
+        60
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 20532,
+      "cells_bit_identical": 20532,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "sig_zscore",
+      "ref": "sig_zscore.parquet",
+      "shape": [
+        348,
+        60
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 20532,
+      "cells_bit_identical": 20532,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "sig_ssgsea",
+      "ref": "sig_ssgsea.parquet",
+      "shape": [
+        348,
+        32
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 10788,
+      "cells_bit_identical": 10788,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "sig_integration",
+      "ref": "sig_integration.parquet",
+      "shape": [
+        348,
+        178
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 61596,
+      "cells_bit_identical": 61596,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "anno_eset",
+      "ref": "anno_eset.parquet",
+      "shape": [
+        50181,
+        10
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 501810,
+      "cells_bit_identical": 501810,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "cibersort",
+      "ref": "cibersort.parquet",
+      "shape": [
+        10,
+        25
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 250,
+      "cells_bit_identical": 243,
+      "max_abs_diff": 0.030000000000000006,
+      "object_cols_equal": true,
+      "max_abs_diff_excl_Pvalue": 0.0,
+      "excl_Pvalue_cells_bit_identical": 240,
+      "excl_Pvalue_numeric_cells": 240,
+      "Pvalue_max_abs_diff": 0.030000000000000006
+    },
+    {
+      "stage": "epic",
+      "ref": "epic.pkl",
+      "shape": [
+        10,
+        8
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 270,
+      "cells_bit_identical": 270,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "quantiseq",
+      "ref": "quantiseq.parquet",
+      "shape": [
+        10,
+        12
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 110,
+      "cells_bit_identical": 110,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "mcpcounter",
+      "ref": "mcpcounter.parquet",
+      "shape": [
+        10,
+        10
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 100,
+      "cells_bit_identical": 100,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "estimate",
+      "ref": "estimate.parquet",
+      "shape": [
+        3,
+        10
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 30,
+      "cells_bit_identical": 30,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    },
+    {
+      "stage": "count2tpm",
+      "ref": "count2tpm.parquet",
+      "shape": [
+        48058,
+        10
+      ],
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 480580,
+      "cells_bit_identical": 480580,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true
+    }
+  ],
+  "versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "scikit-learn": "1.7.2",
+    "gseapy": "1.3.0",
+    "iobrx_rust": "0.1.0"
+  },
+  "t224": {
+    "cibersort_n_threads": 224,
+    "rep_totals_s": [
+      3.8887,
+      3.8736,
+      3.8663
+    ],
+    "median_total_s": 3.8736,
+    "per_stage": {
+      "sig_pca": {
+        "times_s": [
+          0.24,
+          0.265,
+          0.2625
+        ],
+        "median_s": 0.2625
+      },
+      "sig_zscore": {
+        "times_s": [
+          0.1371,
+          0.1511,
+          0.1468
+        ],
+        "median_s": 0.1468
+      },
+      "sig_ssgsea": {
+        "times_s": [
+          0.125,
+          0.1456,
+          0.1415
+        ],
+        "median_s": 0.1415
+      },
+      "sig_integration": {
+        "times_s": [
+          0.2255,
+          0.2465,
+          0.2414
+        ],
+        "median_s": 0.2414
+      },
+      "anno_eset": {
+        "times_s": [
+          0.1015,
+          0.1069,
+          0.1066
+        ],
+        "median_s": 0.1066
+      },
+      "cibersort": {
+        "times_s": [
+          2.6774,
+          2.5745,
+          2.5471
+        ],
+        "median_s": 2.5745
+      },
+      "epic": {
+        "times_s": [
+          0.0288,
+          0.0308,
+          0.0271
+        ],
+        "median_s": 0.0288
+      },
+      "quantiseq": {
+        "times_s": [
+          0.1523,
+          0.1501,
+          0.1814
+        ],
+        "median_s": 0.1523
+      },
+      "mcpcounter": {
+        "times_s": [
+          0.0081,
+          0.008,
+          0.0085
+        ],
+        "median_s": 0.0081
+      },
+      "estimate": {
+        "times_s": [
+          0.0462,
+          0.0461,
+          0.049
+        ],
+        "median_s": 0.0462
+      },
+      "count2tpm": {
+        "times_s": [
+          0.1468,
+          0.1491,
+          0.1543
+        ],
+        "median_s": 0.1491
+      }
+    },
+    "load_s": [
+      0.176,
+      0.1836,
+      0.1748
+    ]
+  },
+  "t64": {
+    "cibersort_n_threads": 64,
+    "rep_totals_s": [
+      4.3236,
+      4.9732,
+      4.2787
+    ],
+    "median_total_s": 4.3236,
+    "per_stage": {
+      "sig_pca": {
+        "times_s": [
+          0.2602,
+          0.2581,
+          0.2548
+        ],
+        "median_s": 0.2581
+      },
+      "sig_zscore": {
+        "times_s": [
+          0.1466,
+          0.1389,
+          0.1477
+        ],
+        "median_s": 0.1466
+      },
+      "sig_ssgsea": {
+        "times_s": [
+          0.1412,
+          0.1255,
+          0.1403
+        ],
+        "median_s": 0.1403
+      },
+      "sig_integration": {
+        "times_s": [
+          0.2435,
+          0.2269,
+          0.2361
+        ],
+        "median_s": 0.2361
+      },
+      "anno_eset": {
+        "times_s": [
+          0.1016,
+          0.1038,
+          0.103
+        ],
+        "median_s": 0.103
+      },
+      "cibersort": {
+        "times_s": [
+          3.0516,
+          3.7332,
+          3.0141
+        ],
+        "median_s": 3.0516
+      },
+      "epic": {
+        "times_s": [
+          0.0284,
+          0.0281,
+          0.0292
+        ],
+        "median_s": 0.0284
+      },
+      "quantiseq": {
+        "times_s": [
+          0.1513,
+          0.1588,
+          0.1527
+        ],
+        "median_s": 0.1527
+      },
+      "mcpcounter": {
+        "times_s": [
+          0.0079,
+          0.0081,
+          0.008
+        ],
+        "median_s": 0.008
+      },
+      "estimate": {
+        "times_s": [
+          0.046,
+          0.0459,
+          0.0459
+        ],
+        "median_s": 0.0459
+      },
+      "count2tpm": {
+        "times_s": [
+          0.1454,
+          0.146,
+          0.1471
+        ],
+        "median_s": 0.146
+      }
+    },
+    "load_s": [
+      0.1749,
+      0.1783,
+      0.175
+    ]
+  }
+}

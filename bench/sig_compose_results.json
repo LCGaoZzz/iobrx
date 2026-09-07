@@ -1,0 +1,200 @@
+{
+  "env": {
+    "python": "3.11.15",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "sklearn": "1.7.2",
+    "joblib": "1.5.3",
+    "gseapy": "1.3.0",
+    "cpu_count": 224,
+    "rust_ssgsea_importable": true,
+    "rust_ssgsea_default": false
+  },
+  "protocol": {
+    "data": "imvigor210_eset (872x348) x signature_collection",
+    "mini_gene_count": 3,
+    "adjust_eset": true,
+    "reps": 3,
+    "warmup": 1,
+    "clock": "time.perf_counter (in-process)"
+  },
+  "gates": {
+    "pca_parallel1": {
+      "shape_identical": true,
+      "columns_identical": true,
+      "index_identical": true,
+      "ID_identical": true,
+      "max_abs_diff": 0.0,
+      "PASS": true
+    },
+    "pca_parallel8": {
+      "shape_identical": true,
+      "columns_identical": true,
+      "index_identical": true,
+      "ID_identical": true,
+      "max_abs_diff": 0.0,
+      "PASS": true
+    },
+    "pca_parallel32": {
+      "shape_identical": true,
+      "columns_identical": true,
+      "index_identical": true,
+      "ID_identical": true,
+      "max_abs_diff": 0.0,
+      "PASS": true
+    },
+    "zscore": {
+      "shape_identical": true,
+      "columns_identical": true,
+      "index_identical": true,
+      "ID_identical": true,
+      "max_abs_diff": 0.0,
+      "PASS": true
+    },
+    "integration": {
+      "shape_identical": true,
+      "columns_identical": true,
+      "index_identical": true,
+      "ID_identical": true,
+      "max_abs_diff": 0.0,
+      "PASS": true
+    },
+    "pca_thread_invariance_1_8_32": true,
+    "ssgsea_delegated_original_INFO": {
+      "shape_identical": true,
+      "columns_identical": true,
+      "index_identical": true,
+      "ID_identical": true,
+      "max_abs_diff": 0.0,
+      "PASS": true
+    },
+    "rust_ssgsea_attempt_INFO": {
+      "tried": true,
+      "pass": false,
+      "detail": "iobrx_rust.ssgsea_core via iobrx/fast/ssgsea_fast.py: 31/31 numeric columns differ vs refs/sig_ssgsea.parquet, max abs diff 0.4349, median Pearson corr ~0.96 (semantic mismatch, not last-bit noise); original gp.ssgsea passes with 0.0 in the same process -> module default keeps the original ssGSEA leg."
+    }
+  },
+  "timings": {
+    "orig_pca": {
+      "times_s": [
+        0.2659,
+        0.3285,
+        0.2403
+      ],
+      "median_s": 0.2659,
+      "shape": [
+        348,
+        60
+      ]
+    },
+    "orig_zscore": {
+      "times_s": [
+        0.1769,
+        0.1854,
+        0.2817
+      ],
+      "median_s": 0.1854,
+      "shape": [
+        348,
+        60
+      ]
+    },
+    "orig_ssgsea": {
+      "times_s": [
+        1.0054,
+        1.0553,
+        0.8134
+      ],
+      "median_s": 1.0054,
+      "shape": [
+        348,
+        32
+      ]
+    },
+    "orig_integration": {
+      "times_s": [
+        1.0126,
+        0.9235,
+        0.9636
+      ],
+      "median_s": 0.9636,
+      "shape": [
+        348,
+        178
+      ]
+    },
+    "fast_pca_t1": {
+      "times_s": [
+        0.228,
+        0.2271,
+        0.2226
+      ],
+      "median_s": 0.2271,
+      "shape": [
+        348,
+        60
+      ],
+      "speedup_vs_original": 1.17
+    },
+    "fast_pca_t8": {
+      "times_s": [
+        0.4389,
+        0.3315,
+        0.3189
+      ],
+      "median_s": 0.3315,
+      "shape": [
+        348,
+        60
+      ],
+      "speedup_vs_original": 0.8
+    },
+    "fast_pca_t32": {
+      "times_s": [
+        0.4064,
+        0.5571,
+        0.3655
+      ],
+      "median_s": 0.4064,
+      "shape": [
+        348,
+        60
+      ],
+      "speedup_vs_original": 0.65
+    },
+    "fast_zscore": {
+      "times_s": [
+        0.1843,
+        0.2018,
+        0.3065
+      ],
+      "median_s": 0.2018,
+      "shape": [
+        348,
+        60
+      ],
+      "speedup_vs_original": 0.92
+    },
+    "fast_integration": {
+      "times_s": [
+        0.9196,
+        0.8965,
+        0.9905
+      ],
+      "median_s": 0.9196,
+      "shape": [
+        348,
+        178
+      ],
+      "speedup_vs_original": 1.05
+    }
+  },
+  "notes": [
+    "Threading verdict (measured): joblib threads give NO speedup for this workload \u2014 fast_pca_t8 0.331s / t32 0.406s vs serial 0.227s. Output remains bitwise identical at 1/8/32 threads (GATE pca_thread_invariance_1_8_32), because each per-signature _one is independent; the slowdown is scheduling/GIL overhead on 58 small (348 x <=166) SVDs whose LAPACK kernels release the GIL but whose pandas/sklearn Python-side overhead does not."
+  ],
+  "decomposition": {
+    "preprocess_eset_once_ms": 13.5,
+    "integration_ssgsea_leg_gp_ssgsea_ms": 738.5,
+    "note": "integration = 1 shared preprocess + 58 PCA PCs1 + 58 column-means + gp.ssgsea(min_size=3, 55 terms) + suffix/concat/TME derivations; original recomputes preprocess 3x"
+  }
+}

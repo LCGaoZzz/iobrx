@@ -1,0 +1,374 @@
+{
+  "round": 9,
+  "datetime": "2026-09-07T19:33:51",
+  "machine_cores": 224,
+  "driver_loadavg_at_merge": [
+    19.5908203125,
+    13.91650390625,
+    9.10888671875
+  ],
+  "crate": "iobrx_rust 0.1.0 (rebuilt this round: +pca_pc1, +pca_zscore_intermediate, +rows_colmean_pairwise, +dgesdd via init_blas 3rd arg)",
+  "part1_gate_A": {
+    "description": "Rust PCA leg vs sklearn PCA(n_components=1, svd_solver='full') + pandas z intermediate, ALL official signatures passing the filter on imvigor210_eset",
+    "n_signatures": 58,
+    "n_checked": 58,
+    "failures": [],
+    "all_bit_exact": true,
+    "checks_per_signature": [
+      "z-scored intermediate bit-equal (pca_zscore_intermediate vs pandas sub/std/ddof=1/div/replace/fillna)",
+      "PC1 scores bit-equal sklearn fit_transform (max abs diff == 0.0)",
+      "mean_expr bit-equal tmp.mean(axis=0)"
+    ],
+    "mechanism": "pandas z-chain orders replicated exactly (mean: SEQUENTIAL per gene over samples on the F-order block; std ddof=1: nanvar's C-order copy -> PAIRWISE avg and sqr-sum, sqr=(avg-x)**2 array-power semantics; div/fillna elementwise); sklearn mean_ PAIRWISE per gene on the F-order z; dgesdd jobz='S' called via ctypes-resolved scipy_dgesdd_ from scipy's bundled openblas (same dlopened .so), lda=m, lwork from the lwork=-1 workspace query (verified equal to scipy dgesdd_lwork for all 17 distinct shapes); svd_flip(u_based_decision=False) row-0 sign; pc1=(U[:,0]*sign)*S[0]",
+    "PASS": true
+  },
+  "part1_gate_B": {
+    "description": "full stage outputs vs refs after wiring rust legs into sig_score_fast",
+    "sig_pca": {
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 20532,
+      "numeric_cells": 20532
+    },
+    "sig_integration": {
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 61596,
+      "numeric_cells": 61596
+    },
+    "PASS": true
+  },
+  "part2_gates": {
+    "sig_zscore": {
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 20532,
+      "numeric_cells": 20532
+    },
+    "sig_ssgsea": {
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 10788,
+      "numeric_cells": 10788
+    },
+    "zscore_leg_mechanism": "Rust rows_colmean_pairwise (pandas colwise pairwise sum order over selected rows, /g) - bit-exact all 58",
+    "ssgsea_surround_decision": "KEPT in pandas: the ~30-40ms preprocess_eset + filter + pivot surround involves pandas log2-heuristic/filter semantics that are NOT trivially bit-exact to port; per instruction the gate was not risked for ~30ms",
+    "PASS": true
+  },
+  "rust_vs_fallback_legs_bit_equal": {
+    "pca": true,
+    "zscore": true
+  },
+  "stage_benchmarks": {
+    "datetime": "2026-09-07T19:31:49",
+    "machine_cores": 224,
+    "driver_loadavg": [
+      4.517578125,
+      4.85888671875,
+      5.6591796875
+    ],
+    "protocol": "fresh subprocess per stage group; in-process median of 3 timed reps after 1 warmup (cold first call timed separately for count2tpm/quantiseq)",
+    "groups": {
+      "sig": {
+        "group": "sig",
+        "loadavg": [
+          4.517578125,
+          4.85888671875,
+          5.6591796875
+        ],
+        "sig_pca": {
+          "times_s": [
+            0.191938,
+            0.252721,
+            0.198221
+          ],
+          "median_s": 0.198221
+        },
+        "sig_zscore": {
+          "times_s": [
+            0.115772,
+            0.116864,
+            0.111969
+          ],
+          "median_s": 0.115772
+        },
+        "sig_ssgsea": {
+          "times_s": [
+            0.141687,
+            0.140528,
+            0.149114
+          ],
+          "median_s": 0.141687
+        },
+        "sig_integration": {
+          "times_s": [
+            0.308983,
+            0.241892,
+            0.247874
+          ],
+          "median_s": 0.247874
+        }
+      },
+      "cibersort": {
+        "group": "cibersort",
+        "loadavg": [
+          8.080078125,
+          5.591796875,
+          5.89208984375
+        ],
+        "cibersort_224T": {
+          "times_s": [
+            2.554114,
+            2.543436,
+            2.39103
+          ],
+          "median_s": 2.543436
+        },
+        "cibersort_64T": {
+          "times_s": [
+            3.316244,
+            3.000255,
+            2.952237
+          ],
+          "median_s": 3.000255
+        }
+      },
+      "count2tpm": {
+        "group": "count2tpm",
+        "loadavg": [
+          25.44189453125,
+          9.982421875,
+          7.34326171875
+        ],
+        "count2tpm_cold_first_call_s": 0.158723,
+        "count2tpm_warm": {
+          "times_s": [
+            0.104894,
+            0.104748,
+            0.104801
+          ],
+          "median_s": 0.104801
+        },
+        "count2tpm_cold_protocol": "fresh subprocess, disk cache present; first call includes packaged-annotation cache load"
+      },
+      "quantiseq": {
+        "group": "quantiseq",
+        "loadavg": [
+          25.44189453125,
+          9.982421875,
+          7.34326171875
+        ],
+        "quantiseq_cold_first_call_s": 0.125516,
+        "quantiseq_warm": {
+          "times_s": [
+            0.05669,
+            0.056624,
+            0.056502
+          ],
+          "median_s": 0.056624
+        },
+        "quantiseq_cold_protocol": "fresh subprocess; first call includes HGNC alias-map build (per-process memoized)"
+      },
+      "small": {
+        "group": "small",
+        "loadavg": [
+          25.44189453125,
+          9.982421875,
+          7.34326171875
+        ],
+        "anno_eset": {
+          "times_s": [
+            0.088142,
+            0.087244,
+            0.090847
+          ],
+          "median_s": 0.088142
+        },
+        "epic": {
+          "times_s": [
+            0.017001,
+            0.016828,
+            0.016715
+          ],
+          "median_s": 0.016828
+        },
+        "mcpcounter": {
+          "times_s": [
+            0.007523,
+            0.007526,
+            0.007428
+          ],
+          "median_s": 0.007523
+        },
+        "estimate": {
+          "times_s": [
+            0.045239,
+            0.045358,
+            0.045115
+          ],
+          "median_s": 0.045239
+        }
+      }
+    }
+  },
+  "e2e": {
+    "protocol": "fresh subprocess per rep; data loaded once per subprocess (untimed); 11 official stages timed individually with perf_counter; 1 warmup subprocess + 3 timed subprocesses per cibersort thread config; medians reported",
+    "t224": {
+      "rep_totals_s": [
+        4.0067,
+        3.7515,
+        3.7135
+      ],
+      "median_total_s": 3.7515,
+      "per_stage_median_s": {
+        "sig_pca": 0.2332,
+        "sig_zscore": 0.1355,
+        "sig_ssgsea": 0.1225,
+        "sig_integration": 0.2236,
+        "anno_eset": 0.1012,
+        "cibersort": 2.5706,
+        "epic": 0.0295,
+        "quantiseq": 0.1446,
+        "mcpcounter": 0.0079,
+        "estimate": 0.0459,
+        "count2tpm": 0.1457
+      }
+    },
+    "t64": {
+      "rep_totals_s": [
+        4.5633,
+        4.294,
+        4.5975
+      ],
+      "median_total_s": 4.5633,
+      "per_stage_median_s": {
+        "sig_pca": 0.2332,
+        "sig_zscore": 0.1354,
+        "sig_ssgsea": 0.1218,
+        "sig_integration": 0.224,
+        "anno_eset": 0.1025,
+        "cibersort": 3.3613,
+        "epic": 0.0286,
+        "quantiseq": 0.1498,
+        "mcpcounter": 0.0078,
+        "estimate": 0.0462,
+        "count2tpm": 0.1444
+      }
+    },
+    "previous_round_e2e_medians_for_reference": {
+      "t224": 4.3241,
+      "t64": 4.8949
+    }
+  },
+  "precision_verify_11_stages": [
+    {
+      "stage": "sig_pca",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 20532,
+      "numeric_cells": 20532
+    },
+    {
+      "stage": "sig_zscore",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 20532,
+      "numeric_cells": 20532
+    },
+    {
+      "stage": "sig_ssgsea",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 10788,
+      "numeric_cells": 10788
+    },
+    {
+      "stage": "sig_integration",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 61596,
+      "numeric_cells": 61596
+    },
+    {
+      "stage": "anno_eset",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 501810,
+      "numeric_cells": 501810
+    },
+    {
+      "stage": "cibersort",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.030000000000000006,
+      "cells_bit_identical": 243,
+      "numeric_cells": 250,
+      "cibersort_max_abs_diff_excl_Pvalue": 0.0,
+      "cibersort_excl_Pvalue_bits": "240/240",
+      "cibersort_Pvalue_max_abs_diff": 0.030000000000000006,
+      "note": "original cibersort p-values are unseeded (OS entropy) -> not reproducible by design"
+    },
+    {
+      "stage": "epic",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 270,
+      "numeric_cells": 270
+    },
+    {
+      "stage": "quantiseq",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 110,
+      "numeric_cells": 110
+    },
+    {
+      "stage": "mcpcounter",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 100,
+      "numeric_cells": 100
+    },
+    {
+      "stage": "estimate",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 30,
+      "numeric_cells": 30
+    },
+    {
+      "stage": "count2tpm",
+      "index_equal": true,
+      "columns_equal": true,
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 480580,
+      "numeric_cells": 480580
+    }
+  ],
+  "versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "scikit-learn": "1.7.2",
+    "gseapy": "1.3.0",
+    "iobrx_rust": "0.1.0"
+  },
+  "notes": [
+    "after the crate reinstall every benchmark ran in FRESH subprocesses (stage groups one subprocess each; e2e fresh subprocess per rep)",
+    "all numbers exactly as measured, incl. cibersort P-value deviation (unseeded original)",
+    "loadavg during runs captured per group in stage_benchmarks.groups[*].loadavg"
+  ]
+}

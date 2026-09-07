@@ -1,0 +1,356 @@
+{
+  "datetime": "2026-09-07T23:51:53",
+  "machine_cores": 224,
+  "protocol": "bench_full_e2e.py protocol (fresh subprocess per rep via bench_full_e2e.run_one, unmodified); per thread point: 1 warmup subprocess + 3 timed subprocesses; medians; cibersort n_threads set per block, all other stages identical",
+  "stage_order": [
+    "sig_pca",
+    "sig_zscore",
+    "sig_ssgsea",
+    "sig_integration",
+    "anno_eset",
+    "cibersort",
+    "epic",
+    "quantiseq",
+    "mcpcounter",
+    "estimate",
+    "count2tpm"
+  ],
+  "driver_loadavg_start": [
+    8.38134765625,
+    8.28466796875,
+    8.7734375
+  ],
+  "t224": {
+    "cibersort_n_threads": 224,
+    "rep_totals_s": [
+      4.1265,
+      4.2509,
+      3.8985
+    ],
+    "median_total_s": 4.1265,
+    "per_stage": {
+      "sig_pca": {
+        "times_s": [
+          0.2673,
+          0.26,
+          0.2419
+        ],
+        "median_s": 0.26
+      },
+      "sig_zscore": {
+        "times_s": [
+          0.1492,
+          0.1473,
+          0.1376
+        ],
+        "median_s": 0.1473
+      },
+      "sig_ssgsea": {
+        "times_s": [
+          0.1564,
+          0.1532,
+          0.1391
+        ],
+        "median_s": 0.1532
+      },
+      "sig_integration": {
+        "times_s": [
+          0.2552,
+          0.2542,
+          0.2329
+        ],
+        "median_s": 0.2542
+      },
+      "anno_eset": {
+        "times_s": [
+          0.1116,
+          0.1092,
+          0.1067
+        ],
+        "median_s": 0.1092
+      },
+      "cibersort": {
+        "times_s": [
+          2.7855,
+          2.9421,
+          2.6349
+        ],
+        "median_s": 2.7855
+      },
+      "epic": {
+        "times_s": [
+          0.0268,
+          0.0272,
+          0.0292
+        ],
+        "median_s": 0.0272
+      },
+      "quantiseq": {
+        "times_s": [
+          0.1617,
+          0.1539,
+          0.1642
+        ],
+        "median_s": 0.1617
+      },
+      "mcpcounter": {
+        "times_s": [
+          0.0082,
+          0.0079,
+          0.0082
+        ],
+        "median_s": 0.0082
+      },
+      "estimate": {
+        "times_s": [
+          0.0485,
+          0.0459,
+          0.0494
+        ],
+        "median_s": 0.0485
+      },
+      "count2tpm": {
+        "times_s": [
+          0.1562,
+          0.1501,
+          0.1544
+        ],
+        "median_s": 0.1544
+      }
+    },
+    "load_s": [
+      0.1992,
+      0.1924,
+      0.1767
+    ],
+    "loadavg_after": [
+      32.88134765625,
+      13.87109375,
+      10.59765625
+    ]
+  },
+  "t64": {
+    "cibersort_n_threads": 64,
+    "rep_totals_s": [
+      4.6154,
+      4.8153,
+      4.8742
+    ],
+    "median_total_s": 4.8153,
+    "per_stage": {
+      "sig_pca": {
+        "times_s": [
+          0.2555,
+          0.236,
+          0.2608
+        ],
+        "median_s": 0.2555
+      },
+      "sig_zscore": {
+        "times_s": [
+          0.1466,
+          0.1359,
+          0.1477
+        ],
+        "median_s": 0.1466
+      },
+      "sig_ssgsea": {
+        "times_s": [
+          0.1392,
+          0.1237,
+          0.1419
+        ],
+        "median_s": 0.1392
+      },
+      "sig_integration": {
+        "times_s": [
+          0.2399,
+          0.2237,
+          0.2458
+        ],
+        "median_s": 0.2399
+      },
+      "anno_eset": {
+        "times_s": [
+          0.1038,
+          0.1015,
+          0.1042
+        ],
+        "median_s": 0.1038
+      },
+      "cibersort": {
+        "times_s": [
+          3.3459,
+          3.5968,
+          3.5859
+        ],
+        "median_s": 3.5859
+      },
+      "epic": {
+        "times_s": [
+          0.0283,
+          0.0301,
+          0.0287
+        ],
+        "median_s": 0.0287
+      },
+      "quantiseq": {
+        "times_s": [
+          0.1541,
+          0.1555,
+          0.1509
+        ],
+        "median_s": 0.1541
+      },
+      "mcpcounter": {
+        "times_s": [
+          0.0078,
+          0.0082,
+          0.0082
+        ],
+        "median_s": 0.0082
+      },
+      "estimate": {
+        "times_s": [
+          0.0457,
+          0.0473,
+          0.0467
+        ],
+        "median_s": 0.0467
+      },
+      "count2tpm": {
+        "times_s": [
+          0.1484,
+          0.1566,
+          0.1534
+        ],
+        "median_s": 0.1534
+      }
+    },
+    "load_s": [
+      0.1748,
+      0.1775,
+      0.1821
+    ],
+    "loadavg_after": [
+      30.35888671875,
+      14.64306640625,
+      10.931640625
+    ]
+  },
+  "t32": {
+    "cibersort_n_threads": 32,
+    "rep_totals_s": [
+      5.7658,
+      6.1052,
+      5.8909
+    ],
+    "median_total_s": 5.8909,
+    "per_stage": {
+      "sig_pca": {
+        "times_s": [
+          0.2591,
+          0.2582,
+          0.239
+        ],
+        "median_s": 0.2582
+      },
+      "sig_zscore": {
+        "times_s": [
+          0.147,
+          0.1474,
+          0.1368
+        ],
+        "median_s": 0.147
+      },
+      "sig_ssgsea": {
+        "times_s": [
+          0.1395,
+          0.1528,
+          0.1372
+        ],
+        "median_s": 0.1395
+      },
+      "sig_integration": {
+        "times_s": [
+          0.2368,
+          0.2404,
+          0.2359
+        ],
+        "median_s": 0.2368
+      },
+      "anno_eset": {
+        "times_s": [
+          0.1055,
+          0.1053,
+          0.1007
+        ],
+        "median_s": 0.1053
+      },
+      "cibersort": {
+        "times_s": [
+          4.4945,
+          4.8086,
+          4.6407
+        ],
+        "median_s": 4.6407
+      },
+      "epic": {
+        "times_s": [
+          0.0284,
+          0.03,
+          0.0299
+        ],
+        "median_s": 0.0299
+      },
+      "quantiseq": {
+        "times_s": [
+          0.1496,
+          0.1595,
+          0.1592
+        ],
+        "median_s": 0.1592
+      },
+      "mcpcounter": {
+        "times_s": [
+          0.008,
+          0.0084,
+          0.0081
+        ],
+        "median_s": 0.0081
+      },
+      "estimate": {
+        "times_s": [
+          0.0466,
+          0.0466,
+          0.0467
+        ],
+        "median_s": 0.0466
+      },
+      "count2tpm": {
+        "times_s": [
+          0.1508,
+          0.148,
+          0.1566
+        ],
+        "median_s": 0.1508
+      }
+    },
+    "load_s": [
+      0.1918,
+      0.1767,
+      0.1765
+    ],
+    "loadavg_after": [
+      28.556640625,
+      15.7861328125,
+      11.4345703125
+    ]
+  },
+  "wall_s": 77.9,
+  "driver_loadavg_end": [
+    28.556640625,
+    15.7861328125,
+    11.4345703125
+  ]
+}

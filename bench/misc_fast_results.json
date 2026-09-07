@@ -1,0 +1,274 @@
+{
+  "protocol": "in-process perf_counter, median of 3 reps after 1 warmup, official inputs, stdout of both sides -> /dev/null",
+  "note_cache": "fast sides use module-level memoization of immutable resources (pkl loads) and identity-keyed memoization of constant reference/annotation prep, per task rules",
+  "anno_eset": {
+    "gate_original_vs_ref": {
+      "shape_got": [
+        50181,
+        10
+      ],
+      "shape_ref": [
+        50181,
+        10
+      ],
+      "index_order_equal": true,
+      "columns_equal": true,
+      "nan_masks_equal": true,
+      "max_abs_diff": 0.0,
+      "bitwise_equal": true
+    },
+    "gate_fast_vs_ref": {
+      "shape_got": [
+        50181,
+        10
+      ],
+      "shape_ref": [
+        50181,
+        10
+      ],
+      "index_order_equal": true,
+      "columns_equal": true,
+      "nan_masks_equal": true,
+      "max_abs_diff": 0.0,
+      "bitwise_equal": true
+    },
+    "timing_original": {
+      "warmup_s": 0.0876,
+      "times_s": [
+        0.0914,
+        0.0894,
+        0.0863
+      ],
+      "median_s": 0.0894
+    },
+    "timing_fast": {
+      "warmup_s": 0.0262,
+      "times_s": [
+        0.0239,
+        0.0236,
+        0.0237
+      ],
+      "median_s": 0.0237
+    },
+    "speedup": 3.77
+  },
+  "epic": {
+    "gate_original_vs_ref": {
+      "cellFractions": {
+        "shape_got": [
+          10,
+          8
+        ],
+        "shape_ref": [
+          10,
+          8
+        ],
+        "index_order_equal": true,
+        "columns_equal": true,
+        "nan_masks_equal": true,
+        "max_abs_diff": 0.0,
+        "bitwise_equal": true
+      },
+      "mRNAProportions": {
+        "shape_got": [
+          10,
+          8
+        ],
+        "shape_ref": [
+          10,
+          8
+        ],
+        "index_order_equal": true,
+        "columns_equal": true,
+        "nan_masks_equal": true,
+        "max_abs_diff": 0.0,
+        "bitwise_equal": true
+      },
+      "fit_gof": {
+        "shape_got": [
+          10,
+          12
+        ],
+        "shape_ref": [
+          10,
+          12
+        ],
+        "index_order_equal": true,
+        "columns_equal": true,
+        "str_col_convergeMessage_equal": true,
+        "nan_masks_equal": true,
+        "max_abs_diff": 0.0,
+        "bitwise_equal": true
+      }
+    },
+    "gate_fast_vs_ref": {
+      "cellFractions": {
+        "shape_got": [
+          10,
+          8
+        ],
+        "shape_ref": [
+          10,
+          8
+        ],
+        "index_order_equal": true,
+        "columns_equal": true,
+        "nan_masks_equal": true,
+        "max_abs_diff": 0.0,
+        "bitwise_equal": true
+      },
+      "mRNAProportions": {
+        "shape_got": [
+          10,
+          8
+        ],
+        "shape_ref": [
+          10,
+          8
+        ],
+        "index_order_equal": true,
+        "columns_equal": true,
+        "nan_masks_equal": true,
+        "max_abs_diff": 0.0,
+        "bitwise_equal": true
+      },
+      "fit_gof": {
+        "shape_got": [
+          10,
+          12
+        ],
+        "shape_ref": [
+          10,
+          12
+        ],
+        "index_order_equal": true,
+        "columns_equal": true,
+        "str_col_convergeMessage_equal": true,
+        "nan_masks_equal": true,
+        "max_abs_diff": 0.0,
+        "bitwise_equal": true
+      }
+    },
+    "timing_original": {
+      "warmup_s": 0.0169,
+      "times_s": [
+        0.0164,
+        0.0164,
+        0.0163
+      ],
+      "median_s": 0.0164
+    },
+    "timing_fast": {
+      "warmup_s": 0.0107,
+      "times_s": [
+        0.0104,
+        0.0105,
+        0.0104
+      ],
+      "median_s": 0.0104
+    },
+    "speedup": 1.58
+  },
+  "mcpcounter": {
+    "gate_original_vs_ref": {
+      "shape_got": [
+        10,
+        10
+      ],
+      "shape_ref": [
+        10,
+        10
+      ],
+      "index_order_equal": true,
+      "columns_equal": true,
+      "nan_masks_equal": true,
+      "max_abs_diff": 0.0,
+      "bitwise_equal": true
+    },
+    "gate_fast_vs_ref": {
+      "shape_got": [
+        10,
+        10
+      ],
+      "shape_ref": [
+        10,
+        10
+      ],
+      "index_order_equal": true,
+      "columns_equal": true,
+      "nan_masks_equal": true,
+      "max_abs_diff": 0.0,
+      "bitwise_equal": true
+    },
+    "timing_original": {
+      "warmup_s": 0.0074,
+      "times_s": [
+        0.0075,
+        0.0072,
+        0.0072
+      ],
+      "median_s": 0.0072
+    },
+    "timing_fast": {
+      "warmup_s": 0.0017,
+      "times_s": [
+        0.0017,
+        0.0017,
+        0.0017
+      ],
+      "median_s": 0.0017
+    },
+    "speedup": 4.24
+  },
+  "estimate": {
+    "gate_original_vs_ref": {
+      "shape_got": [
+        3,
+        10
+      ],
+      "shape_ref": [
+        3,
+        10
+      ],
+      "index_order_equal": true,
+      "columns_equal": true,
+      "nan_masks_equal": true,
+      "max_abs_diff": 0.0,
+      "bitwise_equal": true
+    },
+    "gate_fast_vs_ref": {
+      "shape_got": [
+        3,
+        10
+      ],
+      "shape_ref": [
+        3,
+        10
+      ],
+      "index_order_equal": true,
+      "columns_equal": true,
+      "nan_masks_equal": true,
+      "max_abs_diff": 0.0,
+      "bitwise_equal": true
+    },
+    "timing_original": {
+      "warmup_s": 0.0453,
+      "times_s": [
+        0.0439,
+        0.0436,
+        0.0437
+      ],
+      "median_s": 0.0437
+    },
+    "timing_fast": {
+      "warmup_s": 0.0173,
+      "times_s": [
+        0.0173,
+        0.0173,
+        0.0173
+      ],
+      "median_s": 0.0173
+    },
+    "speedup": 2.53
+  }
+}

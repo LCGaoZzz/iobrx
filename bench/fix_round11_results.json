@@ -1,0 +1,325 @@
+{
+  "round": "fix_round11",
+  "purpose": "fix all 5 adversarial-audit findings (iobrx/bench/audit_precision.json, audit of 2026-09-07) and re-run the full regression",
+  "datetime": "2026-09-07T21:19:10",
+  "machine_cores": 224,
+  "crate_changes": {
+    "iobrx/fast/count2tpm_fast.py": [
+      "FINDING1 mask rebuild np.ones->np.zeros in _filter_matrix_features"
+    ],
+    "iobrx/fast/estimate_fast.py": [
+      "FINDING2 gene_pos dict built first-occurrence (list.index parity) instead of last-occurrence"
+    ],
+    "iobrx/fast/cibersort_fast.py": [
+      "FINDING3 exp2 heuristic moved into the shim using numpy (np.max<50 -> np.exp2 out=), exp2_done passed to cibersort_core"
+    ],
+    "iobrx/crates/iobrx_rust/src/lib.rs": [
+      "FINDING3 cibersort_core: exp2_done parameter (skips internal Rust exp2 when caller applied numpy exp2)",
+      "FINDING3 step-8 X standardization reduction rewritten: flat F-memory-order (column-stacked) traversal, 8192-element chunked pairwise sums, sequential chunk accumulation (was: per-column sequential + pairwise over column totals)",
+      "FINDING4 explicit NaN check on the common-restricted yc -> ValueError('Input y contains NaN.') (sklearn NuSVR.fit parity); mapped to PyValueError",
+      "FINDING4 best.unwrap() replaced with an Err return (no Rust panic path)",
+      "FINDING5 quantile_normalize_np: stride-honoring gather via ndarray view (as_slice() silently misread F-contiguous memory as row-major)",
+      "hardening: cibersort_core (mix_y, sig_x) and fit_nusvr_linear (X) now reject non-C-contiguous 2D input with a clear ValueError instead of silently misreading it"
+    ]
+  },
+  "findings": {
+    "FINDING_1_CT7": {
+      "issue": "count2tpm_fast._filter_matrix_features rebuilt the keep-mask with np.ones after NA-exclusion, silently re-adding NA rows (3 all-NaN genes KMT2E/RP11-436A7.1/SEC22C survived; row order also shifted via remove_duplicate_genes tie-shuffling)",
+      "root_cause": "mask-recomposition bug: full_ok must start all-False so NA rows stay excluded",
+      "fix": "full_ok = np.zeros(...) in iobrx/fast/count2tpm_fast.py",
+      "gate": "CT7 rerun -> PASS: identical index (3 NaN genes dropped like the original), max abs diff 0.0"
+    },
+    "FINDING_2_ES5": {
+      "issue": "estimate_fast gene-position map used LAST occurrence ({g: i for i, g in enumerate(...)}); original gene_names.index(g) takes FIRST; on non-unique-index inputs 5 signature member positions differed (DDR2, ADAM8, LPXN, NKG7, TYROBP) -> ESTIMATEScore max abs diff 46.69",
+      "root_cause": "dict-build direction; only observable when input_df.index is non-unique (merge-expansion path)",
+      "fix": "first-occurrence dict (setdefault semantics) in iobrx/fast/estimate_fast.py",
+      "gate": "ES5 rerun -> PASS: max abs diff 0.0"
+    },
+    "FINDING_3_CB6b": {
+      "issue": "cibersort on degenerate eset_tme_stad 235x50 (12 LM22-overlap genes): 1-2/50 samples diverged (weights max 6.69e-05 QN=True; max 2.54e-04 QN=False)",
+      "mechanism": "TWO independent last-bit input divergences vs the original pipeline, both amplified by the underdetermined 12-genes x 22-cell-types NuSVR (support-set flips), both absorbed by every well-posed case (hence 0 divergence on the 12 well-posed cibersort cases incl. 50181x50): (1) exp2: the original applies numpy's vectorized np.exp2; the crate used Rust libm f64::exp2, which differs by 1 ulp on ~5% of entries (measured: 594/11750 cells on the CB6b matrix, each 1 ulp). These last-bit mixture differences flow through QN/z-scores into the degenerate solve. (2) X scalar standardization: the reference X (pandas .loc -> to_numpy) is F-CONTIGUOUS, and numpy reduces a full-array sum over FLAT MEMORY ORDER (column-stacked) with the nditer reduce buffer (pairwise per 8192-element chunk, chunk sums accumulated sequentially). The crate used per-column sequential accumulation + pairwise over the 22 column totals: bitwise-equal on the official 531x22 matrix (coincidental at that size) but 1 ulp off on the 12x22 matrix (x_mean 1495.884602668057 vs ...567). Verified against X.mean()/X.std(ddof=1) on both matrices: flat-memory-order chunked pairwise is the exact match on both. The audit's 'N-dependent (>=21 columns) reduction' bisect signature was a red herring: with a FIXED 1-ulp input perturbation, whether a given sample's float32 weights/support set flips depends only on that sample's y values (which legitimately change with the column context through QN row means), so more context columns merely expose more knife-edge samples.",
+      "fix": "exp2 heuristic + np.exp2 applied in the shim (numpy-exact, incl. np.max NaN propagation semantics), exp2_done flag added to cibersort_core; step-8 reduction rewritten to flat F-memory-order chunked pairwise",
+      "gates": {
+        "CB6b_235x50_QN_true": "max abs diff 0.0 across all 50 samples (n_mismatch=0, index/cols equal)",
+        "CB6b_235x50_QN_false": "max abs diff 0.0 across all 50 samples (n_mismatch=0)",
+        "official_50181x10_QN_true": "max abs diff 0.0",
+        "thread_invariance": "n_threads 1/8/224 outputs bitwise identical"
+      }
+    },
+    "FINDING_4_CB11": {
+      "issue": "NaN rows reaching the solver: original raises sklearn ValueError('Input y contains NaN.'); fast panicked (Rust Option::unwrap at lib.rs best.unwrap(), because NaN rmse never beats best_rmse=+inf so no nu is selected)",
+      "fix": "explicit NaN check on the common-restricted yc (post exp2/QN/restriction = exactly the values reaching the solver) -> ValueError('Input y contains NaN.'); plus best.unwrap() replaced by an Err (panic-free)",
+      "gate": "CB11 -> BOTH_ERROR_SAME_TYPE: ValueError 'Input y contains NaN.' on both sides"
+    },
+    "FINDING_5_quantile_normalize_np": {
+      "issue": "exposed helper disagreed with the numpy reference on the real 235x50 matrix (every cell, max abs diff 2679) while agreeing on transposes/random/small cases",
+      "root_cause": "NOT value-pattern-dependent (the audit's hypothesis) but LAYOUT-dependent: pd.DataFrame.to_numpy() returns an F-CONTIGUOUS array, and the helper's as_slice() handed back the raw column-major memory which the row-major Rust code silently misinterpreted (QN computed on effectively transposed memory). Any F-contiguous input was garbage; C-contiguous inputs (random arrays, ascontiguousarray copies) were bit-exact - which is exactly the observed agreement pattern.",
+      "fix": "kept in the public API (used only by iobrx/bench/bench_rust_cibersort.py QN-phase timing; nothing in the crate internals or other shims calls it - cibersort_core has its own internal quantile_normalize) and made layout-correct: values gathered through the ndarray view honoring strides; C-contiguous fast path unchanged",
+      "gate": "F-order direct, C-order, and F-order submatrix inputs all bitwise-equal to CS.quantile_normalize_fast on the real 235x50 exp2 matrix; cibersort_core and fit_nusvr_linear now fail loudly (ValueError) on F-order input instead of silently misreading"
+    },
+    "CT10_decision": {
+      "case": "duplicated Ensembl IDs: original crashes in tpm.insert (symbol_map.loc[tpm.index] expands on the duplicated index -> ValueError 'Length of values (4796) does not match length of index (4706)'); fast succeeds",
+      "decision": "DOCUMENTED DELIBERATE DIVERGENCE, counted as documented-difference. The original's error is a pandas .loc-expansion artifact inside its symbol-insert step, not a designed error contract; aligning the fast would mean re-introducing an upstream crash bug on input the fast handles correctly."
+    }
+  },
+  "regression": {
+    "a_audit_battery": {
+      "harness": "iobrx/bench/audit_work/audit_driver.py (fresh state, all 83 cases re-run in fresh subprocesses)",
+      "verdict_counts": {
+        "PASS": 79,
+        "BOTH_ERROR_SAME_TYPE": 3,
+        "ORIG_ERROR_FAST_OK": 1
+      },
+      "total": 83,
+      "accounting": "79 PASS + 3 BOTH_ERROR_SAME_TYPE (pass-equivalent: CB11, AE10, MC4) + 1 ORIG_ERROR_FAST_OK (CT10, documented deliberate divergence) = 83/83",
+      "previously_failing_now_fixed": {
+        "CT7": "PASS",
+        "ES5": "PASS",
+        "CB6b": "PASS",
+        "CB11": "BOTH_ERROR_SAME_TYPE (was ERROR_MISMATCH / PanicException)"
+      },
+      "per_module": {
+        "cibersort": {
+          "cases": 13,
+          "PASS": 12
+        },
+        "sig_score": {
+          "cases": 22,
+          "PASS": 22
+        },
+        "count2tpm": {
+          "cases": 11,
+          "PASS": 10
+        },
+        "quantiseq": {
+          "cases": 8,
+          "PASS": 8
+        },
+        "anno_eset": {
+          "cases": 10,
+          "PASS": 9
+        },
+        "epic": {
+          "cases": 7,
+          "PASS": 7
+        },
+        "mcpcounter": {
+          "cases": 6,
+          "PASS": 5
+        },
+        "estimate": {
+          "cases": 6,
+          "PASS": 6
+        }
+      },
+      "per_case_verdicts": {
+        "CB1": "PASS",
+        "CB2": "PASS",
+        "CB3": "PASS",
+        "CB4": "PASS",
+        "CB5": "PASS",
+        "CB6a": "PASS",
+        "CB6b": "PASS",
+        "CB7": "PASS",
+        "CB8": "PASS",
+        "CB9": "PASS",
+        "CB10": "PASS",
+        "CB11": "BOTH_ERROR_SAME_TYPE",
+        "CB12": "PASS",
+        "SS1": "PASS",
+        "SS2": "PASS",
+        "SS3": "PASS",
+        "SS4": "PASS",
+        "SS5": "PASS",
+        "SS6": "PASS",
+        "SS7a": "PASS",
+        "SS7b": "PASS",
+        "SS7c": "PASS",
+        "SS8": "PASS",
+        "SS9a": "PASS",
+        "SS9b": "PASS",
+        "SS9c": "PASS",
+        "SS10": "PASS",
+        "SS11": "PASS",
+        "SS12": "PASS",
+        "SS13": "PASS",
+        "SS14": "PASS",
+        "SS15": "PASS",
+        "SS16": "PASS",
+        "SS17a": "PASS",
+        "SS17b": "PASS",
+        "CT1": "PASS",
+        "CT2": "PASS",
+        "CT3": "PASS",
+        "CT4": "PASS",
+        "CT5": "PASS",
+        "CT6": "PASS",
+        "CT7": "PASS",
+        "CT8": "PASS",
+        "CT9": "PASS",
+        "CT10": "ORIG_ERROR_FAST_OK",
+        "CT11": "PASS",
+        "QS1": "PASS",
+        "QS2": "PASS",
+        "QS3": "PASS",
+        "QS4": "PASS",
+        "QS5": "PASS",
+        "QS6": "PASS",
+        "QS7": "PASS",
+        "QS8": "PASS",
+        "AE1": "PASS",
+        "AE2": "PASS",
+        "AE3": "PASS",
+        "AE4": "PASS",
+        "AE5": "PASS",
+        "AE6": "PASS",
+        "AE7": "PASS",
+        "AE8": "PASS",
+        "AE9": "PASS",
+        "AE10": "BOTH_ERROR_SAME_TYPE",
+        "EP1": "PASS",
+        "EP2": "PASS",
+        "EP3": "PASS",
+        "EP4": "PASS",
+        "EP5": "PASS",
+        "EP6": "PASS",
+        "EP7": "PASS",
+        "MC1": "PASS",
+        "MC2": "PASS",
+        "MC3": "PASS",
+        "MC4": "BOTH_ERROR_SAME_TYPE",
+        "MC5": "PASS",
+        "MC6": "PASS",
+        "ES1": "PASS",
+        "ES2": "PASS",
+        "ES3": "PASS",
+        "ES4": "PASS",
+        "ES5": "PASS",
+        "ES6": "PASS"
+      }
+    },
+    "b_official_precision_gates": {
+      "protocol": "bench_full_e2e.py --worker --verify (fresh subprocess), fast outputs vs iobrx/refs/",
+      "rows": {
+        "sig_pca": 0.0,
+        "sig_zscore": 0.0,
+        "sig_ssgsea": 0.0,
+        "sig_integration": 0.0,
+        "anno_eset": 0.0,
+        "cibersort": 0.03,
+        "epic": 0.0,
+        "quantiseq": 0.0,
+        "mcpcounter": 0.0,
+        "estimate": 0.0,
+        "count2tpm": 0.0
+      },
+      "summary": "all 11 stages max abs diff 0.0 except cibersort 'P-value' (3.0e-02; original unseeded OS-entropy -> not reproducible by design). cibersort excluding P-value: 240/240 cells bit-identical."
+    },
+    "c_full_e2e": {
+      "protocol": "bench_full_e2e.py: fresh subprocess per rep, 1 warmup + 3 reps per config, medians; machine load at start ~10 of 224 cores",
+      "t224": {
+        "rep_totals_s": [
+          3.8887,
+          3.8736,
+          3.8663
+        ],
+        "median_total_s": 3.8736,
+        "per_stage_median_s": {
+          "sig_pca": 0.2625,
+          "sig_zscore": 0.1468,
+          "sig_ssgsea": 0.1415,
+          "sig_integration": 0.2414,
+          "anno_eset": 0.1066,
+          "cibersort": 2.5745,
+          "epic": 0.0288,
+          "quantiseq": 0.1523,
+          "mcpcounter": 0.0081,
+          "estimate": 0.0462,
+          "count2tpm": 0.1491
+        }
+      },
+      "t64": {
+        "rep_totals_s": [
+          4.3236,
+          4.9732,
+          4.2787
+        ],
+        "median_total_s": 4.3236,
+        "per_stage_median_s": {
+          "sig_pca": 0.2581,
+          "sig_zscore": 0.1466,
+          "sig_ssgsea": 0.1403,
+          "sig_integration": 0.2361,
+          "anno_eset": 0.103,
+          "cibersort": 3.0516,
+          "epic": 0.0284,
+          "quantiseq": 0.1527,
+          "mcpcounter": 0.008,
+          "estimate": 0.0459,
+          "count2tpm": 0.146
+        }
+      },
+      "previous_round_for_reference": {
+        "t224_median": 3.7515,
+        "t64_median": 4.5633
+      }
+    },
+    "d_cibersort_inprocess": {
+      "protocol": "bench_rust_cibersort.py (in-process, DataFrame-in, 1 warmup + 3 reps, median)",
+      "fast_nthreads_1": {
+        "warmup_s": 87.582,
+        "times_s": [
+          87.42,
+          87.461,
+          87.378
+        ],
+        "median_s": 87.42
+      },
+      "fast_nthreads_64": {
+        "warmup_s": 3.426,
+        "times_s": [
+          3.076,
+          2.986,
+          3.284
+        ],
+        "median_s": 3.076
+      },
+      "fast_nthreads_224": {
+        "warmup_s": 2.706,
+        "times_s": [
+          2.249,
+          2.262,
+          2.496
+        ],
+        "median_s": 2.262
+      },
+      "phases_nt_224_s": {
+        "prep_pandas_s": 0.0382,
+        "quantile_norm_s": 0.0172,
+        "solve_10_samples_s": 1.4833,
+        "perm_100_s": 0.8112,
+        "cibersort_core_perm0_s": 1.5005,
+        "cibersort_core_full_s": 2.3117,
+        "n_iter_sum": 84984516
+      },
+      "speedup_vs_original": "38.5x at 224T (original n_jobs=1 median 87.2s)",
+      "conclusion": "no perf regression from the fixes: 224T in-process median 2.262s; e2e cibersort stage median 2.575s vs prior round 2.571s (within noise); QN phase unchanged at 0.017s",
+      "phases_nt_64_s": {
+        "prep_pandas_s": 0.0618,
+        "quantile_norm_s": 0.0173,
+        "solve_10_samples_s": 1.1229,
+        "perm_100_s": 1.9224,
+        "cibersort_core_perm0_s": 1.1401,
+        "cibersort_core_full_s": 3.0626,
+        "n_iter_sum": 84984516
+      }
+    }
+  },
+  "artifacts": {
+    "audit_report": "iobrx/bench/audit_precision.json (overwritten by the re-run; pre-fix snapshot at iobrx/bench/audit_precision.prefix11.bak.json and state at iobrx/bench/audit_work/state.prefix11.bak.json)",
+    "rerun_log": "iobrx/bench/audit_work/audit_rerun_fix11.log",
+    "e2e_results": "iobrx/bench/full_e2e_results.json",
+    "cibersort_bench": "iobrx/bench/rust_cibersort_results.json",
+    "probe_scripts": "iobrx/bench/audit_work/probe_f3*.py, gate_cb6b.py, gate_official.py"
+  }
+}

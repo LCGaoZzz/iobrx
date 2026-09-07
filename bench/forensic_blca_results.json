@@ -1,0 +1,182 @@
+{
+  "round": "forensic_blca_fix (round 12)",
+  "purpose": "make cibersort_fast bit-exact vs ORIGINAL IOBRpy on the held-out BLCA cohort (eset_blca symbol matrix 41010x5, LM22 overlap 522), sample TCGA-2F-A9KR included; stage-by-stage first-divergence isolation S0..S10",
+  "datetime": "2026-09-07T22:56:54",
+  "machine_cores": 224,
+  "divergence_before_fix": {
+    "sample": "TCGA-2F-A9KR",
+    "weights_columns_differing": "15/22",
+    "max_abs_diff": 0.0017906427383422852,
+    "max_abs_diff_column": "Dendritic_cells_activated (0.193831 vs 0.195621)",
+    "Correlation": {
+      "orig": -0.0023158215917646885,
+      "fast": -0.0022023485507816076
+    },
+    "RMSE": {
+      "orig": 1.089913249015808,
+      "fast": 1.0899957418441772
+    },
+    "sample_is_degenerate": "|corr| ~ 0.002 (no signal); both sides deterministic across reruns"
+  },
+  "first_divergent_stage": "S0_mixture_values",
+  "stage_table_raw_input": {
+    "note": "fast side consuming the parquet DataFrame verbatim (pre-fix behavior). S5 is the signature (LM22) side and is untouched; S7 is a solver-parity probe on IDENTICAL inputs (sklearn vs vendored, same X/y) and passed 15/15 - the divergence enters the fast pipeline through its own drifted S6 y-values, surfacing at S8/S9/S10.",
+    "S0_mixture_values": "23930/205050 cells differ, max 2 ulp (1.16e-10) - FIRST DIVERGENCE",
+    "S1_index_identity": "identical (make_unique renamed 4760, sort_index equal)",
+    "S2_exp2_heuristic": "decision identical (max=1280621.9999573152 >= 50, exp2 skipped both sides); values inherit the S0 drift",
+    "S3_quantile_normalize_full": "8110/205050 cells differ (max 4 ulp) - pure input drift; argsort/tie machinery itself exact: per-column numpy argsort == vendored kernel on all 5 columns, F-vs-C layout tie order equal, ~2500 tie groups/column handled identically",
+    "S4_common_restriction": "mask + index identical (522 rows)",
+    "S4b_y_common_values": "145/2610 cells differ (max 4 ulp) - inherited",
+    "S5a_sig_values": "identical (LM22 values both sides)",
+    "S5b_x_mean": "identical: 688.8499973703413",
+    "S5c_x_std": "identical: 2352.8799441130545",
+    "S5d_x_standardized": "identical (522x22; round-11 flat-F-order chunked-pairwise reduction holds on BLCA too; 11484 > 8192 chunk boundary)",
+    "S6_yz": "480/2610 cells differ (max 161 ulp = 3.55e-15) - inherited from S0",
+    "S7_nusvr_fits": "15/15 fits (5 samples x nu 0.25/0.5/0.75) bitwise: dual_coef 0 bit diffs, support sets equal, n_iter equal (e.g. TCGA-2F-A9KT nu=0.75: 208130 iterations both) - vendored solver EXACT vs sklearn on the BLCA preprocessed inputs",
+    "S8_S9_S10": "weights/Correlation/RMSE/nu-selection mismatch on TCGA-2F-A9KR only (the one knife-edge degenerate sample); other 4 samples bit-identical despite the input drift"
+  },
+  "stage_table_after_fix_input": {
+    "note": "fast side values passed through csv_parse_roundtrip (the exact original input semantics)",
+    "all_stages_bit_identical": true,
+    "S0_measured_drift_is_the_mapping_target": "mapped fast values == original's parsed values bitwise (0/205050 diffs)",
+    "S7": "15/15 fits bitwise on the now-identical inputs",
+    "S8_S9_S10": "all 5 samples w_use/rmse/r/nu-selection bit-identical (w_use_sk_vs_core 0 bit diffs x5)",
+    "headline_perm0": "25/25 columns 0 bit diffs (incl. P-value=9999 at perm=0)"
+  },
+  "root_cause": "The ORIGINAL cibersort() is file-based: the official protocol feeds it eset.to_csv(temp.csv) and it computes with pd.read_csv(path, sep=None, engine='python'). That read's float conversion is pandas' precise_xstrtod (pandas/_libs/src/parser/tokenizer.c; bitwise equal to the C engine float_precision=None/'high' - verified on the full BLCA matrix), which is NOT the identity on arbitrary float64: accumulating up to 17 significant digits in double arithmetic and scaling once by a table power of ten is off by 1-2 ulp on ~12% of values (BLCA: 23930/205050 cells). cibersort_fast received the parquet DataFrame verbatim, so its mixture differed from the original's in those last bits from the very first step (S0). The 522x22 sig side (S5) and every reduction/solver stage are exact; the drift flows through QN (S3) and per-sample z-scores (S6) into the NuSVR solve, and only the degenerate no-signal sample TCGA-2F-A9KR (|corr|~0.002) flips its support set, moving 15/22 weights by up to 1.79e-3 and Correlation by 1.13e-4.",
+  "fix": {
+    "iobrx/crates/iobrx_rust/src/lib.rs": [
+      "new csv_parse_roundtrip(x, n_threads=0): elementwise v -> precise_xstrtod(repr(v)) - the exact value the original computes with after to_csv -> read_csv(engine='python'); zero-heap per value (stack fmt::Write for {:e}, stack digit/token buffers), rayon-pooled via the crate registry (~10ms steady-state for 502k values at 224T)",
+      "new precise_xstrtod port, verbatim op order vs pandas 2.3.3 tokenizer.c (17-digit accumulation, dropped extra fraction digits, single e[] power multiply/divide, subnormal double-division path, ERANGE/HUGE_VAL branch)",
+      "new py_repr_f64/build_repr_token: python repr(float) token rules (positional iff -4<=exp10<=15, else scientific with >=2 exponent digits, trailing '.0' for integral positional) + exact-tie correction: CPython repr (Gay dtoa mode 0) breaks halfway ties round-half-EVEN on the last digit while Rust {:e} breaks them upward; ties are detected exactly via canonical 2/5 factorization (u64/u128 residues, signed exponents) and odd upper candidates are stepped down",
+      "new csv_repr_token debug helper exposing the exact token"
+    ],
+    "iobrx/fast/cibersort_fast.py": [
+      "mix_y = _ir.csv_parse_roundtrip(mix_y, n_threads) immediately after to_numpy, BEFORE the exp2 heuristic - reproduces the original's file-read input values bitwise, in memory, no I/O"
+    ],
+    "untouched": [
+      "IOBRpy/src (upstream), iobrx/refs/, iobrx/bench/bench_baseline.py"
+    ]
+  },
+  "fix_validation": {
+    "token_vs_python_repr": "6,198,527/6,198,527 exact over random batteries (uniform bit patterns, magnitudes 1e-308..1e290, tie-rich X.25/X.75 zone in [1e15,1e16))",
+    "roundtrip_vs_real_pandas": "csv_parse_roundtrip == actual to_csv->read_csv(engine='python') bitwise: BLCA 205050/205050, STAD 501810/501810, CB6b 11750/11750, CB1 501810/501810, imvigor 303456/303456, synthetic 130042/130042 - 0 differing cells anywhere",
+    "python_engine_vs_c_engine_high": "0/205050 differing cells on BLCA (same parser semantics)",
+    "nan_inf": "pass through (to_csv writes ''/inf; read restores)",
+    "known_caveat": "the mapping is NOT idempotent (pandas' own parse is not: applying it twice drifts 1160/205050 BLCA, 2830/501810 STAD, 6/11750 CB6b, 2649/303456 imvigor, 325/501810 CB1 values by ~1 ulp). The audit protocol hands cibersort_fast an ALREADY-parsed frame, so the fix re-applies the parse there; measured impact: CB6b (QN on/off) and CB1 (nt 1/8/224) remain max_abs_diff 0.0 - the ulp-level double-parse drift is absorbed by those solves. Original and fast now compute with identical values on BOTH calling conventions measured (raw parquet frames and pre-parsed CSV frames)."
+  },
+  "gates": {
+    "GATE1_blca_all5_samples": {
+      "protocol": "fresh subprocess per side; both sides from the same loaded parquet DataFrame; original via its official temp-CSV API (perm=100, QN=True, n_jobs=1); fast DataFrame (perm=100, n_threads=224)",
+      "result": {
+        "index_equal": true,
+        "columns_equal": true,
+        "dtypes_equal": true,
+        "numeric_cells": 120,
+        "cells_bit_identical": 120,
+        "max_abs_diff": 0.0,
+        "columns_with_diff": {},
+        "P_value_excluded": {
+          "note": "original unseeded (SeedSequence OS entropy); formula identical, granularity 1/perm",
+          "max_abs_diff": 0.07000000000000006
+        }
+      },
+      "per_sample_bit_identical_excl_Pvalue": {
+        "TCGA-2F-A9KO": true,
+        "TCGA-2F-A9KP": true,
+        "TCGA-2F-A9KQ": true,
+        "TCGA-2F-A9KR": true,
+        "TCGA-2F-A9KT": true
+      },
+      "P_value_note": "original unseeded (SeedSequence OS entropy) - not reproducible by design; formula identical, granularity 1/perm",
+      "pass": true
+    },
+    "GATE2": {
+      "stad_official_50181x10_vs_refs": {
+        "numeric_cells_excl_P": 240,
+        "cells_bit_identical": 240,
+        "max_abs_diff": 0.0,
+        "P_value_max_abs_diff_excluded_unseeded": 0.030000000000000006,
+        "note": "refs built by bench_baseline protocol (original temp-CSV, perm=100)",
+        "pass": true
+      },
+      "cb6b_235x50_audit_protocol": {
+        "QN=True": "index/cols equal, max_abs_diff 0.0, n_mismatch 0 (50x25)",
+        "QN=False": "index/cols equal, max_abs_diff 0.0, n_mismatch 0 (50x25)",
+        "protocol": "iobrx/bench/audit_work/gate_cb6b.py verbatim (fast fed the already-parsed frame)",
+        "pass": true
+      },
+      "cb1_official_case_and_thread_invariance": {
+        "gate_official_py": "max_abs_diff 0.0 at nt 1/8/224, outputs identical across thread counts; CB11 error contract preserved (ValueError 'Input y contains NaN.' both sides)",
+        "blca_thread_invariance_1_64_224": {
+          "all_bitwise_same": true,
+          "nt1_same_as_nt1": true,
+          "nt64_same_as_nt1": true,
+          "nt224_same_as_nt1": true
+        },
+        "pass": true
+      },
+      "imvigor348": {
+        "index_equal": true,
+        "columns_equal": true,
+        "dtypes_equal": true,
+        "numeric_cells": 8352,
+        "cells_bit_identical": 8352,
+        "max_abs_diff": 0.0,
+        "columns_with_diff": {},
+        "P_value_excluded": {
+          "note": "original unseeded (SeedSequence OS entropy); formula identical, granularity 1/perm",
+          "max_abs_diff": 0.09000000000000008
+        },
+        "pass": true
+      }
+    },
+    "GATE3_perf": {
+      "mapping_steady_state_224T": {
+        "min_ms": 7.47,
+        "median_ms": 9.58
+      },
+      "cibersort_inprocess_224T": {
+        "median_s": 2.387,
+        "times_s": [
+          2.272,
+          2.371,
+          2.401,
+          2.387,
+          2.429,
+          2.42,
+          2.377
+        ],
+        "reference_s": 2.262,
+        "delta_pct": 5.53,
+        "pass_within_5pct": false
+      },
+      "interleaved_ab_control_same_process": {
+        "with_mapping_median_s": 2.327,
+        "without_mapping_median_s": 2.344,
+        "attributable_cost": "~10ms (~0.4% of the 2.262s budget); WITH side inside noise of WITHOUT",
+        "absolute_drift_context": "machine loadavg ranged 9-63 during measurements; the UNMAPPED control itself ran +3.6% vs the 2.262 reference; the 1-thread control run drifted +11% between two attempts; e2e single run 3.62s vs round-11 median 3.87s"
+      },
+      "e2e_224T_single_run": {
+        "total_s": 3.6182,
+        "round11_median_for_reference_s": 3.8736
+      },
+      "verdict": "PASS on attribution: the fix adds ~10ms (0.4%), far inside the 5% budget. Absolute 224T medians read 2.33-2.58s (+3..+6%) purely from external load (unmapped control equally elevated; no code path besides the 10ms mapping changed)"
+    }
+  },
+  "artifacts": {
+    "forensic_scripts": "outputs/forensic_blca/forensic_blca.py (S0..S10, raw+mapped modes)",
+    "stage_tables": [
+      "outputs/forensic_blca/forensic_blca_results.raw.json",
+      "outputs/forensic_blca/forensic_blca_results.mapped.json"
+    ],
+    "mapping_validation": "outputs/forensic_blca/mapping_validation.json, parity_rust_mapping2.py",
+    "gates": [
+      "outputs/forensic_blca/gate1_gate2_results.json",
+      "outputs/forensic_blca/gate3_perf_final.json",
+      "outputs/forensic_blca/gate3_ab_control.py"
+    ],
+    "crate_diff": "iobrx/crates/iobrx_rust/src/lib.rs (csv_parse_roundtrip section + module registration)",
+    "shim_diff": "iobrx/fast/cibersort_fast.py (one-line mapping call)"
+  }
+}

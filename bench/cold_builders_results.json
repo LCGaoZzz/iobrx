@@ -1,0 +1,735 @@
+{
+  "gate_quantiseq": {
+    "alias_map": {
+      "hgnc_shape": [
+        42097,
+        10
+      ],
+      "orig_entries": 53299,
+      "vec_entries": 53299,
+      "dict_equal": true,
+      "insertion_order_identical": true,
+      "orig_build_s": 0.8531,
+      "vec_build_s": 0.0654,
+      "PASS": true
+    },
+    "stage_vs_refs": {
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 110,
+      "cells_bit_identical": 110,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true,
+      "PASS": true
+    }
+  },
+  "gate_count2tpm_build_from_pickle": {
+    "phase": "build",
+    "stage_vs_refs": {
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 480580,
+      "cells_bit_identical": 480580,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true,
+      "disk_cache_files": [
+        "hsa_ensembl.meta.json",
+        "hsa_ensembl.parquet"
+      ],
+      "PASS": true
+    }
+  },
+  "gate_count2tpm_disk_cached": {
+    "phase": "cached",
+    "stage_vs_refs": {
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 480580,
+      "cells_bit_identical": 480580,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true,
+      "disk_cache_files": [
+        "hsa_ensembl.meta.json",
+        "hsa_ensembl.parquet"
+      ],
+      "PASS": true
+    }
+  },
+  "gate_count2tpm_all_branches": {
+    "phase": "branches",
+    "stage_vs_refs": {
+      "index_equal": true,
+      "columns_equal": true,
+      "numeric_cells": 480580,
+      "cells_bit_identical": 480580,
+      "max_abs_diff": 0.0,
+      "object_cols_equal": true,
+      "disk_cache_files": [
+        "hsa_ensembl.meta.json",
+        "hsa_ensembl.parquet"
+      ],
+      "PASS": true
+    },
+    "branch_equals": {
+      "hsa_ensembl": {
+        "shape": [
+          65988,
+          2
+        ],
+        "equals_fresh_incl_dtypes": true,
+        "index_dtype_equal": true,
+        "index_equal_nan_aware": true
+      },
+      "hsa_entrez": {
+        "shape": [
+          24530,
+          2
+        ],
+        "equals_fresh_incl_dtypes": true,
+        "index_dtype_equal": true,
+        "index_equal_nan_aware": true
+      },
+      "hsa_symbol": {
+        "shape": [
+          59281,
+          2
+        ],
+        "equals_fresh_incl_dtypes": true,
+        "index_dtype_equal": true,
+        "index_equal_nan_aware": true
+      },
+      "mmus_ensembl": {
+        "shape": [
+          56953,
+          2
+        ],
+        "equals_fresh_incl_dtypes": true,
+        "index_dtype_equal": true,
+        "index_equal_nan_aware": true
+      },
+      "mmus_mgi": {
+        "shape": [
+          55199,
+          2
+        ],
+        "equals_fresh_incl_dtypes": true,
+        "index_dtype_equal": true,
+        "index_equal_nan_aware": true
+      },
+      "mmus_symbol": {
+        "shape": [
+          56805,
+          2
+        ],
+        "equals_fresh_incl_dtypes": true,
+        "index_dtype_equal": true,
+        "index_equal_nan_aware": true
+      }
+    },
+    "PASS": true
+  },
+  "timing_quantiseq": {
+    "new_cold_s": [
+      0.132,
+      0.1303,
+      0.1791
+    ],
+    "new_warm_s": [
+      0.0571,
+      0.0573,
+      0.0568
+    ],
+    "old_cold_s": [
+      0.9025,
+      0.9223,
+      0.9783
+    ],
+    "old_warm_s": [
+      0.8999,
+      0.89,
+      0.9373
+    ]
+  },
+  "timing_count2tpm": {
+    "cold_nocache_build_s": [
+      0.3104,
+      0.3247,
+      0.5158
+    ],
+    "warm_after_build_s": [
+      0.1074,
+      0.1094,
+      0.1882
+    ],
+    "cold_cached_s": [
+      0.1623,
+      0.1641,
+      0.246
+    ],
+    "warm_cached_s": [
+      0.109,
+      0.1098,
+      0.1795
+    ],
+    "old_prep_simulated_s": [
+      0.3441,
+      0.3413,
+      0.3416
+    ]
+  },
+  "bench_full_e2e": {
+    "machine_cores": 224,
+    "datetime": "2026-09-07T18:56:01",
+    "protocol": "fresh subprocess per rep; data loaded once per subprocess (untimed); 11 official stages timed individually with perf_counter; 1 warmup subprocess + 3 timed subprocesses per cibersort thread config; medians reported",
+    "stage_order": [
+      "sig_pca",
+      "sig_zscore",
+      "sig_ssgsea",
+      "sig_integration",
+      "anno_eset",
+      "cibersort",
+      "epic",
+      "quantiseq",
+      "mcpcounter",
+      "estimate",
+      "count2tpm"
+    ],
+    "fast_paths": {
+      "sig_pca/sig_zscore/sig_ssgsea/sig_integration": "calculate_sig_score_fast (rust ssgsea_core leg for ssgsea+integration)",
+      "anno_eset": "ORIGINAL (per bench spec)",
+      "cibersort": "cibersort_fast (rust cibersort_core, n_threads per config)",
+      "epic": "ORIGINAL (per bench spec)",
+      "quantiseq": "quantiseq_fast (vectorized HGNC alias-map builder + per-process memoization)",
+      "mcpcounter": "ORIGINAL (per bench spec)",
+      "estimate": "ORIGINAL (per bench spec)",
+      "count2tpm": "count2tpm_fast (vectorized + disk-cached packaged refined refs)"
+    },
+    "verify": [
+      {
+        "stage": "sig_pca",
+        "ref": "sig_pca.parquet",
+        "shape": [
+          348,
+          60
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 20532,
+        "cells_bit_identical": 20532,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "sig_zscore",
+        "ref": "sig_zscore.parquet",
+        "shape": [
+          348,
+          60
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 20532,
+        "cells_bit_identical": 20532,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "sig_ssgsea",
+        "ref": "sig_ssgsea.parquet",
+        "shape": [
+          348,
+          32
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 10788,
+        "cells_bit_identical": 10788,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "sig_integration",
+        "ref": "sig_integration.parquet",
+        "shape": [
+          348,
+          178
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 61596,
+        "cells_bit_identical": 61596,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "anno_eset",
+        "ref": "anno_eset.parquet",
+        "shape": [
+          50181,
+          10
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 501810,
+        "cells_bit_identical": 501810,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "cibersort",
+        "ref": "cibersort.parquet",
+        "shape": [
+          10,
+          25
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 250,
+        "cells_bit_identical": 243,
+        "max_abs_diff": 0.030000000000000006,
+        "object_cols_equal": true,
+        "max_abs_diff_excl_Pvalue": 0.0,
+        "excl_Pvalue_cells_bit_identical": 240,
+        "excl_Pvalue_numeric_cells": 240,
+        "Pvalue_max_abs_diff": 0.030000000000000006
+      },
+      {
+        "stage": "epic",
+        "ref": "epic.pkl",
+        "shape": [
+          10,
+          8
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 270,
+        "cells_bit_identical": 270,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "quantiseq",
+        "ref": "quantiseq.parquet",
+        "shape": [
+          10,
+          12
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 110,
+        "cells_bit_identical": 110,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "mcpcounter",
+        "ref": "mcpcounter.parquet",
+        "shape": [
+          10,
+          10
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 100,
+        "cells_bit_identical": 100,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "estimate",
+        "ref": "estimate.parquet",
+        "shape": [
+          3,
+          10
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 30,
+        "cells_bit_identical": 30,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      },
+      {
+        "stage": "count2tpm",
+        "ref": "count2tpm.parquet",
+        "shape": [
+          48058,
+          10
+        ],
+        "index_equal": true,
+        "columns_equal": true,
+        "numeric_cells": 480580,
+        "cells_bit_identical": 480580,
+        "max_abs_diff": 0.0,
+        "object_cols_equal": true
+      }
+    ],
+    "versions": {
+      "numpy": "2.2.6",
+      "pandas": "2.3.3",
+      "scipy": "1.16.3",
+      "scikit-learn": "1.7.2",
+      "gseapy": "1.3.0",
+      "iobrx_rust": "0.1.0"
+    },
+    "t224": {
+      "cibersort_n_threads": 224,
+      "rep_totals_s": [
+        4.138,
+        4.4901,
+        4.3241
+      ],
+      "median_total_s": 4.3241,
+      "per_stage": {
+        "sig_pca": {
+          "times_s": [
+            0.3533,
+            0.3364,
+            0.3328
+          ],
+          "median_s": 0.3364
+        },
+        "sig_zscore": {
+          "times_s": [
+            0.1333,
+            0.1208,
+            0.1196
+          ],
+          "median_s": 0.1208
+        },
+        "sig_ssgsea": {
+          "times_s": [
+            0.1388,
+            0.1263,
+            0.1258
+          ],
+          "median_s": 0.1263
+        },
+        "sig_integration": {
+          "times_s": [
+            0.3418,
+            0.3077,
+            0.3064
+          ],
+          "median_s": 0.3077
+        },
+        "anno_eset": {
+          "times_s": [
+            0.1,
+            0.1044,
+            0.102
+          ],
+          "median_s": 0.102
+        },
+        "cibersort": {
+          "times_s": [
+            2.6912,
+            3.1256,
+            2.9642
+          ],
+          "median_s": 2.9642
+        },
+        "epic": {
+          "times_s": [
+            0.0264,
+            0.0262,
+            0.0256
+          ],
+          "median_s": 0.0262
+        },
+        "quantiseq": {
+          "times_s": [
+            0.1532,
+            0.15,
+            0.15
+          ],
+          "median_s": 0.15
+        },
+        "mcpcounter": {
+          "times_s": [
+            0.0079,
+            0.0077,
+            0.0079
+          ],
+          "median_s": 0.0079
+        },
+        "estimate": {
+          "times_s": [
+            0.0455,
+            0.045,
+            0.0454
+          ],
+          "median_s": 0.0454
+        },
+        "count2tpm": {
+          "times_s": [
+            0.1465,
+            0.14,
+            0.1444
+          ],
+          "median_s": 0.1444
+        }
+      },
+      "load_s": [
+        0.176,
+        0.1705,
+        0.1754
+      ]
+    },
+    "t64": {
+      "cibersort_n_threads": 64,
+      "rep_totals_s": [
+        4.679,
+        4.8949,
+        5.0295
+      ],
+      "median_total_s": 4.8949,
+      "per_stage": {
+        "sig_pca": {
+          "times_s": [
+            0.3409,
+            0.3492,
+            0.3208
+          ],
+          "median_s": 0.3409
+        },
+        "sig_zscore": {
+          "times_s": [
+            0.1307,
+            0.1326,
+            0.1299
+          ],
+          "median_s": 0.1307
+        },
+        "sig_ssgsea": {
+          "times_s": [
+            0.1357,
+            0.1348,
+            0.135
+          ],
+          "median_s": 0.135
+        },
+        "sig_integration": {
+          "times_s": [
+            0.3295,
+            0.3352,
+            0.276
+          ],
+          "median_s": 0.3295
+        },
+        "anno_eset": {
+          "times_s": [
+            0.102,
+            0.0995,
+            0.13
+          ],
+          "median_s": 0.102
+        },
+        "cibersort": {
+          "times_s": [
+            3.2519,
+            3.4651,
+            3.6412
+          ],
+          "median_s": 3.4651
+        },
+        "epic": {
+          "times_s": [
+            0.0265,
+            0.0265,
+            0.0279
+          ],
+          "median_s": 0.0265
+        },
+        "quantiseq": {
+          "times_s": [
+            0.1563,
+            0.1534,
+            0.1612
+          ],
+          "median_s": 0.1563
+        },
+        "mcpcounter": {
+          "times_s": [
+            0.008,
+            0.0079,
+            0.0079
+          ],
+          "median_s": 0.0079
+        },
+        "estimate": {
+          "times_s": [
+            0.0464,
+            0.0457,
+            0.0471
+          ],
+          "median_s": 0.0464
+        },
+        "count2tpm": {
+          "times_s": [
+            0.1511,
+            0.145,
+            0.1525
+          ],
+          "median_s": 0.1511
+        }
+      },
+      "load_s": [
+        0.1724,
+        0.1737,
+        0.1753
+      ]
+    }
+  },
+  "warm_inproc_e2e": {
+    "protocol": "single process, resources loaded once, 1 warmup pass + 3 timed reps, cibersort n_threads=224",
+    "rep_totals_s": [
+      3.6268,
+      3.5023,
+      3.6578
+    ],
+    "median_total_s": 3.6268,
+    "per_stage_median_s": {
+      "sig_pca": 0.2656,
+      "sig_zscore": 0.1229,
+      "sig_ssgsea": 0.1274,
+      "sig_integration": 0.3028,
+      "anno_eset": 0.0919,
+      "cibersort": 2.4514,
+      "epic": 0.0216,
+      "quantiseq": 0.0608,
+      "mcpcounter": 0.0077,
+      "estimate": 0.0463,
+      "count2tpm": 0.1097
+    },
+    "per_stage_rep_times_s": {
+      "sig_pca": [
+        0.2656,
+        0.3069,
+        0.2354
+      ],
+      "sig_zscore": [
+        0.1224,
+        0.1229,
+        0.1891
+      ],
+      "sig_ssgsea": [
+        0.1274,
+        0.127,
+        0.1274
+      ],
+      "sig_integration": [
+        0.3171,
+        0.2911,
+        0.3028
+      ],
+      "anno_eset": [
+        0.0946,
+        0.0919,
+        0.0913
+      ],
+      "cibersort": [
+        2.4514,
+        2.3198,
+        2.4659
+      ],
+      "epic": [
+        0.0216,
+        0.0211,
+        0.0216
+      ],
+      "quantiseq": [
+        0.0625,
+        0.0607,
+        0.0608
+      ],
+      "mcpcounter": [
+        0.008,
+        0.0077,
+        0.0077
+      ],
+      "estimate": [
+        0.0463,
+        0.046,
+        0.0463
+      ],
+      "count2tpm": [
+        0.1099,
+        0.1073,
+        0.1097
+      ]
+    }
+  },
+  "summary": {
+    "previous_run": {
+      "median_total_s_t224": 5.321,
+      "quantiseq_fresh_proc_stage_s": 0.92,
+      "count2tpm_cold_first_call_s": [
+        0.211,
+        0.378
+      ],
+      "count2tpm_warm_s": 0.121,
+      "source": "task brief (previous full_e2e_results.json was overwritten by this run's bench)"
+    },
+    "this_run": {
+      "median_total_s_t224": 4.3241,
+      "delta_total_s": 0.9969,
+      "quantiseq_stage_median_s": 0.15,
+      "count2tpm_stage_median_s": 0.1444,
+      "warm_inproc_median_total_s": 3.6268
+    },
+    "quantiseq_builder": {
+      "alias_map_entries": 53299,
+      "dict_equal_and_same_insertion_order": true,
+      "orig_builder_cold_s": 0.8531,
+      "vectorized_builder_cold_s": 0.0654,
+      "stage_cold_s_new": [
+        0.132,
+        0.1303,
+        0.1791
+      ],
+      "stage_warm_s_new": [
+        0.0571,
+        0.0573,
+        0.0568
+      ],
+      "stage_cold_s_old_upstream": [
+        0.9025,
+        0.9223,
+        0.9783
+      ],
+      "stage_warm_s_old_upstream": [
+        0.8999,
+        0.89,
+        0.9373
+      ]
+    },
+    "count2tpm_packaged_prep": {
+      "old_prep_reconstructed_s": [
+        0.3441,
+        0.3413,
+        0.3416
+      ],
+      "stage_cold_s_disk_cache_present": [
+        0.1623,
+        0.1641,
+        0.246
+      ],
+      "stage_cold_s_first_ever_builds_cache": [
+        0.3104,
+        0.3247,
+        0.5158
+      ],
+      "stage_warm_s": [
+        0.109,
+        0.1098,
+        0.1795
+      ]
+    },
+    "notes": [
+      "quantiseq: vectorized builder produces a dict exactly equal (==) to upstream's, with identical insertion order; consumption in map_genes is .get() lookups + values() set only (read-only), so order is not load-bearing anyway.",
+      "count2tpm: packaged pickle stores BOTH anno tables as lists of row-dicts (18.2MB); old first packaged call paid read_pickle + 2x pd.DataFrame(list) + refine. New: per-branch refined ref tables persisted to iobrx/fast/_pkgcache/*.parquet keyed on (path,size,mtime_ns) of the pickle; a cache hit never opens the pickle; any cache problem falls back to compute-from-pickle (bit-exact by construction).",
+      "cibersort P-value column remains non-reproducible by design (unseeded original); all other cells bit-identical."
+    ]
+  }
+}

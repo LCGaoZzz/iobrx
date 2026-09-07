@@ -1,0 +1,126 @@
+{
+  "timestamp_utc": "2026-09-07T06:38:28.450028+00:00",
+  "machine": {
+    "cores": 224,
+    "python": "3.11.15"
+  },
+  "input": {
+    "eset": "testdata/eset_stad_symbol.parquet",
+    "eset_shape": [
+      50181,
+      10
+    ],
+    "hgnc_key": "HGNC_genenames_20170418",
+    "hgnc_shape": [
+      42097,
+      10
+    ],
+    "reference": "iobrx/refs/quantiseq.parquet",
+    "protocol": "median of 3 timed reps after 1 warmup, in-process perf_counter"
+  },
+  "precision": [
+    {
+      "label": "original(cache-disabled) vs refs/quantiseq.parquet",
+      "index_equal": true,
+      "columns_equal": true,
+      "shape_a": [
+        10,
+        12
+      ],
+      "shape_b": [
+        10,
+        12
+      ],
+      "max_abs_diff": 0.0
+    },
+    {
+      "label": "wrapper(cached) vs refs/quantiseq.parquet",
+      "index_equal": true,
+      "columns_equal": true,
+      "shape_a": [
+        10,
+        12
+      ],
+      "shape_b": [
+        10,
+        12
+      ],
+      "max_abs_diff": 0.0
+    },
+    {
+      "label": "original vs wrapper",
+      "index_equal": true,
+      "columns_equal": true,
+      "shape_a": [
+        10,
+        12
+      ],
+      "shape_b": [
+        10,
+        12
+      ],
+      "max_abs_diff": 0.0
+    }
+  ],
+  "timing": {
+    "original_same_process": {
+      "warmup_s": 0.9805311320815235,
+      "times_s": [
+        1.7875643169973046,
+        1.2037128140218556,
+        1.0597391909686849
+      ],
+      "median_s": 1.2037128140218556,
+      "cache": "disabled (pristine upstream builder)"
+    },
+    "wrapper_cached": {
+      "warmup_s": 0.9869157390203327,
+      "times_s": [
+        0.07114364497829229,
+        0.07305269804783165,
+        0.0708707160083577
+      ],
+      "median_s": 0.07114364497829229,
+      "cache_info_after": {
+        "cached_hgnc_objects": 1,
+        "hits": 3,
+        "misses": 1,
+        "active": true
+      }
+    },
+    "wrapper_cold_pair": {
+      "rounds": [
+        {
+          "round": 0,
+          "call1_builds_cache_s": 1.0337039179867133,
+          "call2_steady_state_s": 0.06969930697232485
+        },
+        {
+          "round": 1,
+          "call1_builds_cache_s": 1.0073148749070242,
+          "call2_steady_state_s": 0.07483817404136062
+        },
+        {
+          "round": 2,
+          "call1_builds_cache_s": 1.033488663029857,
+          "call2_steady_state_s": 0.07679764798376709
+        }
+      ],
+      "median_call1_s": 1.033488663029857,
+      "median_call2_s": 0.07483817404136062
+    },
+    "speedup_median": 16.91947066233588
+  },
+  "alias_map_check": {
+    "n_entries_shim": 53299,
+    "n_entries_original": 53299,
+    "dict_equal": true,
+    "same_object_on_hit": true,
+    "cache_info_after": {
+      "cached_hgnc_objects": 1,
+      "hits": 1,
+      "misses": 1,
+      "active": true
+    }
+  }
+}

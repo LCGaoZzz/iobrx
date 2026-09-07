@@ -1,0 +1,2751 @@
+{
+ "metadata": {
+  "audit": "adversarial precision audit: IOBRpy originals vs iobrx/fast shims",
+  "date": "2026-09-07",
+  "protocol": "Every case: ORIGINAL and FAST run in SEPARATE fresh subprocesses (quantiseq_fast monkey-patches the original module on import, so the original side never imports any fast shim). Inputs shared via parquet. cibersort: mixture written to CSV with float_format='%.17g' (the python-engine parser of the original is NOT round-trip exact, csv_roundtrip_exact=false, c-engine float_precision='round_trip' IS exact=true); the FAST receives the DataFrame returned by the exact pd.read_csv(path, sep=None, engine='python', index_col=0) call the original makes internally, so both sides see byte-identical solver inputs. PASS requires: identical index (incl. name), identical columns, identical dtypes, bitwise-equal values incl. NaN masks (max abs diff exactly 0.0). BOTH_ERROR_SAME_TYPE: both raise the same exception class. Seeds fixed in all builders.",
+  "machine": "python 3.11.15, numpy/pandas/scipy/sklearn/gseapy per venv",
+  "verdict_counts": {
+   "PASS": 76,
+   "FAIL": 3,
+   "ERROR_MISMATCH": 1,
+   "ORIG_ERROR_FAST_OK": 1,
+   "BOTH_ERROR_SAME_TYPE": 2
+  },
+  "total_cases": 83,
+  "pass_count": 76
+ },
+ "summary_per_module": {
+  "cibersort": {
+   "cases": 13,
+   "PASS": 11
+  },
+  "sig_score": {
+   "cases": 22,
+   "PASS": 22
+  },
+  "count2tpm": {
+   "cases": 11,
+   "PASS": 9
+  },
+  "quantiseq": {
+   "cases": 8,
+   "PASS": 8
+  },
+  "anno_eset": {
+   "cases": 10,
+   "PASS": 9
+  },
+  "epic": {
+   "cases": 7,
+   "PASS": 7
+  },
+  "mcpcounter": {
+   "cases": 6,
+   "PASS": 5
+  },
+  "estimate": {
+   "cases": 6,
+   "PASS": 5
+  }
+ },
+ "failures": {
+  "CB6b": {
+   "module": "cibersort",
+   "variant": "50-sample subset of eset_tme_stad (seed 7; degenerate 12-gene LM22 overlap)",
+   "note": null,
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 6.690621376037598e-05,
+   "value_bitwise_equal": false,
+   "first_mismatch": [
+    "T_cells_CD8",
+    [
+     20
+    ],
+    [
+     0.06222129240632057
+    ],
+    [
+     0.06225933879613876
+    ]
+   ],
+   "verdict": "FAIL",
+   "forensic": {
+    "finding": "numeric divergence on degenerate input (12 LM22-overlapping genes, 235x50 mixture); QN=True: 1/50 samples differ (11 cells: 9 weights + Correlation + RMSE; weights max abs diff 6.69e-05, Correlation 3.0e-06, RMSE 6.7e-05); QN=False probe: 2/50 samples differ (23 cells, max 2.54e-04) - divergence is NOT quantile-normalization-dependent",
+    "solver_isolated": "iobrx_rust.fit_nusvr_linear verified BIT-EXACT vs sklearn NuSVR (dual_coef and w identical) on all 150 (sample x nu) fits of the exact original-preprocessed CB6b inputs, and on random well-conditioned 100x22/500x22 and degenerate 12x22/16x22 problems",
+    "bisect": "the failing sample alone (1 column) matches bitwise; divergence requires >=21 columns of context (5/7/11-column windows match, 21-column window diverges 4.5e-05) => cause is an N-dependent reduction inside the fast's internal preprocessing (exp2/z-score/QN-mean), not the SVR solve",
+    "extra": "exposed helper iobrx_rust.quantile_normalize_np disagrees MASSIVELY with the numpy reference QN on exactly this real 235x50 matrix (every cell, max abs diff 2679) while agreeing on its 50x235 transpose, on same-shape random data (with and without injected ties), and on small cases - value-pattern-dependent bug in the exposed helper; cibersort_core itself cannot be using that broken path (CB1/CB6a/CB8 full-size QN cases are bitwise-equal)",
+    "impact": "0 divergence on 12 well-posed cibersort cases incl. 50181x50; divergence only on this degenerate overlap (eset_tme_stad), magnitude <= 2.5e-04"
+   }
+  },
+  "CT7": {
+   "module": "count2tpm",
+   "variant": "3 NaN rows in full matrix",
+   "note": null,
+   "index_equal": false,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "value_bitwise_equal": false,
+   "verdict": "FAIL",
+   "forensic": {
+    "root_cause": "count2tpm_fast._filter_matrix_features: after excluding NA rows from the inf/variance checks it rebuilds the keep-mask as full_ok = np.ones(...) and writes only the NA-free rows' flags into it, so NA-containing rows are silently RE-ADDED by the final countMat.loc[ok]. The 3 injected all-NaN genes survive in the fast (original drops them via feature_manipulation).",
+    "damage": "fast output has 3 extra bogus rows (symbols KMT2E, RP11-436A7.1, SEC22C - zero-valued after fillna) and a different row ORDER from tie-shuffling in remove_duplicate_genes; on the 48056 common symbols max abs diff is 1.46e-11 (last-bit), no cell > 1e-9",
+    "trigger": "any count matrix containing NaN that goes through the all-numeric fast filter path (has_na=True); check_data-only (CT6, no NaN) and inf/zero-variance rows (CT8) are unaffected"
+   }
+  },
+  "ES5": {
+   "module": "estimate",
+   "variant": "non-unique index input (merge-expansion path in both)",
+   "note": "depends on ES1 inputs already built",
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 46.68881149388517,
+   "value_bitwise_equal": false,
+   "first_mismatch": [
+    "TCGA-BR-6455",
+    [
+     0,
+     1,
+     2
+    ],
+    [
+     92.95170201983365,
+     871.9144471264119,
+     964.8661491462456
+    ],
+    [
+     104.94562459801249,
+     904.5100139786355,
+     1009.455638576648
+    ]
+   ],
+   "verdict": "FAIL",
+   "forensic": {
+    "root_cause": "estimate_fast non-unique-index fallback: original computes set_indices = [gene_names.index(g) for g in overlap] (FIRST occurrence of each label); fast builds gene_pos = {g: i for i, g in enumerate(gene_names)} (LAST occurrence wins). With 300 duplicated index labels the merged frame has 61 duplicated gene labels; 1 StromalSignature gene (DDR2) and 4 ImmuneSignature genes (ADAM8, LPXN, NKG7, TYROBP) get a different member position -> different enrichment member mask -> different scores.",
+    "damage": "max abs diff 46.69 on ESTIMATEScore (StromalSignature 11.99, ImmuneSignature 37.17, TumorPurity 0.0057); 40 differing cells of 40",
+    "trigger": "only when input_df.index is non-unique (fast falls back to _filter_common_genes_ref); unique-index inputs (ES1-ES4, ES6 incl. NaN values) are bitwise-equal"
+   }
+  },
+  "CB11": {
+   "module": "cibersort",
+   "variant": "NaN rows incl one LM22-intersecting gene (expected: both error identically or documented divergence)",
+   "note": null,
+   "orig_error": [
+    "ValueError",
+    "Input y contains NaN."
+   ],
+   "fast_error": [
+    "PanicException",
+    "called `Option::unwrap()` on a `None` value"
+   ],
+   "verdict": "ERROR_MISMATCH",
+   "forensic": {
+    "behavior": "NaN rows reaching the solver: original raises ValueError('Input y contains NaN') from sklearn; fast raises Rust PanicException ('called Option::unwrap() on a None value'). Both fail, but with different exception types (no graceful ValueError, and a panic is an unsafe error contract)."
+   }
+  },
+  "CT10": {
+   "module": "count2tpm",
+   "variant": "duplicated Ensembl IDs (50 rows duplicated, 5000-row subset seed 23)",
+   "note": null,
+   "orig_error": [
+    "ValueError",
+    "Length of values (4796) does not match length of index (4706)"
+   ],
+   "fast_error": null,
+   "verdict": "ORIG_ERROR_FAST_OK",
+   "forensic": {
+    "behavior": "duplicated Ensembl IDs: original CRASHES in tpm.insert (symbol_map.loc[tpm.index] expands on the duplicated index: 'Length of values (4796) does not match length of index (4706)'); the FAST SUCCEEDS (it inserts symbol_map.to_numpy() instead) and returns a 4706x10 result. Not a drop-in replacement for this input class: fast silently completes where the upstream raises."
+   }
+  },
+  "AE10": {
+   "module": "anno_eset",
+   "variant": "non-unique eset index (200 duplicated rows; expected identical reindex failure in both)",
+   "note": null,
+   "orig_error": [
+    "ValueError",
+    "cannot reindex on an axis with duplicate labels"
+   ],
+   "fast_error": [
+    "ValueError",
+    "cannot reindex on an axis with duplicate labels"
+   ],
+   "verdict": "BOTH_ERROR_SAME_TYPE"
+  },
+  "MC4": {
+   "module": "mcpcounter",
+   "variant": "features_type='ENSEMBL_ID' on eset_stad (genes df has no ENSEMBL ID column -> KeyError expected in both)",
+   "note": null,
+   "orig_error": [
+    "KeyError",
+    "'ENSEMBL ID'"
+   ],
+   "fast_error": [
+    "KeyError",
+    "'ENSEMBL ID'"
+   ],
+   "verdict": "BOTH_ERROR_SAME_TYPE"
+  }
+ },
+ "cases": {
+  "CB7": {
+   "module": "cibersort",
+   "variant": "3000-gene subset incl all 531 LM22-overlapping genes (seed 11)",
+   "id": "CB7",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    25
+   ],
+   "fast_shape": [
+    10,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 9.8
+  },
+  "CB2": {
+   "module": "cibersort",
+   "variant": "QN=False perm=0",
+   "id": "CB2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    25
+   ],
+   "fast_shape": [
+    10,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 10.4
+  },
+  "CB3": {
+   "module": "cibersort",
+   "variant": "absolute=True abs_method=sig.score perm=0",
+   "id": "CB3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    26
+   ],
+   "fast_shape": [
+    10,
+    26
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 13.0
+  },
+  "CB4": {
+   "module": "cibersort",
+   "variant": "absolute=True abs_method=no.sumto1 perm=0",
+   "id": "CB4",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    26
+   ],
+   "fast_shape": [
+    10,
+    26
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 12.9
+  },
+  "CB6a": {
+   "module": "cibersort",
+   "variant": "50-sample input (columns resampled w/ replacement from eset_stad_symbol, seed 42)",
+   "id": "CB6a",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    50,
+    25
+   ],
+   "fast_shape": [
+    50,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 44.0
+  },
+  "CB6b": {
+   "module": "cibersort",
+   "variant": "50-sample subset of eset_tme_stad (seed 7; degenerate 12-gene LM22 overlap)",
+   "id": "CB6b",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    50,
+    25
+   ],
+   "fast_shape": [
+    50,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 6.690621376037598e-05,
+   "value_bitwise_equal": false,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 11,
+   "first_mismatch": [
+    "T_cells_CD8",
+    [
+     20
+    ],
+    [
+     0.06222129240632057
+    ],
+    [
+     0.06225933879613876
+    ]
+   ],
+   "verdict": "FAIL",
+   "seconds": 1.7,
+   "forensic": {
+    "finding": "numeric divergence on degenerate input (12 LM22-overlapping genes, 235x50 mixture); QN=True: 1/50 samples differ (11 cells: 9 weights + Correlation + RMSE; weights max abs diff 6.69e-05, Correlation 3.0e-06, RMSE 6.7e-05); QN=False probe: 2/50 samples differ (23 cells, max 2.54e-04) - divergence is NOT quantile-normalization-dependent",
+    "solver_isolated": "iobrx_rust.fit_nusvr_linear verified BIT-EXACT vs sklearn NuSVR (dual_coef and w identical) on all 150 (sample x nu) fits of the exact original-preprocessed CB6b inputs, and on random well-conditioned 100x22/500x22 and degenerate 12x22/16x22 problems",
+    "bisect": "the failing sample alone (1 column) matches bitwise; divergence requires >=21 columns of context (5/7/11-column windows match, 21-column window diverges 4.5e-05) => cause is an N-dependent reduction inside the fast's internal preprocessing (exp2/z-score/QN-mean), not the SVR solve",
+    "extra": "exposed helper iobrx_rust.quantile_normalize_np disagrees MASSIVELY with the numpy reference QN on exactly this real 235x50 matrix (every cell, max abs diff 2679) while agreeing on its 50x235 transpose, on same-shape random data (with and without injected ties), and on small cases - value-pattern-dependent bug in the exposed helper; cibersort_core itself cannot be using that broken path (CB1/CB6a/CB8 full-size QN cases are bitwise-equal)",
+    "impact": "0 divergence on 12 well-posed cibersort cases incl. 50181x50; divergence only on this degenerate overlap (eset_tme_stad), magnitude <= 2.5e-04"
+   }
+  },
+  "CB8": {
+   "module": "cibersort",
+   "variant": "max<50 exp2 branch (input = log2(x+1) of eset_stad_symbol)",
+   "id": "CB8",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    25
+   ],
+   "fast_shape": [
+    10,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 12.4
+  },
+  "CB9": {
+   "module": "cibersort",
+   "variant": "200 duplicated gene symbols in index (make_unique path)",
+   "id": "CB9",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    25
+   ],
+   "fast_shape": [
+    10,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 11.9
+  },
+  "CB10": {
+   "module": "cibersort",
+   "variant": "unsorted (shuffled, seed 5) row index",
+   "id": "CB10",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    25
+   ],
+   "fast_shape": [
+    10,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 12.9
+  },
+  "CB12": {
+   "module": "cibersort",
+   "variant": "absolute=True abs_method=sig.score QN=False perm=0",
+   "id": "CB12",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    26
+   ],
+   "fast_shape": [
+    10,
+    26
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 10.3
+  },
+  "SS2": {
+   "module": "sig_score",
+   "variant": "pca adjust_eset=False",
+   "id": "SS2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    60
+   ],
+   "fast_shape": [
+    348,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.3
+  },
+  "SS3": {
+   "module": "sig_score",
+   "variant": "pca mini_gene_count=0",
+   "id": "SS3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    90
+   ],
+   "fast_shape": [
+    348,
+    90
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.3
+  },
+  "SS4": {
+   "module": "sig_score",
+   "variant": "pca mini_gene_count=10",
+   "id": "SS4",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    12
+   ],
+   "fast_shape": [
+    348,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.3
+  },
+  "SS5": {
+   "module": "sig_score",
+   "variant": "zscore default",
+   "id": "SS5",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    60
+   ],
+   "fast_shape": [
+    348,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.0
+  },
+  "SS6": {
+   "module": "sig_score",
+   "variant": "zscore adjust_eset=False",
+   "id": "SS6",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    60
+   ],
+   "fast_shape": [
+    348,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.2
+  },
+  "SS7a": {
+   "module": "sig_score",
+   "variant": "custom sig dict (sizes 1/3/10/50/200 incl absent genes; TMEscore_CIR contrast) - pca stage fn",
+   "id": "SS7a",
+   "note": "custom dict cannot go through the public entry (group names only); fast side replicates the exact internal 2-line pca branch of calculate_sig_score_fast",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    6
+   ],
+   "fast_shape": [
+    10,
+    6
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.9
+  },
+  "SS7b": {
+   "module": "sig_score",
+   "variant": "custom sig dict - zscore stage fn",
+   "id": "SS7b",
+   "note": "same protocol as SS7a",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    6
+   ],
+   "fast_shape": [
+    10,
+    6
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.8
+  },
+  "SS7c": {
+   "module": "sig_score",
+   "variant": "custom sig dict - integration (rust ssgsea leg)",
+   "id": "SS7c",
+   "note": "integration filter is against the RAW eset index (3>=3 keeps Sig1 with 1 present gene)",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    16
+   ],
+   "fast_shape": [
+    10,
+    16
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.2
+  },
+  "SS8": {
+   "module": "sig_score",
+   "variant": "120-column subset of imvigor (seed 13), pca",
+   "id": "SS8",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    120,
+    60
+   ],
+   "fast_shape": [
+    120,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.1
+  },
+  "SS10": {
+   "module": "sig_score",
+   "variant": "multiple groups [signature_collection, signature_tme], pca",
+   "id": "SS10",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    60
+   ],
+   "fast_shape": [
+    348,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.2
+  },
+  "SS11": {
+   "module": "sig_score",
+   "variant": "ssgsea default (full imvigor, mini=3, adjust=True) - rust core",
+   "id": "SS11",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    32
+   ],
+   "fast_shape": [
+    348,
+    32
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.5
+  },
+  "SS12": {
+   "module": "sig_score",
+   "variant": "ssgsea mini_gene_count=10 (120-col subset)",
+   "id": "SS12",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    120,
+    12
+   ],
+   "fast_shape": [
+    120,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.2
+  },
+  "SS13": {
+   "module": "sig_score",
+   "variant": "ssgsea adjust_eset=False (120-col subset)",
+   "id": "SS13",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    120,
+    32
+   ],
+   "fast_shape": [
+    120,
+    32
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.1
+  },
+  "SS15": {
+   "module": "sig_score",
+   "variant": "integration default (full imvigor) - rust ssgsea leg",
+   "id": "SS15",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    178
+   ],
+   "fast_shape": [
+    348,
+    178
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 4.1
+  },
+  "SS16": {
+   "module": "sig_score",
+   "variant": "integration with use_rust_ssgsea=False (fast runs original gp.ssgsea leg)",
+   "id": "SS16",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    120,
+    178
+   ],
+   "fast_shape": [
+    120,
+    178
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.7
+  },
+  "SS17a": {
+   "module": "sig_score",
+   "variant": "pca with _RUST_PCA_DEFAULT=False (verbatim sklearn fallback leg)",
+   "id": "SS17a",
+   "note": "runtime toggle of the shim module global (source untouched)",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    60
+   ],
+   "fast_shape": [
+    348,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.3
+  },
+  "SS17b": {
+   "module": "sig_score",
+   "variant": "zscore with _RUST_PCA_DEFAULT=False (pandas fallback leg)",
+   "id": "SS17b",
+   "note": "zscore rust leg shares the same module toggle",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    60
+   ],
+   "fast_shape": [
+    348,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.0
+  },
+  "CT1": {
+   "module": "count2tpm",
+   "variant": "official-default: eset_stad 60483x10 Ensembl, anno_grch38 parquet + gc=None (packaged reload quirk, hsa/Ensembl)",
+   "id": "CT1",
+   "note": "either anno arg non-DataFrame => both implementations reload the packaged tables and ignore the passed frame",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    54658,
+    10
+   ],
+   "fast_shape": [
+    54658,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.0
+  },
+  "CT2": {
+   "module": "count2tpm",
+   "variant": "both annos as DataFrames (test anno_grch38 + packaged anno_gc_vm32), hsa/Ensembl",
+   "id": "CT2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    54658,
+    10
+   ],
+   "fast_shape": [
+    54658,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.1
+  },
+  "CT3": {
+   "module": "count2tpm",
+   "variant": "idType='symbol' input (eset_stad_symbol 50181x10 as counts), hsa",
+   "id": "CT3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    48078,
+    10
+   ],
+   "fast_shape": [
+    48078,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.0
+  },
+  "CT4": {
+   "module": "count2tpm",
+   "variant": "versioned Ensembl index (.15 on 30% of rows, seed 3), remove_version=True",
+   "id": "CT4",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    54658,
+    10
+   ],
+   "fast_shape": [
+    54658,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.1
+  },
+  "CT5": {
+   "module": "count2tpm",
+   "variant": "versioned Ensembl index, remove_version=False (str[:15] truncation path)",
+   "id": "CT5",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    54658,
+    10
+   ],
+   "fast_shape": [
+    54658,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.0
+  },
+  "CT6": {
+   "module": "count2tpm",
+   "variant": "check_data=True on clean full matrix (feature_manipulation path)",
+   "id": "CT6",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    48058,
+    10
+   ],
+   "fast_shape": [
+    48058,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 5.7
+  },
+  "CT7": {
+   "module": "count2tpm",
+   "variant": "3 NaN rows in full matrix",
+   "id": "CT7",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    48056,
+    10
+   ],
+   "fast_shape": [
+    48059,
+    10
+   ],
+   "index_equal": false,
+   "cols_equal": true,
+   "index_diff_sample": [
+    [
+     "RNU6-219P",
+     "RNU6-723P"
+    ],
+    [
+     "RNU6-723P",
+     "RNU6-949P"
+    ],
+    [
+     "RNU6-949P",
+     "RNU6-219P"
+    ],
+    [
+     "RNU6-634P",
+     "RNU6-958P"
+    ],
+    [
+     "RNU6-958P",
+     "RNU6-634P"
+    ],
+    [
+     "MIR627",
+     "MIR586"
+    ],
+    [
+     "MIR586",
+     "MIR627"
+    ],
+    [
+     "RNU6-708P",
+     "RNU6-138P"
+    ]
+   ],
+   "dtypes_equal": true,
+   "value_bitwise_equal": false,
+   "verdict": "FAIL",
+   "seconds": 5.9,
+   "forensic": {
+    "root_cause": "count2tpm_fast._filter_matrix_features: after excluding NA rows from the inf/variance checks it rebuilds the keep-mask as full_ok = np.ones(...) and writes only the NA-free rows' flags into it, so NA-containing rows are silently RE-ADDED by the final countMat.loc[ok]. The 3 injected all-NaN genes survive in the fast (original drops them via feature_manipulation).",
+    "damage": "fast output has 3 extra bogus rows (symbols KMT2E, RP11-436A7.1, SEC22C - zero-valued after fillna) and a different row ORDER from tie-shuffling in remove_duplicate_genes; on the 48056 common symbols max abs diff is 1.46e-11 (last-bit), no cell > 1e-9",
+    "trigger": "any count matrix containing NaN that goes through the all-numeric fast filter path (has_na=True); check_data-only (CT6, no NaN) and inf/zero-variance rows (CT8) are unaffected"
+   }
+  },
+  "CT8": {
+   "module": "count2tpm",
+   "variant": "edge values: one all-zero row, one +inf row, one -inf row (check_data=True, 8000-row subset seed 17)",
+   "id": "CT8",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    6399,
+    10
+   ],
+   "fast_shape": [
+    6399,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.2
+  },
+  "CT9": {
+   "module": "count2tpm",
+   "variant": "org='mmus' idType='Ensembl' (3000 mouse ENSMUSG rows from packaged anno_gc_vm32, seed 9)",
+   "id": "CT9",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    3000,
+    10
+   ],
+   "fast_shape": [
+    3000,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.9
+  },
+  "QS1": {
+   "module": "quantiseq",
+   "variant": "official default (eset_stad_symbol, lsei, rmgenes=unassigned->default)",
+   "id": "QS1",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    12
+   ],
+   "fast_shape": [
+    10,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.3
+  },
+  "QS2": {
+   "module": "quantiseq",
+   "variant": "arrays=True (quantile normalization path)",
+   "id": "QS2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    12
+   ],
+   "fast_shape": [
+    10,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.4
+  },
+  "QS3": {
+   "module": "quantiseq",
+   "variant": "tumor=True",
+   "id": "QS3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    12
+   ],
+   "fast_shape": [
+    10,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.3
+  },
+  "QS4": {
+   "module": "quantiseq",
+   "variant": "mRNAscale=False",
+   "id": "QS4",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    12
+   ],
+   "fast_shape": [
+    10,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.4
+  },
+  "QS5": {
+   "module": "quantiseq",
+   "variant": "rmgenes=None",
+   "id": "QS5",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    12
+   ],
+   "fast_shape": [
+    10,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.3
+  },
+  "QS6": {
+   "module": "quantiseq",
+   "variant": "method='hampel' (RLM robust path)",
+   "id": "QS6",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    11
+   ],
+   "fast_shape": [
+    10,
+    11
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.4
+  },
+  "QS7": {
+   "module": "quantiseq",
+   "variant": "30-sample subset of imvigor210 (seed 2)",
+   "id": "QS7",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    30,
+    12
+   ],
+   "fast_shape": [
+    30,
+    12
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.5
+  },
+  "QS8": {
+   "module": "quantiseq",
+   "variant": "direct adversarial compare of _build_hgnc_alias_map (orig iterrows) vs vectorized builder: real HGNC + 6 synthetic edge frames; dict equality AND insertion order",
+   "id": "QS8",
+   "note": "fast payload imports quantiseq FIRST and captures the pristine builder before quantiseq_fast patches it; compares builder outputs, not deconvolution",
+   "orig_ok": true,
+   "fast_ok": true,
+   "builder_report": {
+    "real_hgnc": {
+     "equal": true,
+     "items_order_equal": true,
+     "n_keys": 53299,
+     "first_diff": null
+    },
+    "syn_synonyms": {
+     "equal": true,
+     "items_order_equal": true,
+     "n_keys": 12,
+     "first_diff": null
+    },
+    "syn_numeric_nan": {
+     "equal": true,
+     "items_order_equal": true,
+     "n_keys": 7,
+     "first_diff": null
+    },
+    "syn_single_row": {
+     "equal": true,
+     "items_order_equal": true,
+     "n_keys": 2,
+     "first_diff": null
+    },
+    "syn_empty": {
+     "equal": true,
+     "items_order_equal": true,
+     "n_keys": 0,
+     "first_diff": null
+    },
+    "syn_no_approved": {
+     "equal": true,
+     "items_order_equal": true,
+     "n_keys": 0,
+     "first_diff": null
+    },
+    "syn_dupe_tokens": {
+     "equal": true,
+     "items_order_equal": true,
+     "n_keys": 3,
+     "first_diff": null
+    }
+   },
+   "verdict": "PASS",
+   "seconds": 2.7
+  },
+  "AE1": {
+   "module": "anno_eset",
+   "variant": "official: eset_stad + built-in key 'anno_grch38', method=mean",
+   "id": "AE1",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    50181,
+    10
+   ],
+   "fast_shape": [
+    50181,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.0
+  },
+  "AE2": {
+   "module": "anno_eset",
+   "variant": "method='sd'",
+   "id": "AE2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    50181,
+    10
+   ],
+   "fast_shape": [
+    50181,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.8
+  },
+  "AE3": {
+   "module": "anno_eset",
+   "variant": "method='sum'",
+   "id": "AE3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    50181,
+    10
+   ],
+   "fast_shape": [
+    50181,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.8
+  },
+  "AE4": {
+   "module": "anno_eset",
+   "variant": "method='max' (unsupported -> else-branch = mean in both)",
+   "id": "AE4",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    50181,
+    10
+   ],
+   "fast_shape": [
+    50181,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.8
+  },
+  "AE5": {
+   "module": "anno_eset",
+   "variant": "built-in key 'anno_rnaseq' with symbol-indexed input (eset_stad_symbol)",
+   "id": "AE5",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    0,
+    10
+   ],
+   "fast_shape": [
+    0,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.5
+  },
+  "AE8": {
+   "module": "anno_eset",
+   "variant": "input with Ensembl version suffixes (.15 on 20% of rows, seed 6)",
+   "id": "AE8",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    40225,
+    10
+   ],
+   "fast_shape": [
+    40225,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.8
+  },
+  "AE9": {
+   "module": "anno_eset",
+   "variant": "int64-dtype input (fast falls back to faithful pandas path), 5000-row subset seed 46",
+   "id": "AE9",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    4179,
+    10
+   ],
+   "fast_shape": [
+    4179,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.5
+  },
+  "EP1": {
+   "module": "epic",
+   "variant": "official TRef (eset_stad_symbol 50181x10)",
+   "id": "EP1",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "verdict": "PASS",
+   "frames": {
+    "mRNAProportions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "cellFractions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "fit_gof": {
+     "orig_shape": [
+      10,
+      12
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    }
+   },
+   "orig_shape": {
+    "mRNAProportions": [
+     10,
+     8
+    ],
+    "cellFractions": [
+     10,
+     8
+    ],
+    "fit_gof": [
+     10,
+     12
+    ]
+   },
+   "seconds": 2.1
+  },
+  "EP2": {
+   "module": "epic",
+   "variant": "BRef reference",
+   "id": "EP2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "verdict": "PASS",
+   "frames": {
+    "mRNAProportions": {
+     "orig_shape": [
+      10,
+      7
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "cellFractions": {
+     "orig_shape": [
+      10,
+      7
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "fit_gof": {
+     "orig_shape": [
+      10,
+      12
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    }
+   },
+   "orig_shape": {
+    "mRNAProportions": [
+     10,
+     7
+    ],
+    "cellFractions": [
+     10,
+     7
+    ],
+    "fit_gof": [
+     10,
+     12
+    ]
+   },
+   "seconds": 2.1
+  },
+  "EP3": {
+   "module": "epic",
+   "variant": "with_other_cells=False (fast falls back to upstream)",
+   "id": "EP3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "verdict": "PASS",
+   "frames": {
+    "mRNAProportions": {
+     "orig_shape": [
+      10,
+      7
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "cellFractions": {
+     "orig_shape": [
+      10,
+      7
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "fit_gof": {
+     "orig_shape": [
+      10,
+      12
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    }
+   },
+   "orig_shape": {
+    "mRNAProportions": [
+     10,
+     7
+    ],
+    "cellFractions": [
+     10,
+     7
+    ],
+    "fit_gof": [
+     10,
+     12
+    ]
+   },
+   "seconds": 2.2
+  },
+  "EP4": {
+   "module": "epic",
+   "variant": "scale_exprs=False (fast falls back to upstream)",
+   "id": "EP4",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "verdict": "PASS",
+   "frames": {
+    "mRNAProportions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "cellFractions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "fit_gof": {
+     "orig_shape": [
+      10,
+      12
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    }
+   },
+   "orig_shape": {
+    "mRNAProportions": [
+     10,
+     8
+    ],
+    "cellFractions": [
+     10,
+     8
+    ],
+    "fit_gof": [
+     10,
+     12
+    ]
+   },
+   "seconds": 2.0
+  },
+  "EP6": {
+   "module": "epic",
+   "variant": "bulk with 100 duplicated gene rows (median-merge; fast falls back)",
+   "id": "EP6",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "verdict": "PASS",
+   "frames": {
+    "mRNAProportions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "cellFractions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "fit_gof": {
+     "orig_shape": [
+      10,
+      12
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    }
+   },
+   "orig_shape": {
+    "mRNAProportions": [
+     10,
+     8
+    ],
+    "cellFractions": [
+     10,
+     8
+    ],
+    "fit_gof": [
+     10,
+     12
+    ]
+   },
+   "seconds": 2.1
+  },
+  "EP7": {
+   "module": "epic",
+   "variant": "bulk with 2 all-NaN genes (fast handles removal in fast path)",
+   "id": "EP7",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "verdict": "PASS",
+   "frames": {
+    "mRNAProportions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "cellFractions": {
+     "orig_shape": [
+      10,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "fit_gof": {
+     "orig_shape": [
+      10,
+      12
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    }
+   },
+   "orig_shape": {
+    "mRNAProportions": [
+     10,
+     8
+    ],
+    "cellFractions": [
+     10,
+     8
+    ],
+    "fit_gof": [
+     10,
+     12
+    ]
+   },
+   "seconds": 2.0
+  },
+  "MC1": {
+   "module": "mcpcounter",
+   "variant": "official HUGO_symbols (eset_stad_symbol)",
+   "id": "MC1",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    10
+   ],
+   "fast_shape": [
+    10,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.2
+  },
+  "MC5": {
+   "module": "mcpcounter",
+   "variant": "NaN-bearing float64 input (fast falls back to pandas col-mean)",
+   "id": "MC5",
+   "note": "depends on MC1 inputs already built",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    10
+   ],
+   "fast_shape": [
+    10,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.2
+  },
+  "MC6": {
+   "module": "mcpcounter",
+   "variant": "20-sample subset of eset_tme_stad (seed 16)",
+   "id": "MC6",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    3,
+    20
+   ],
+   "fast_shape": [
+    3,
+    20
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.1
+  },
+  "ES1": {
+   "module": "estimate",
+   "variant": "official platform='affymetrix' (eset_stad_symbol)",
+   "id": "ES1",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    4,
+    10
+   ],
+   "fast_shape": [
+    4,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.3
+  },
+  "ES2": {
+   "module": "estimate",
+   "variant": "platform='agilent'",
+   "id": "ES2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    3,
+    10
+   ],
+   "fast_shape": [
+    3,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.3
+  },
+  "ES3": {
+   "module": "estimate",
+   "variant": "platform='illumina'",
+   "id": "ES3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    3,
+    10
+   ],
+   "fast_shape": [
+    3,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.3
+  },
+  "ES4": {
+   "module": "estimate",
+   "variant": "30-sample subset of imvigor210 (seed 14)",
+   "id": "ES4",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    4,
+    30
+   ],
+   "fast_shape": [
+    4,
+    30
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.2
+  },
+  "ES5": {
+   "module": "estimate",
+   "variant": "non-unique index input (merge-expansion path in both)",
+   "id": "ES5",
+   "note": "depends on ES1 inputs already built",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    4,
+    10
+   ],
+   "fast_shape": [
+    4,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 46.68881149388517,
+   "value_bitwise_equal": false,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 40,
+   "first_mismatch": [
+    "TCGA-BR-6455",
+    [
+     0,
+     1,
+     2
+    ],
+    [
+     92.95170201983365,
+     871.9144471264119,
+     964.8661491462456
+    ],
+    [
+     104.94562459801249,
+     904.5100139786355,
+     1009.455638576648
+    ]
+   ],
+   "verdict": "FAIL",
+   "seconds": 1.3,
+   "forensic": {
+    "root_cause": "estimate_fast non-unique-index fallback: original computes set_indices = [gene_names.index(g) for g in overlap] (FIRST occurrence of each label); fast builds gene_pos = {g: i for i, g in enumerate(gene_names)} (LAST occurrence wins). With 300 duplicated index labels the merged frame has 61 duplicated gene labels; 1 StromalSignature gene (DDR2) and 4 ImmuneSignature genes (ADAM8, LPXN, NKG7, TYROBP) get a different member position -> different enrichment member mask -> different scores.",
+    "damage": "max abs diff 46.69 on ESTIMATEScore (StromalSignature 11.99, ImmuneSignature 37.17, TumorPurity 0.0057); 40 differing cells of 40",
+    "trigger": "only when input_df.index is non-unique (fast falls back to _filter_common_genes_ref); unique-index inputs (ES1-ES4, ES6 incl. NaN values) are bitwise-equal"
+   }
+  },
+  "ES6": {
+   "module": "estimate",
+   "variant": "NaN-bearing input (rank-loop path in both)",
+   "id": "ES6",
+   "note": "depends on ES4 inputs already built",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    4,
+    30
+   ],
+   "fast_shape": [
+    4,
+    30
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.2
+  },
+  "CB11": {
+   "module": "cibersort",
+   "variant": "NaN rows incl one LM22-intersecting gene (expected: both error identically or documented divergence)",
+   "id": "CB11",
+   "note": null,
+   "orig_ok": false,
+   "orig_error": [
+    "ValueError",
+    "Input y contains NaN."
+   ],
+   "fast_ok": false,
+   "fast_error": [
+    "PanicException",
+    "called `Option::unwrap()` on a `None` value"
+   ],
+   "verdict": "ERROR_MISMATCH",
+   "seconds": 3.0,
+   "forensic": {
+    "behavior": "NaN rows reaching the solver: original raises ValueError('Input y contains NaN') from sklearn; fast raises Rust PanicException ('called Option::unwrap() on a None value'). Both fail, but with different exception types (no graceful ValueError, and a panic is an unsafe error contract)."
+   }
+  },
+  "SS9a": {
+   "module": "sig_score",
+   "variant": "synthetic q99>100 matrix (log2 heuristic triggers), 800x30, pca",
+   "id": "SS9a",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    30,
+    175
+   ],
+   "fast_shape": [
+    30,
+    175
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.6
+  },
+  "SS9b": {
+   "module": "sig_score",
+   "variant": "synthetic q99>100 matrix, zscore",
+   "id": "SS9b",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    30,
+    175
+   ],
+   "fast_shape": [
+    30,
+    175
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.1
+  },
+  "SS9c": {
+   "module": "sig_score",
+   "variant": "synthetic q99>100 matrix, integration (120-col submatrix)",
+   "id": "SS9c",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    12,
+    523
+   ],
+   "fast_shape": [
+    12,
+    523
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 4.4
+  },
+  "SS14": {
+   "module": "sig_score",
+   "variant": "ssgsea custom dict (3/10/50/200; min_size=max(3,5) kills the 3-gene sig) on 120-col subset",
+   "id": "SS14",
+   "note": "fast = the same function sig_score_fast(method='ssgsea') delegates to",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    120,
+    4
+   ],
+   "fast_shape": [
+    120,
+    4
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 3.2
+  },
+  "CT10": {
+   "module": "count2tpm",
+   "variant": "duplicated Ensembl IDs (50 rows duplicated, 5000-row subset seed 23)",
+   "id": "CT10",
+   "note": null,
+   "orig_ok": false,
+   "orig_error": [
+    "ValueError",
+    "Length of values (4796) does not match length of index (4706)"
+   ],
+   "fast_ok": true,
+   "fast_error": null,
+   "verdict": "ORIG_ERROR_FAST_OK",
+   "seconds": 2.2,
+   "forensic": {
+    "behavior": "duplicated Ensembl IDs: original CRASHES in tpm.insert (symbol_map.loc[tpm.index] expands on the duplicated index: 'Length of values (4796) does not match length of index (4706)'); the FAST SUCCEEDS (it inserts symbol_map.to_numpy() instead) and returns a 4706x10 result. Not a drop-in replacement for this input class: fast silently completes where the upstream raises."
+   }
+  },
+  "AE6": {
+   "module": "anno_eset",
+   "variant": "annotation passed as DataFrame (testdata anno_grch38 parquet, probe=id symbol=symbol)",
+   "id": "AE6",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    50181,
+    10
+   ],
+   "fast_shape": [
+    50181,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.3
+  },
+  "AE10": {
+   "module": "anno_eset",
+   "variant": "non-unique eset index (200 duplicated rows; expected identical reindex failure in both)",
+   "id": "AE10",
+   "note": null,
+   "orig_ok": false,
+   "orig_error": [
+    "ValueError",
+    "cannot reindex on an axis with duplicate labels"
+   ],
+   "fast_ok": false,
+   "fast_error": [
+    "ValueError",
+    "cannot reindex on an axis with duplicate labels"
+   ],
+   "verdict": "BOTH_ERROR_SAME_TYPE",
+   "seconds": 2.0
+  },
+  "MC2": {
+   "module": "mcpcounter",
+   "variant": "features_type='ENTREZ_ID' (index = ENTREZID markers, seed 8)",
+   "id": "MC2",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    10
+   ],
+   "fast_shape": [
+    10,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.5
+  },
+  "MC4": {
+   "module": "mcpcounter",
+   "variant": "features_type='ENSEMBL_ID' on eset_stad (genes df has no ENSEMBL ID column -> KeyError expected in both)",
+   "id": "MC4",
+   "note": null,
+   "orig_ok": false,
+   "orig_error": [
+    "KeyError",
+    "'ENSEMBL ID'"
+   ],
+   "fast_ok": false,
+   "fast_error": [
+    "KeyError",
+    "'ENSEMBL ID'"
+   ],
+   "verdict": "BOTH_ERROR_SAME_TYPE",
+   "seconds": 1.7
+  },
+  "EP5": {
+   "module": "epic",
+   "variant": "20-sample subset of eset_tme_stad (seed 6)",
+   "id": "EP5",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "verdict": "PASS",
+   "frames": {
+    "mRNAProportions": {
+     "orig_shape": [
+      20,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "cellFractions": {
+     "orig_shape": [
+      20,
+      8
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    },
+    "fit_gof": {
+     "orig_shape": [
+      20,
+      12
+     ],
+     "max_abs_diff": 0.0,
+     "index_equal": true,
+     "cols_equal": true,
+     "dtypes_equal": true,
+     "nan_mask_equal": true,
+     "n_value_or_mask_mismatch": 0,
+     "first_mismatch": null,
+     "verdict": "PASS",
+     "orig_error": null,
+     "fast_error": null
+    }
+   },
+   "orig_shape": {
+    "mRNAProportions": [
+     20,
+     8
+    ],
+    "cellFractions": [
+     20,
+     8
+    ],
+    "fit_gof": [
+     20,
+     12
+    ]
+   },
+   "seconds": 2.5
+  },
+  "MC3": {
+   "module": "mcpcounter",
+   "variant": "features_type='affy133P2_probesets' (index = probeset ids, seed 10)",
+   "id": "MC3",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    10
+   ],
+   "fast_shape": [
+    10,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.3
+  },
+  "AE7": {
+   "module": "anno_eset",
+   "variant": "annotation DataFrame with duplicated probe ids mapping to different symbols (5000-row eset subset seed 44)",
+   "id": "AE7",
+   "note": "duplicated probe ids exercise the merge-expansion / multiplicity path of the fast vectorized core",
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    4339,
+    10
+   ],
+   "fast_shape": [
+    4339,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 1.9
+  },
+  "CT11": {
+   "module": "count2tpm",
+   "variant": "idType='entrez' (index = entrez ids from anno_grch38 parquet, seed 4)",
+   "id": "CT11",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    2933,
+    10
+   ],
+   "fast_shape": [
+    2933,
+    10
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "seconds": 2.1
+  },
+  "CB1": {
+   "module": "cibersort",
+   "variant": "official-default QN=True perm=0 absolute=False (eset_stad_symbol 50181x10); fast n_threads 1/8/224 invariance",
+   "id": "CB1",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    25
+   ],
+   "fast_shape": [
+    10,
+    25
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "fast_invariance": {
+    "t1": {
+     "full_frame_equal_to_fast_run": true,
+     "max_abs_diff": 0.0,
+     "verdict": "PASS"
+    },
+    "t8": {
+     "full_frame_equal_to_fast_run": true,
+     "max_abs_diff": 0.0,
+     "verdict": "PASS"
+    }
+   },
+   "seconds": 25.2
+  },
+  "CB5": {
+   "module": "cibersort",
+   "variant": "perm=7 (weights/Corr/RMSE only; fast P-value seeded stability)",
+   "id": "CB5",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    10,
+    25
+   ],
+   "fast_shape": [
+    10,
+    25
+   ],
+   "compared_columns_only": [
+    "B_cells_naive",
+    "B_cells_memory",
+    "Plasma_cells",
+    "T_cells_CD8",
+    "T_cells_CD4_naive",
+    "T_cells_CD4_memory_resting",
+    "T_cells_CD4_memory_activated",
+    "T_cells_follicular_helper",
+    "T_cells_regulatory_(Tregs)",
+    "T_cells_gamma_delta",
+    "NK_cells_resting",
+    "NK_cells_activated",
+    "Monocytes",
+    "Macrophages_M0",
+    "Macrophages_M1",
+    "Macrophages_M2",
+    "Dendritic_cells_resting",
+    "Dendritic_cells_activated",
+    "Mast_cells_resting",
+    "Mast_cells_activated",
+    "Eosinophils",
+    "Neutrophils",
+    "Correlation",
+    "RMSE"
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "pvalue_checks": {
+    "in_range": true,
+    "granularity_ok": true,
+    "repeat_bitwise_stable": true,
+    "orig_in_range": true,
+    "orig_granularity_ok": true
+   },
+   "fast_invariance": {
+    "rep2": {
+     "full_frame_equal_to_fast_run": true,
+     "verdict": "PASS"
+    }
+   },
+   "seconds": 11.5
+  },
+  "SS1": {
+   "module": "sig_score",
+   "variant": "pca default (imvigor210 872x348, signature_collection, mini=3, adjust=True)",
+   "id": "SS1",
+   "note": null,
+   "orig_ok": true,
+   "fast_ok": true,
+   "orig_shape": [
+    348,
+    60
+   ],
+   "fast_shape": [
+    348,
+    60
+   ],
+   "index_equal": true,
+   "cols_equal": true,
+   "dtypes_equal": true,
+   "max_abs_diff": 0.0,
+   "value_bitwise_equal": true,
+   "nan_mask_equal": true,
+   "n_value_or_mask_mismatch": 0,
+   "verdict": "PASS",
+   "fast_invariance": {
+    "par8": {
+     "full_frame_equal_to_fast_run": true,
+     "max_abs_diff": 0.0,
+     "verdict": "PASS"
+    }
+   },
+   "seconds": 4.7
+  }
+ }
+}

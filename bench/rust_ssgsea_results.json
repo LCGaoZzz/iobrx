@@ -1,0 +1,101 @@
+{
+  "data": "testdata/imvigor210_eset.parquet (872 genes x 348 samples)",
+  "sig_dict": "signature_collection (323 signatures, merged via _merge_signature_groups)",
+  "mini_gene_count": 3,
+  "adjust_eset": true,
+  "n_signatures_passing_min5_filter": 30,
+  "log2_heuristic_triggers": false,
+  "machine": {
+    "cores": 224
+  },
+  "protocol": "in-process perf_counter, median of 3 reps after 1 warmup",
+  "versions": {
+    "gseapy": "1.3.0",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "iobrx_rust": "0.1.0 (maturin develop --release)"
+  },
+  "original_gseapy_threads1": {
+    "times_s": [
+      0.662526,
+      0.657477,
+      0.577694
+    ],
+    "median_s": 0.657477
+  },
+  "original_gseapy_threads224": {
+    "times_s": [
+      0.633428,
+      0.638371,
+      0.63212
+    ],
+    "median_s": 0.633428
+  },
+  "precision_original_vs_ref": {
+    "shape": [
+      348,
+      32
+    ],
+    "columns_equal": true,
+    "ids_equal": true,
+    "numeric_cells": 10788,
+    "cells_bit_identical": 10788,
+    "max_abs_diff": 0.0,
+    "max_rel_err": 0.0,
+    "top5_diff_cells": []
+  },
+  "rust_n_threads_1": {
+    "times_s": [
+      0.061367,
+      0.060471,
+      0.059901
+    ],
+    "median_s": 0.060471
+  },
+  "rust_n_threads_224": {
+    "times_s": [
+      0.072088,
+      0.054603,
+      0.057147
+    ],
+    "median_s": 0.057147
+  },
+  "gate_rust_vs_ref": {
+    "shape": [
+      348,
+      32
+    ],
+    "columns_equal": true,
+    "ids_equal": true,
+    "numeric_cells": 10788,
+    "cells_bit_identical": 10788,
+    "max_abs_diff": 0.0,
+    "max_rel_err": 0.0,
+    "top5_diff_cells": []
+  },
+  "gate_pass_1e-6": true,
+  "speedup_vs_original_t1": {
+    "rust_t1": 10.9,
+    "rust_t224": 11.5
+  },
+  "rust_core_only": {
+    "note": "iobrx_rust.ssgsea_core alone on prepared inputs (872x348, 30 sets), median of 3 after warmup, same protocol",
+    "n_threads_1": {
+      "times_ms": [
+        26.26,
+        25.97,
+        26.07
+      ],
+      "median_ms": 26.07
+    },
+    "n_threads_224": {
+      "times_ms": [
+        18.83,
+        18.31,
+        16.54
+      ],
+      "median_ms": 18.31
+    }
+  },
+  "stage_time_breakdown_note": "rust stage = preprocess_eset + filter_signatures + gseapy load_data/load_gmt ports + numpy conversion + ssgsea_core + res2d pivot; the pandas surrounding work accounts for stage_minus_core ~= 34 ms (t1) / 39 ms (t224)"
+}

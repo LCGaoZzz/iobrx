@@ -1,0 +1,310 @@
+{
+  "measurement": "Rust cibersort stage (iobrx/fast/cibersort_fast.py::cibersort_fast): thread scaling + cold-start characterization",
+  "date_utc": "2026-09-07",
+  "machine": {
+    "cpu": "Intel(R) Xeon(R) Platinum 8480C",
+    "logical_cores": 224,
+    "rustc": "rustc 1.97.1 (8bab26f4f 2026-07-14)",
+    "cargo": "cargo 1.97.1 (c980f4866 2026-06-30)"
+  },
+  "versions": {
+    "python": "Python 3.11.15",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "maturin": "1.15.0"
+  },
+  "input": "testdata/eset_stad_symbol.parquet (50181x10) + LM22 (547x22), common=531, perm=100, QN=True, absolute=False, DataFrame-in (no CSV)",
+  "reference_baselines_original_iobrpy": {
+    "csv_protocol_3rep_median_s": 94.9,
+    "n_jobs1_3rep_median_s_setup_facts": 88.82,
+    "sources": [
+      "iobrx/bench/rust_cibersort_results.json (original_njobs1_baseline)",
+      "iobrx/bench/logs/baseline.log line 66: warm=94.07s median=88.82s reps=[87.67, 88.82, 91.54]"
+    ]
+  },
+  "code_facts": {
+    "rayon_pool": "A fresh rayon::ThreadPoolBuilder().num_threads(n).build() is constructed inside EVERY cibersort_core call (iobrx/crates/iobrx_rust/src/lib.rs:1032-1035); there is no persistent global pool, so every per-call time below already includes 224-thread pool construction.",
+    "blas_pinning": "cibersort_fast._init_blas() pins numpy's bundled openblas to 1 thread (avoids oversubscription from inside rayon workers); it dlopens scipy/numpy openblas .so via ctypes once per process and passes kernel addresses to the Rust module."
+  },
+  "1_thread_scaling": {
+    "protocol": "fresh subprocess per thread count; 1 warmup + 3 reps of the full perm=100 call; perf_counter wall; median reported",
+    "results": {
+      "8": {
+        "n_threads": 8,
+        "data_load_s": 0.0361,
+        "init_blas_s": 0.0039,
+        "warmup_s": 14.0077,
+        "times_s": [
+          13.3224,
+          13.5275,
+          13.0943
+        ],
+        "median_s": 13.3224,
+        "subprocess_wall_s": 54.479
+      },
+      "16": {
+        "n_threads": 16,
+        "data_load_s": 0.037,
+        "init_blas_s": 0.0044,
+        "warmup_s": 8.5815,
+        "times_s": [
+          7.5248,
+          7.9079,
+          7.032
+        ],
+        "median_s": 7.5248,
+        "subprocess_wall_s": 31.469
+      },
+      "32": {
+        "n_threads": 32,
+        "data_load_s": 0.0363,
+        "init_blas_s": 0.0043,
+        "warmup_s": 5.5055,
+        "times_s": [
+          4.8033,
+          4.8436,
+          5.4731
+        ],
+        "median_s": 4.8436,
+        "subprocess_wall_s": 21.027
+      },
+      "64": {
+        "n_threads": 64,
+        "data_load_s": 0.0362,
+        "init_blas_s": 0.0042,
+        "warmup_s": 4.0057,
+        "times_s": [
+          3.4721,
+          3.445,
+          3.591
+        ],
+        "median_s": 3.4721,
+        "subprocess_wall_s": 14.913
+      },
+      "128": {
+        "n_threads": 128,
+        "data_load_s": 0.0335,
+        "init_blas_s": 0.0043,
+        "warmup_s": 3.1379,
+        "times_s": [
+          3.4073,
+          2.7563,
+          2.8972
+        ],
+        "median_s": 2.8972,
+        "subprocess_wall_s": 12.599
+      },
+      "224": {
+        "n_threads": 224,
+        "data_load_s": 0.0325,
+        "init_blas_s": 0.0039,
+        "warmup_s": 2.7781,
+        "times_s": [
+          2.5866,
+          2.482,
+          3.1251
+        ],
+        "median_s": 2.5866,
+        "subprocess_wall_s": 11.378
+      }
+    },
+    "speedup_vs_original_csv_protocol_median_94_9s": {
+      "8": 7.12,
+      "16": 12.61,
+      "32": 19.59,
+      "64": 27.33,
+      "128": 32.76,
+      "224": 36.69
+    },
+    "speedup_vs_original_njobs1_median_88_82s": {
+      "8": 6.67,
+      "16": 11.8,
+      "32": 18.34,
+      "64": 25.58,
+      "128": 30.66,
+      "224": 34.34
+    }
+  },
+  "2_cold_process_start": {
+    "protocol": "fresh `python3 -c` subprocess per run (3 runs); child perf_counter splits; parent measures total spawn-to-exit wall; first call = perm=100, n_threads=224",
+    "runs": [
+      {
+        "import_numpy_pandas_s": 0.265,
+        "import_iobrx_rust_s": 0.0004,
+        "import_shim_s": 0.0004,
+        "parquet_load_s": 0.0334,
+        "first_call_s": 2.9175,
+        "child_span_s": 3.2168,
+        "out_shape": [
+          10,
+          25
+        ],
+        "run": 1,
+        "subprocess_wall_s": 3.316,
+        "interp_boot_shutdown_overhead_s": 0.1
+      },
+      {
+        "import_numpy_pandas_s": 0.2615,
+        "import_iobrx_rust_s": 0.0004,
+        "import_shim_s": 0.0004,
+        "parquet_load_s": 0.0335,
+        "first_call_s": 2.6701,
+        "child_span_s": 2.9659,
+        "out_shape": [
+          10,
+          25
+        ],
+        "run": 2,
+        "subprocess_wall_s": 3.069,
+        "interp_boot_shutdown_overhead_s": 0.103
+      },
+      {
+        "import_numpy_pandas_s": 0.2628,
+        "import_iobrx_rust_s": 0.0004,
+        "import_shim_s": 0.0004,
+        "parquet_load_s": 0.0336,
+        "first_call_s": 2.7207,
+        "child_span_s": 3.0178,
+        "out_shape": [
+          10,
+          25
+        ],
+        "run": 3,
+        "subprocess_wall_s": 3.119,
+        "interp_boot_shutdown_overhead_s": 0.101
+      }
+    ],
+    "warm_in_process_reference_224t_median_s": 2.5866,
+    "summary": {
+      "total_subprocess_wall_s": [
+        3.316,
+        3.069,
+        3.119
+      ],
+      "import_iobrx_rust_s": [
+        0.0004,
+        0.0004,
+        0.0004
+      ],
+      "first_call_s": [
+        2.9175,
+        2.6701,
+        2.7207
+      ],
+      "import_numpy_pandas_s": [
+        0.265,
+        0.2615,
+        0.2628
+      ],
+      "note": "cold start to first-result ~= 3.1s total; import of the compiled module is ~0.4ms; the first call itself is within ~0.1-0.3s of the warm in-process median"
+    }
+  },
+  "3_rayon_pool_first_vs_later_calls": {
+    "protocol": "fresh subprocess; 3 consecutive timed cibersort_fast calls (perm=100, n_threads=224)",
+    "fully_cold": {
+      "variant": "fully_cold_first_call_includes_init_blas_and_lm22",
+      "call_times_s": [
+        3.999,
+        2.5918,
+        2.7388
+      ]
+    },
+    "post_init": {
+      "variant": "post_init_blas_and_lm22_loaded_before_timing",
+      "init_blas_s": 0.0038,
+      "lm22_load_s": 0.0158,
+      "call_times_s": [
+        2.8108,
+        2.3944,
+        2.5244
+      ]
+    },
+    "finding": "No persistent pool to warm: the pool is rebuilt inside every call. The one-time first-call penalty (fully cold: 4.00s vs 2.59/2.74s later) is almost entirely cold-cache/page-fault cost, NOT pool spin-up and NOT init: _init_blas costs 3.8ms and the LM22 read 15.8ms. Post-init first call is 2.81s vs 2.39/2.52s later, i.e. a residual ~0.3-0.4s first-touch cost."
+  },
+  "4_wheel_build": {
+    "wheel_existed_before": false,
+    "incremental_build": {
+      "time_s": 9.74,
+      "rc": 0,
+      "stdout_tail": "",
+      "stderr_tail": " |       ^^^^^^^^^^^^^^^^^^\n\nwarning: `iobrx_rust` (lib) generated 6 warnings\n    Finished `release` profile [optimized] target(s) in 8.99s\n\ud83d\udce6 Built wheel for CPython 3.11 to /data/users/lianchong/workspace1/iobrx/crates/iobrx_rust/target/wheels/iobrx_rust-0.1.0-cp311-cp311-manylinux_2_34_x86_64.whl\n",
+      "wheels": [
+        {
+          "path": "/data/users/lianchong/workspace1/iobrx/crates/iobrx_rust/target/wheels/iobrx_rust-0.1.0-cp311-cp311-manylinux_2_34_x86_64.whl",
+          "bytes": 497368
+        }
+      ]
+    },
+    "full_build_after_cargo_clean": {
+      "time_s": 13.71,
+      "rc": 0,
+      "stdout_tail": "",
+      "stderr_tail": "|       ^^^^^^^^^^^^^^^^^^\n\nwarning: `iobrx_rust` (lib) generated 6 warnings\n    Finished `release` profile [optimized] target(s) in 12.83s\n\ud83d\udce6 Built wheel for CPython 3.11 to /data/users/lianchong/workspace1/iobrx/crates/iobrx_rust/target/wheels/iobrx_rust-0.1.0-cp311-cp311-manylinux_2_34_x86_64.whl\n",
+      "wheels": [
+        {
+          "path": "/data/users/lianchong/workspace1/iobrx/crates/iobrx_rust/target/wheels/iobrx_rust-0.1.0-cp311-cp311-manylinux_2_34_x86_64.whl",
+          "bytes": 497371
+        }
+      ]
+    },
+    "fingerprint_entries_after_cold_build": 74,
+    "wheel_contents": {
+      "iobrx_rust/__init__.py": 123,
+      "iobrx_rust/iobrx_rust.cpython-311-x86_64-linux-gnu.so": 1264552,
+      "iobrx_rust-0.1.0.dist-info/METADATA": 54,
+      "iobrx_rust-0.1.0.dist-info/WHEEL": 109,
+      "iobrx_rust-0.1.0.dist-info/sboms/iobrx_rust.cyclonedx.json": 49090,
+      "iobrx_rust-0.1.0.dist-info/RECORD": 521
+    },
+    "note": "no wheel pre-existed (target/maturin empty, no *.whl anywhere in workspace); cold full build (after cargo clean) is 13.7s on 224 cores; wheel ships a single 1.26MB cpython-311 x86_64 .so"
+  },
+  "5_memory_peak_rss": {
+    "protocol": "fresh subprocess per condition; ru_maxrss (getrusage RUSAGE_SELF) and /proc/self/status VmRSS/VmHWM around ONE cibersort_fast call (no warmup)",
+    "ru_maxrss": {
+      "control_no_call": {
+        "n_threads": -1,
+        "ru_maxrss_after_imports_load_kib": 547020,
+        "subprocess_wall_s": 0.418
+      },
+      "t224": {
+        "n_threads": 224,
+        "ru_maxrss_after_imports_load_kib": 547020,
+        "call_s": 2.7808,
+        "ru_maxrss_peak_kib": 547020,
+        "delta_kib": 0,
+        "subprocess_wall_s": 3.203
+      },
+      "t1": {
+        "n_threads": 1,
+        "ru_maxrss_after_imports_load_kib": 547020,
+        "call_s": 90.8356,
+        "ru_maxrss_peak_kib": 547020,
+        "delta_kib": 0,
+        "subprocess_wall_s": 91.241
+      }
+    },
+    "vmrss_vmhwm": {
+      "t224": {
+        "n_threads": 224,
+        "call_s": 3.8279,
+        "vmrss_before_kib": 149160,
+        "vmhwm_before_kib": 149160,
+        "vmrss_after_kib": 432680,
+        "vmhwm_after_kib": 432680,
+        "vmrss_delta_kib": 283520,
+        "vmhwm_delta_kib": 283520
+      },
+      "t1": {
+        "n_threads": 1,
+        "call_s": 96.9605,
+        "vmrss_before_kib": 149296,
+        "vmhwm_before_kib": 149296,
+        "vmrss_after_kib": 153812,
+        "vmhwm_after_kib": 159064,
+        "vmrss_delta_kib": 4516,
+        "vmhwm_delta_kib": 9768
+      }
+    },
+    "finding": "Process peak RSS (534 MiB) is set by the numpy/pandas/pyarrow import phase; the cibersort stage never raises it at any thread count. Steady-state cost of the call itself: +277 MiB at 224 threads (~1.24 MiB/thread, faulted-in rayon worker stacks + per-fit buffers) vs +9.5 MiB VmHWM at 1 thread."
+  }
+}

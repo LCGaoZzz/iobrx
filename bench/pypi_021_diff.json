@@ -1,0 +1,109 @@
+{
+  "task": "PyPI 0.2.1 vs local 0.2.0 (commit e3808db) provenance check",
+  "date": "2026-09-07",
+  "artifacts": {
+    "wheel": {
+      "name": "iobrpy-0.2.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl",
+      "sha256": "b3dcf6ff40832c624dff82699ad9467df47a643e398998745eb0ff5d10cd9e8d",
+      "size_bytes": 92328720
+    },
+    "sdist": {
+      "name": "iobrpy-0.2.1.tar.gz",
+      "sha256": "c46c8fff8846d829b8fb3bec972867cbb6945dc454a9995e08fc07c224d94902",
+      "size_bytes": 87217542
+    }
+  },
+  "baseline_tree": {
+    "path": "/data/users/lianchong/workspace1/IOBRpy",
+    "git_head": "e3808db",
+    "tracked_files_modified": 0
+  },
+  "file_diff": {
+    "method": "sha256 per file, src/iobrpy vs src/iobrpy; wheel-vs-sdist compared too",
+    "wheel_vs_sdist": "package trees identical except 3 prebuilt SpecHLA binaries (blastn, bcftools, libwfa2.so.0)",
+    "only_in_021": [
+      "SpecHLA/db/ref/hla_gen...no26789(.v2)?.*.bt2 bowtie2 indexes (12 files, data only)"
+    ],
+    "only_in_020": [
+      "SpecHLA cmake-build-debug artifacts (.gitignore/.cmake json), not code"
+    ],
+    "py_changes_with_real_content": {
+      "iobrpy/__init__.py": "version string 0.2.0 -> 0.2.1",
+      "iobrpy/main.py": "VERSION string 0.2.0 -> 0.2.1 (single line)"
+    },
+    "py_files_crlf_only": [
+      "workflow/estimate.py",
+      "workflow/mcpcounter.py",
+      "bayesprism/__init__.py",
+      "workflow/__init__.py",
+      "utils/print_colorful_message.py",
+      "utils/process_immune_data_batch.py",
+      "utils/remove_version.py",
+      "workflow/IPS.py",
+      "workflow/log2_eset.py",
+      "workflow/mouse2human_eset.py",
+      "workflow/nmf.py",
+      "workflow/prepare_salmon.py",
+      "workflow/trust4.py"
+    ],
+    "resources": {
+      "resources/lm22.txt": "CRLF-only, byte-identical after newline normalization",
+      "resources/common_genes.txt": "CRLF-only, identical",
+      "resources/IPS_genes.txt": "CRLF-only, identical"
+    },
+    "out_of_scope_changes": [
+      "SpecHLA scripts (mask_low_depth_region.py, g_group_annotation.py, map_block2database.py)",
+      "RAG_MCP parameter-hint JSONs",
+      "hla.diploid.ploidy"
+    ]
+  },
+  "port_modules_verdict": {
+    "cibersort.py": "identical",
+    "calculate_sig_score.py": "identical",
+    "count2tpm.py": "identical",
+    "quantiseq.py": "identical",
+    "epic.py": "identical",
+    "anno_eset.py": "identical",
+    "estimate.py": "line-endings only (LF->CRLF); content identical; no numeric semantics change",
+    "mcpcounter.py": "line-endings only (LF->CRLF); content identical; no numeric semantics change"
+  },
+  "dependency_pins": {
+    "changed": false,
+    "note": "pyproject [project].dependencies identical to 0.2.0 requirements.txt; only project version bumped; wheel METADATA Requires-Dist matches",
+    "numeric_relevant": [
+      "numpy>=1.22",
+      "pandas>=1.5",
+      "scipy>=1.9",
+      "scikit-learn>=1.2",
+      "statsmodels>=0.13",
+      "gseapy>=1.0.6"
+    ]
+  },
+  "numeric_confirmation": {
+    "protocol": "fresh subprocess, 0.2.1 sdist src first on sys.path, official testdata, official baseline calls (bench_baseline.py stage definitions verbatim)",
+    "stages_bit_exact_vs_refs": [
+      "sig_pca",
+      "sig_zscore",
+      "sig_ssgsea",
+      "sig_integration",
+      "anno_eset",
+      "quantiseq",
+      "mcpcounter",
+      "estimate",
+      "count2tpm",
+      "epic.cellFractions",
+      "epic.fit_gof",
+      "epic.mRNAProportions"
+    ],
+    "cibersort": {
+      "fractions_correlation_rmse": "bit-exact vs refs (all 24 deterministic columns, max_abs_diff=0)",
+      "P-value": {
+        "max_abs_diff_vs_refs": 0.06,
+        "explanation": "permutation p-value is Monte-Carlo stochastic run-to-run: seeds from unseeded numpy SeedSequence().spawn(perm) (OS entropy)",
+        "control": "0.2.0 tree re-run vs refs: fractions/corr/RMSE bit-exact, P-value max_abs_diff=0.04 (same-magnitude jitter under identical code)"
+      }
+    },
+    "wall_clock_s": 94.6
+  },
+  "verdict": "PASS \u2014 0.2.1 is numerically identical to our 0.2.0 baseline for all ported code paths; refs and port remain valid for 0.2.1. No re-baselining needed. (cibersort P-value column is non-reproducible by design in BOTH versions.)"
+}

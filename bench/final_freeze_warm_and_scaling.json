@@ -1,0 +1,274 @@
+{
+  "datetime": "2026-09-07T23:53:44",
+  "machine_cores": 224,
+  "driver_loadavg_start": [
+    18.9912109375,
+    14.798828125,
+    11.26318359375
+  ],
+  "warm": {
+    "mode": "warm_loop",
+    "load_s": 1.9128,
+    "n_reps": 3,
+    "rep_totals_s": [
+      3.7215,
+      4.0055,
+      3.8005
+    ],
+    "median_total_s": 3.8005,
+    "per_stage": {
+      "sig_pca": {
+        "times_s": [
+          0.1614,
+          0.245,
+          0.1663
+        ],
+        "median_s": 0.1663
+      },
+      "sig_zscore": {
+        "times_s": [
+          0.1328,
+          0.1472,
+          0.2256
+        ],
+        "median_s": 0.1472
+      },
+      "sig_ssgsea": {
+        "times_s": [
+          0.1142,
+          0.1345,
+          0.131
+        ],
+        "median_s": 0.131
+      },
+      "sig_integration": {
+        "times_s": [
+          0.2297,
+          0.2397,
+          0.2337
+        ],
+        "median_s": 0.2337
+      },
+      "anno_eset": {
+        "times_s": [
+          0.0955,
+          0.0975,
+          0.0993
+        ],
+        "median_s": 0.0975
+      },
+      "cibersort": {
+        "times_s": [
+          2.7442,
+          2.8957,
+          2.6903
+        ],
+        "median_s": 2.7442
+      },
+      "epic": {
+        "times_s": [
+          0.0219,
+          0.0217,
+          0.0222
+        ],
+        "median_s": 0.0219
+      },
+      "quantiseq": {
+        "times_s": [
+          0.062,
+          0.0615,
+          0.0644
+        ],
+        "median_s": 0.062
+      },
+      "mcpcounter": {
+        "times_s": [
+          0.0085,
+          0.0081,
+          0.0082
+        ],
+        "median_s": 0.0082
+      },
+      "estimate": {
+        "times_s": [
+          0.0473,
+          0.0471,
+          0.0495
+        ],
+        "median_s": 0.0473
+      },
+      "count2tpm": {
+        "times_s": [
+          0.1039,
+          0.1075,
+          0.1101
+        ],
+        "median_s": 0.1075
+      }
+    },
+    "loadavg": [
+      22.1767578125,
+      15.75927734375,
+      11.63720703125
+    ],
+    "subprocess_wall_s": 18.677
+  },
+  "cb_scaling": {
+    "1": {
+      "mode": "cb_scale",
+      "n_threads": 1,
+      "load_s": 0.996,
+      "times_s": [
+        95.4021,
+        95.1732,
+        95.0929
+      ],
+      "median_s": 95.1732,
+      "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+      "vs_ref_excl_Pvalue_bit_identical": 240,
+      "excl_Pvalue_cells": 240,
+      "vs_ref_Pvalue_max_abs_diff": 0.030000000000000006,
+      "loadavg": [
+        10.08837890625,
+        12.0107421875,
+        11.27587890625
+      ],
+      "subprocess_wall_s": 381.597
+    },
+    "8": {
+      "mode": "cb_scale",
+      "n_threads": 8,
+      "load_s": 1.0064,
+      "times_s": [
+        12.9618,
+        13.6226,
+        12.825
+      ],
+      "median_s": 12.9618,
+      "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+      "vs_ref_excl_Pvalue_bit_identical": 240,
+      "excl_Pvalue_cells": 240,
+      "vs_ref_Pvalue_max_abs_diff": 0.030000000000000006,
+      "loadavg": [
+        13.7099609375,
+        12.5634765625,
+        11.49951171875
+      ],
+      "subprocess_wall_s": 54.755
+    },
+    "16": {
+      "mode": "cb_scale",
+      "n_threads": 16,
+      "load_s": 0.9908,
+      "times_s": [
+        7.6864,
+        7.1864,
+        7.4034
+      ],
+      "median_s": 7.4034,
+      "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+      "vs_ref_excl_Pvalue_bit_identical": 240,
+      "excl_Pvalue_cells": 240,
+      "vs_ref_Pvalue_max_abs_diff": 0.030000000000000006,
+      "loadavg": [
+        17.1328125,
+        13.49951171875,
+        11.845703125
+      ],
+      "subprocess_wall_s": 31.512
+    },
+    "32": {
+      "mode": "cb_scale",
+      "n_threads": 32,
+      "load_s": 0.9738,
+      "times_s": [
+        4.1888,
+        4.5971,
+        4.6784
+      ],
+      "median_s": 4.5971,
+      "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+      "vs_ref_excl_Pvalue_bit_identical": 240,
+      "excl_Pvalue_cells": 240,
+      "vs_ref_Pvalue_max_abs_diff": 0.030000000000000006,
+      "loadavg": [
+        23.25634765625,
+        15.13525390625,
+        12.41943359375
+      ],
+      "subprocess_wall_s": 20.01
+    },
+    "64": {
+      "mode": "cb_scale",
+      "n_threads": 64,
+      "load_s": 0.9649,
+      "times_s": [
+        3.5326,
+        3.1859,
+        3.3374
+      ],
+      "median_s": 3.3374,
+      "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+      "vs_ref_excl_Pvalue_bit_identical": 240,
+      "excl_Pvalue_cells": 240,
+      "vs_ref_Pvalue_max_abs_diff": 0.030000000000000006,
+      "loadavg": [
+        29.3564453125,
+        16.876953125,
+        13.03369140625
+      ],
+      "subprocess_wall_s": 15.619
+    },
+    "128": {
+      "mode": "cb_scale",
+      "n_threads": 128,
+      "load_s": 0.9439,
+      "times_s": [
+        3.0835,
+        2.9056,
+        2.6788
+      ],
+      "median_s": 2.9056,
+      "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+      "vs_ref_excl_Pvalue_bit_identical": 240,
+      "excl_Pvalue_cells": 240,
+      "vs_ref_Pvalue_max_abs_diff": 0.030000000000000006,
+      "loadavg": [
+        33.1015625,
+        18.3974609375,
+        13.59765625
+      ],
+      "subprocess_wall_s": 13.525
+    },
+    "224": {
+      "mode": "cb_scale",
+      "n_threads": 224,
+      "load_s": 0.9455,
+      "times_s": [
+        3.0601,
+        2.6475,
+        3.2429
+      ],
+      "median_s": 3.0601,
+      "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+      "vs_ref_excl_Pvalue_bit_identical": 240,
+      "excl_Pvalue_cells": 240,
+      "vs_ref_Pvalue_max_abs_diff": 0.030000000000000006,
+      "loadavg": [
+        30.85009765625,
+        18.38720703125,
+        13.64501953125
+      ],
+      "subprocess_wall_s": 13.457
+    }
+  },
+  "protocol": {
+    "warm": "ONE fresh subprocess; data+resources loaded once (untimed); 1 warmup pass + 3 timed passes over the 11 official stages; cibersort n_threads=224; stage times perf_counter",
+    "cb_scale": "fresh subprocess per n_threads; stad_symbol loaded once (untimed); 1 warmup + 3 timed cibersort_fast reps (LM22, perm=100, QN=True); median; bitwise check vs refs/cibersort.parquet excl unseeded P-value"
+  },
+  "driver_loadavg_end": [
+    30.85009765625,
+    18.38720703125,
+    13.64501953125
+  ]
+}

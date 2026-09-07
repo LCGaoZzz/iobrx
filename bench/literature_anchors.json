@@ -1,0 +1,248 @@
+{
+  "task": "External, citable literature anchors for the IOBRpy->Python+Rust port speedup campaign",
+  "generated": "2026-09-07",
+  "internal_reference_point": {
+    "metric": "workflow_speedup (wall-clock, official-data workflow: sig scoring incl. ssGSEA, CIBERSORT perm=100, EPIC, quanTIseq, MCPcounter, ESTIMATE, count2tpm, annotation)",
+    "original_iobrpy_seconds": 97.13,
+    "current_rust_backend_seconds": 5.4,
+    "protocol": "in-process perf_counter, median of 3 reps after 1 warmup, 224-core Linux, imvigor210_eset.parquet 872 genes x 348 samples",
+    "biggest_lever": "CIBERSORT: 330 sklearn NuSVR(kernel='linear') fits (~0.2 s each on 531x22) dominate the original runtime"
+  },
+  "anchors": [
+    {
+      "id": "A1",
+      "question": "1) IOBRpy preprint runtime/benchmark numbers (Python vs R)",
+      "finding": "The IOBRpy preprint DOES report runtime numbers, but the only quantitative timing is a within-Python thread-scaling benchmark of CIBERSORT on a 936-sample cohort (OAKPOPLAR); the Python-vs-R comparison is qualitative per method, and the authors explicitly disclaim strict end-to-end comparability because Python timing included data loading while R timing started after loading.",
+      "source": "bioRxiv preprint, posted 2026-07-22",
+      "url": "https://www.biorxiv.org/content/10.64898/2026.07.17.739055v1.full",
+      "doi": "10.64898/2026.07.17.739055",
+      "quoted_numbers": {
+        "cibersort_mean_runtime_1_thread_s": 2864.8,
+        "cibersort_mean_runtime_8_threads_s": 368.4,
+        "cibersort_mean_runtime_16_threads_s": 209.7,
+        "thread_speedup_1_to_16_fold": 13.7,
+        "benchmark_samples": 936,
+        "repeats": 10
+      },
+      "verbatim_quotes": [
+        "Runtime profiles differed by method rather than by programming language alone (Fig. 2a). In the 936-sample benchmark, mean CIBERSORT runtime decreased from 2,864.8 s with one Python thread to 368.4 s with eight threads and 209.7 s with 16 threads, yielding a 13.7-fold speed-up from one to 16 threads. Python was also faster for quanTIseq, ESTIMATE and EPIC in this benchmark, whereas R showed shorter recorded runtimes for MCP-counter and IPS.",
+        "The Python measurements included input-data loading, whereas R timing began after the data had been loaded; the apparent R advantage for some modules may therefore partly reflect the different timing scopes and should not be interpreted as a strict end-to-end comparison.",
+        "Runtime was recorded across 10 repeated runs for each setting; Python timing included input-data loading, whereas R timing began after the data had been loaded. CIBERSORT was additionally evaluated with 1, 8 and 16 Python threads."
+      ],
+      "mapping_to_workflow_speedup": "NOT a Python-vs-R speedup anchor (their fold number is threads-vs-threads inside Python). It IS the best external absolute-runtime anchor for the very software we ported: their CIBERSORT 2,864.8 s single-thread on 936 samples (~3.06 s/sample) vs our original-IOBRpy CIBERSORT ~66 s on 348 samples (~0.19 s/sample) shows how much signature-matrix size, perm count, cohort and timing scope move per-sample CIBERSORT cost across setups. Record as a literature anchor for 'CIBERSORT runtime magnitude in IOBRpy itself', with protocol mismatch flagged.",
+      "protocol_caveats": "Different cohort (936-sample OP matrix vs our 348-sample IMvigor210 872-gene subset), unstated perm count in quoted text, Python timing scope includes input loading, thread counts 1/8/16 vs our measurement, different (unstated) hardware, 10 repeats vs our median-of-3."
+    },
+    {
+      "id": "A2",
+      "question": "2a) Newman 2015 CIBERSORT paper runtime statements",
+      "finding": "NO runtime/speed/timing statements in the abstract; only a qualitative scalability claim. (Verified via Europe PMC REST API.)",
+      "source": "Newman et al. 2015, Nature Methods 12(5):453-457, PMID 25822800",
+      "url": "https://europepmc.org/article/MED/25822800",
+      "doi": "10.1038/nmeth.3337",
+      "quoted_numbers": null,
+      "verbatim_quotes": [
+        "CIBERSORT should enable large-scale analysis of RNA mixtures for cellular biomarkers and therapeutic targets (http://cibersort.stanford.edu/)."
+      ],
+      "mapping_to_workflow_speedup": "None possible. Honest negative: the original CIBERSORT paper publishes no timing numbers to anchor against.",
+      "protocol_caveats": "Abstract-level check only; full text behind publisher access, but no timing figures are known from the paper."
+    },
+    {
+      "id": "A3",
+      "question": "2b) CIBERSORTx (Newman 2019 Nat Biotechnol) runtime statements",
+      "finding": "NO runtime/minutes/timing statements in the abstract; only qualitative 'cost-effective, high-throughput' language. (Verified via Europe PMC REST API.)",
+      "source": "Newman et al. 2019, Nature Biotechnology 37(7):773-782, PMID 31061481, PMC6610714",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=%22CIBERSORTx%22%20AND%20AUTH:%22Newman%22&resultType=core&format=json",
+      "doi": "10.1038/s41587-019-0114-2",
+      "quoted_numbers": null,
+      "verbatim_quotes": [
+        "We anticipate that digital cytometry will augment single-cell profiling efforts, enabling cost-effective, high-throughput tissue characterization without the need for antibodies, disaggregation or viable cells."
+      ],
+      "mapping_to_workflow_speedup": "None possible. Honest negative: no 'CIBERSORTx takes X minutes' statement exists in the paper abstract to cite.",
+      "protocol_caveats": "Abstract verified; Methods sections of the paper and the cibersortx.stanford.edu web UI were not exhaustively searched for UI-level timing hints."
+    },
+    {
+      "id": "A4",
+      "question": "2c) IOBR R papers (Frontiers 2021 / Cell Reports Methods 2024 / Med Research 2025) runtime statements",
+      "finding": "No runtime/timing statements found in the IOBR R-package papers (Frontiers in Immunology 2021; IOBR2 Cell Reports Methods 2024; Med Research 2025). None of the three reports any benchmark seconds or speedup.",
+      "source": "Zeng et al. 2021 Front. Immunol.; Zeng et al. 2024 Cell Rep Methods 4(12):100910; Fang et al. 2025 Med Research 1(1):136-140",
+      "url": "https://www.frontiersin.org/journals/immunology/articles/10.3389/fimmu.2021.687975/full",
+      "doi": "10.3389/fimmu.2021.687975 (also 10.1016/j.crmeth.2024.100910, 10.1002/mdr2.70001)",
+      "quoted_numbers": null,
+      "verbatim_quotes": [],
+      "mapping_to_workflow_speedup": "None possible. Honest negative: the R-side papers publish no timing numbers, so no R-baseline anchor exists from the authors themselves.",
+      "protocol_caveats": "Full texts of CRM 2024 and Med Research 2025 were not page-by-page scanned (paywalled); abstracts and long full-text excerpts examined contain no timings."
+    },
+    {
+      "id": "A5",
+      "question": "2d) EXTERNAL measured CIBERSORT runtimes (third-party benchmark)",
+      "finding": "Diaz-Mejia et al. benchmarked CIBERSORT (among 5 methods) on five scRNA-seq datasets on a 2-core laptop and published absolute computing times: CIBERSORT 'continuous' 75-9,330 s and 'binary' 46-1,522 s; slowest method tested; used the original LM22 signature (547 genes).",
+      "source": "Diaz-Mejia et al. 2019, F1000Research 8:296 (version 3)",
+      "url": "https://f1000research.com/articles/8-296",
+      "doi": "10.12688/f1000research.18490.3",
+      "quoted_numbers": {
+        "cibersort_continuous_range_s": [75, 9330],
+        "cibersort_binary_range_s": [46, 1522],
+        "worst_case_hours": 2.6,
+        "cpu": "3.1-GHz Intel Core i5, 2 cores, 16 GB RAM",
+        "lm22_genes": 547
+      },
+      "verbatim_quotes": [
+        "Computing times varied from 0.03s for METANEIGHBOR 'continuous', processing the 'PBMC-6-SeqWell' dataset, to 9,330s (2.6 hours) for CIBERSORT 'continuous', processing the 'PBMC-22-10X' dataset (Figure 6D and Supplementary Table 1).",
+        "Finally, the slowest methods were CIBERSORT 'binary' (46 to 1,522s) and CIBERSORT 'continuous' (75 to 9,330s).",
+        "All computing time measurements were made using a 3.1-GHz Intel Core i5 CPU with 2 cores and 16 GB RAM.",
+        "For example, for the analysis of the PBMC datasets with CIBERSORT 'continuous' we used the original LM22 signature with 547 genes."
+      ],
+      "mapping_to_workflow_speedup": "Strongest external ABSOLUTE-runtime anchor for CIBERSORT's nu-SVR engine: independent authors measured hours-scale CIBERSORT runtimes, confirming the cost is real and known outside our machine. Maps as context for the size of the lever (CIBERSORT dominates), not as a ratio against our 97.13 s baseline.",
+      "protocol_caveats": "Task is cell-cluster labeling on scRNA data (one mixture per cluster), not bulk TME deconvolution of 348 samples; 2-core 2015-era laptop vs our 224-core machine; perm count not stated in the quoted text; CIBERSORT run via its R source under their wrapper."
+    },
+    {
+      "id": "A6",
+      "question": "3) gseapy paper: Rust rewrite speedup for enrichment scoring",
+      "finding": "The gseapy paper (the tool IOBRpy itself uses for ssGSEA) reports an externally published Python->Rust rewrite speedup of the enrichment statistic: 3-fold (small library) to 80-fold (large library) single-threaded, still ~2-fold at 8 threads, memory 50 GB -> 1.4 GB in the large case.",
+      "source": "Fang, Liu, Peltz 2023, Bioinformatics 39(1):btac757 (GSEApy)",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9805564/",
+      "doi": "10.1093/bioinformatics/btac757",
+      "quoted_numbers": {
+        "speedup_small_library_fold": 3,
+        "speedup_large_library_fold": 80,
+        "speedup_8_threads_fold": 2,
+        "memory_gb_large_library": [50, 1.4],
+        "benchmark": "22,922 genes; 278 or 2,860 pathways; 1,000 permutations"
+      },
+      "verbatim_quotes": [
+        "The Rust implementation of GSEApy is 3-fold faster than the Numpy version of GSEApy (v0.10.8) and uses >4-fold less memory.",
+        "For large gene set libraries (e.g. 2860 pathways in this article), it can run 80-fold faster without much more memory (Supplementary Fig. S1B).",
+        "we found that the Rust implementation was 3- to 80-fold faster in run time with one thread (Supplementary Fig. S1A). The run time with eight threads was decreased to a few minutes for both versions, but the Rust version was still 2-fold faster, and the memory cost was reduced from 50 GB to 1.4 GB (for the 2860 pathways).",
+        "While it took over 1 hour for GSEA-R to calculate the statistics for 2860 pathways, GSEA-P and GSEApy took 3.7 and 5.1 minutes, respectively."
+      ],
+      "mapping_to_workflow_speedup": "Closest published PRECEDENT for exactly our move (Python scientific toolkit rewritten with a Rust core, bit-comparable statistic, speedup measured against the same package's prior pure-Python/Numpy version). Their 3-80x range brackets our current ~18x workflow speedup. Record as a literature anchor: 'peer-reviewed Python->Rust enrichment-scoring speedups of 3-80x are published'.",
+      "protocol_caveats": "Baseline is gseapy's own earlier Numpy implementation, not IOBRpy; workload is the GSEA permutation statistic, not per-sample ssGSEA over an 872-gene x 348-sample matrix; their speedup depends strongly on gene-set-library size (3x small vs 80x large), so no single number transfers; hardware unstated in quotes."
+    },
+    {
+      "id": "A7",
+      "question": "3b) gseapy ssGSEA-specific runtime benchmark",
+      "finding": "NO ssGSEA-specific runtime benchmark found in the gseapy paper or repo; all published timing claims concern the GSEA/prerank permutation statistic. The ssGSEA module shares the Rust core (ssgsea_rs), but no ssGSEA timing table exists.",
+      "source": "gseapy paper (btac757) + github.com/zqfang/GSEApy",
+      "url": "https://github.com/zqfang/GSEApy",
+      "doi": null,
+      "quoted_numbers": null,
+      "verbatim_quotes": [],
+      "mapping_to_workflow_speedup": "None directly. Honest negative: for the ssGSEA stage of our workflow specifically, no published external timing exists; nearest neighbor is A6.",
+      "protocol_caveats": "Repo issues were not exhaustively read for user-reported timings; claim covers paper + README + docs as of 2026-09-07."
+    },
+    {
+      "id": "A8",
+      "question": "4a) sklearn NuSVR linear-kernel slowness: near-identical case report",
+      "finding": "A public scikit-learn issue reports NuSVR(kernel='linear') on a 547x22 matrix (essentially the LM22 CIBERSORT problem shape; our fits are 531x22) running >3 hours without returning, and R (e1071/libsvm) being faster on the same problem. Issue closed with no fix; discussion attributes it to convergence/scaling behavior of libsvm's nu-SVR.",
+      "source": "scikit-learn GitHub issue #11079, opened 2018-05-09 by PhungVanDuy (sklearn 0.19.1)",
+      "url": "https://github.com/scikit-learn/scikit-learn/issues/11079",
+      "doi": null,
+      "quoted_numbers": {
+        "matrix_shape": [547, 22],
+        "runtime_reported": ">3 hours, no result",
+        "sklearn_version": "0.19.1"
+      },
+      "verbatim_quotes": [
+        "I performed the NuSVR (linear kernel) function with matrix input has to shape is 547 x 22 and output 574. But it running too slow! I tried it with R, however, R run faster!",
+        "I run it more than 3 hours but still have no results. I think has an error here!"
+      ],
+      "mapping_to_workflow_speedup": "Anchor for the MECHANISM claim: sklearn NuSVR(linear) on exactly the CIBERSORT problem shape is publicly documented as pathologically slow (7 years before our port). Supports 'the 330 NuSVR fits dominating our original 97.13 s is a known, externally reported bottleneck'. NOT a quantitative anchor (no controlled timing).",
+      "protocol_caveats": "Anecdotal single-user report; features possibly unscaled; 2018 sklearn version; no maintainer resolution on record; pathological tail behavior of libsvm nu-SVR convergence depends on data, so '>3 h' cannot be compared with our ~0.2 s/fit typical case."
+    },
+    {
+      "id": "A9",
+      "question": "4b) sklearn official docs: libsvm-based SVC/SVR complexity vs liblinear",
+      "finding": "scikit-learn's official SVM user guide states the libsvm-based implementation scales between O(n_features x n_samples^2) and O(n_features x n_samples^3), and that the liblinear-based LinearSVC/LinearSVR are 'much more efficient' / 'a faster implementation' for the linear case. NuSVR has no liblinear counterpart in sklearn (this is why the bottleneck has no drop-in sklearn fix and motivates the Rust core).",
+      "source": "scikit-learn user guide, section 1.4 (SVM), 'Complexity' and implementation notes (fetched 2026-09-07, sklearn 1.9.0 docs)",
+      "url": "https://scikit-learn.org/stable/modules/svm.html",
+      "doi": null,
+      "quoted_numbers": null,
+      "verbatim_quotes": [
+        "The QP solver used by the libsvm-based implementation scales between O(n_features x n_samples^2) and O(n_features x n_samples^3) depending on how efficiently the libsvm cache is used in practice (dataset dependent).",
+        "For the linear case, the algorithm used in LinearSVC by the liblinear implementation is much more efficient than its libsvm-based SVC counterpart and can scale almost linearly to millions of samples and/or features.",
+        "There are three different implementations of Support Vector Regression: SVR, NuSVR and LinearSVR. LinearSVR provides a faster implementation than SVR but only considers the linear kernel, while NuSVR implements a slightly different formulation than SVR and LinearSVR.",
+        "Internally, we use libsvm [12] and liblinear [11] to handle all computations."
+      ],
+      "mapping_to_workflow_speedup": "Authoritative anchor for the complexity argument behind our CIBERSORT lever. Supports the theory 'libsvm nu-SVR is the quadratic-cost component'; supplies no numbers of its own.",
+      "protocol_caveats": "Documentation statement, not a measurement; complexity bounds describe scaling, not wall-clock on 531x22."
+    },
+    {
+      "id": "A10",
+      "question": "4c) Published benchmark of a libsvm alternative: ThunderSVM (and the SVR row)",
+      "finding": "Peer-reviewed JMLR paper: ThunderSVM (GPU + multi-core CPU reimplementation of LibSVM incl. nu-SVR, producing 'identical SVMs') is 'generally an order of magnitude faster than LibSVM' - over 100x with GPUs, over 10x on CPUs. Their SVR benchmark (e2006-tfidf, 16,087 samples, RBF kernel): LibSVM 9,161 s vs ThunderSVM 691 s (CPU, 13.3x) / 343.5 s (GPU, 26.7x).",
+      "source": "Wen, Shi, Li, He, Chen 2018, JMLR 19:797-801",
+      "url": "https://www.jmlr.org/papers/v19/17-740.html",
+      "doi": null,
+      "quoted_numbers": {
+        "svr_libsvm_s": 9161,
+        "svr_thundersvm_cpu_s": 691,
+        "svr_thundersvm_gpu_s": 343.5,
+        "svr_speedup_cpu_fold": 13.3,
+        "general_cpu_speedup_fold": ">10",
+        "general_gpu_speedup_fold": ">100"
+      },
+      "verbatim_quotes": [
+        "Our experimental results show that ThunderSVM is generally an order of magnitude faster than LibSVM while producing identical SVMs.",
+        "ThunderSVM when using GPUs is over 100 times faster than LibSVM. When running on CPUs, it is over 10 times faster than LibSVM.",
+        "ThunderSVM consistently outperforms LibSVM without OpenMP by one to two orders of magnitude, LibSVM with OpenMP by 10x times."
+      ],
+      "mapping_to_workflow_speedup": "Peer-reviewed quantitative anchor that re-implementing the same libsvm solver natively/parallel yields 10-100x with identical outputs - the same claim class as our bit-exact Rust NuSVR replacing sklearn's libsvm wrapper. Their 'identical SVMs' claim parallels our bit-exactness. Numbers do NOT transfer (RBF kernel, 16k-sample dataset, GPU).",
+      "protocol_caveats": "Gaussian kernel (not linear); 16,087-sample financial dataset (not 531x22); Tesla P100 GPU / 2x Xeon E5-2640 v4 workstation; parallelized algorithm (our comparison is single-fit serial vs serial, plus batching); speedup is over LibSVM C, not over sklearn's Cython wrapper overhead."
+    },
+    {
+      "id": "A11",
+      "question": "5) IOBRpy PyPI: latest version and release date",
+      "finding": "Latest release is 0.2.1 (wheel uploaded 2026-08-17T17:43:39Z), so 0.2.0 is NOT the latest. 0.2.0 wheel was uploaded 2026-07-12T11:56:59Z (July, not August). The PyPI JSON API's releases object contains only 0.2.0 and 0.2.1 - cached PyPI pages for 0.1.8/0.1.9 exist in search engines but those versions are absent from the live API (deleted/removed). No changelog text is published.",
+      "source": "PyPI JSON API for package iobrpy (queried 2026-09-07)",
+      "url": "https://pypi.org/pypi/iobrpy/json",
+      "doi": null,
+      "quoted_numbers": {
+        "latest_version": "0.2.1",
+        "latest_upload": "2026-08-17T17:43:39Z",
+        "v020_upload": "2026-07-12T11:56:59Z",
+        "requires_python": ">=3.11"
+      },
+      "verbatim_quotes": [
+        "upload_time_iso_8601: 2026-08-17T17:43:39Z (iobrpy-0.2.1 manylinux wheel)",
+        "upload_time_iso_8601: 2026-07-12T11:56:59Z (iobrpy-0.2.0 manylinux_2_38 wheel)"
+      ],
+      "mapping_to_workflow_speedup": "No timing content. Pins the moving target: our bit-exact baseline (upstream IOBRpy at commit e3808db / v0.2.0) is one release behind PyPI latest 0.2.1 as of 2026-09-07 - worth noting in any writeup of the port, and a check-item that 0.2.1 did not itself add a Rust/native accelerator (README/PyPI description shows no such claim).",
+      "protocol_caveats": "PyPI upload times are UTC as reported by the JSON API; commit e3808db date was not independently verified against PyPI metadata."
+    },
+    {
+      "id": "A12",
+      "question": "6) Prior Rust/WASM ports of CIBERSORT or libsvm-based deconvolution",
+      "finding": "crates.io has ZERO crates matching 'cibersort' (API: total 0) - no published Rust CIBERSORT crate exists. However, adjacent prior/parallel work exists on GitHub: (a) LCGaoZzz/python-cibersort-rs - 'Python CIBERSORT v1.04 implementation with a bundled Rust accelerator' (PyO3/Rayon nu-SVR, R-compatible Mersenne-Twister, rust/libsvm/numpy engines, bundled benchmarks); (b) ricardofrantz/libsvm-rs (crates.io libsvm-rs, created 2026-02-09, 335 downloads) - pure-Rust LIBSVM reimplementation covering all 5 SVM types incl. nu-SVR, wasm32 compile-checked; (c) sinmojito/quantiseq-rust (crates.io) - pure-Rust quanTIseq deconvolution port, numeric parity vs Bioconductor quantiseqr. No WASM CIBERSORT port found.",
+      "source": "crates.io API search + GitHub",
+      "url": "https://crates.io/api/v1/crates?page=1&per_page=20&q=cibersort ; https://github.com/LCGaoZzz/python-cibersort-rs ; https://github.com/ricardofrantz/libsvm-rs ; https://github.com/sinmojito/quantiseq-rust",
+      "doi": null,
+      "quoted_numbers": {
+        "crates_io_cibersort_matches": 0,
+        "libsvm_rs_downloads_total": 335,
+        "libsvm_rs_created": "2026-02-09"
+      },
+      "verbatim_quotes": [
+        "An installable Python implementation of the CIBERSORT v1.04 deconvolution pipeline with a bundled Rust accelerator. It runs without R and exposes both a Python API and a command-line interface. (python-cibersort-rs README)",
+        "Pure Rust reimplementation of LIBSVM - zero FFI, drop-in model & CLI compatibility, differential parity tests vs upstream C++, optional serde/rayon/wasm (libsvm-rs README)",
+        "All 5 SVM types: C-SVC, nu-SVC, one-class SVM, epsilon-SVR, nu-SVR (-s 0..4) (libsvm-rs README)",
+        "Pure-Rust port of quanTIseq (Finotello et al. 2019) immune-cell deconvolution ... validated for numeric parity against the Bioconductor quantiseqr package. (quantiseq-rust)"
+      ],
+      "mapping_to_workflow_speedup": "Novelty check, not a numeric anchor: no published Rust CIBERSORT crate on crates.io (our cibersort_core is not anticipated on crates.io), but a GitHub Python+Rust CIBERSORT accelerator exists, a pure-Rust LIBSVM (incl. nu-SVR) exists, and a Rust quanTIseq with parity validation exists. Cite these as related work; do NOT claim first-ever Rust CIBERSORT without qualifying against python-cibersort-rs.",
+      "protocol_caveats": "crates.io search is exact-string; GitHub repos were not cloned/benchmarked, their README claims (including parity and benchmark claims) are unverified; python-cibersort-rs authorship/date relative to this campaign not established."
+    }
+  ],
+  "negative_findings_summary": [
+    "IOBRpy preprint: NO Python-vs-R wall-clock speedup number exists - only in-Python CIBERSORT thread scaling (13.7x, 1->16 threads) plus qualitative per-method direction, with an explicit authors' caveat that the timing scopes differ.",
+    "Newman 2015 (CIBERSORT) and Newman 2019 (CIBERSORTx): no runtime statements in abstracts - no 'takes X minutes' claim to cite.",
+    "IOBR R papers (2021/2024/2025): no runtime or benchmark numbers found.",
+    "gseapy: no ssGSEA-specific runtime benchmark published (claims cover the GSEA permutation statistic).",
+    "No crate named cibersort exists on crates.io; no WASM CIBERSORT port found.",
+    "No published controlled benchmark comparing sklearn NuSVR(linear) head-to-head against liblinear/thunderSVM on CIBERSORT-shaped (531-547 x 22) problems exists - only the anecdotal issue #11079, official complexity statements, and ThunderSVM's RBF-kernel benchmarks."
+  ],
+  "recommended_primary_anchor": {
+    "for_python_to_rust_speedup_claim": "A6 (gseapy, Bioinformatics 2023, 3-80x Rust-vs-Numpy for the same package's enrichment statistic) - peer-reviewed, same claim class, brackets our ~18x",
+    "for_cibersort_bottleneck_claim": "A5 (F1000Research 2019, CIBERSORT 75-9,330 s on 2-core i5) + A8 (sklearn #11079, NuSVR linear on 547x22 >3 h) + A9 (sklearn docs complexity) + A10 (ThunderSVM 10-100x, identical SVMs)",
+    "for_runtime_magnitude_in_iobrpy_itself": "A1 (IOBRpy preprint, CIBERSORT 2,864.8 s single-thread on 936 samples, 13.7x thread scaling)",
+    "record_protocol_note": "Every anchor differs from our protocol (in-process perf_counter, median of 3 after 1 warmup, 224 cores, IMvigor210 872x348); none can be subtracted from or divided into our 97.13 s -> 5.4 s measurement; they are magnitude/context anchors only."
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "annotation_check": {
+    "passed_equals_packaged": false,
+    "per_column_n_differing_cells": {
+      "id": 0,
+      "eff_length": 0,
+      "gc": 0,
+      "entrez": 0,
+      "symbol": 0,
+      "chr": 0,
+      "start": 0,
+      "end": 0,
+      "strand": 0,
+      "biotype": 0,
+      "description": 23920
+    },
+    "note": "anno_gc_vm32=None triggers packaged-table reload in BOTH implementations (passed anno_grch38 ignored), so both use the packaged table; id/eff_length/symbol (the columns consumed by hsa+Ensembl) are identical."
+  },
+  "precision": {
+    "fast_vs_ref": {
+      "index_equal": true,
+      "columns_equal": true,
+      "shape": [
+        48058,
+        10
+      ],
+      "max_abs_diff": 0.0,
+      "max_rel_err": 0.0,
+      "n_cells_differing": 0
+    },
+    "fast_vs_original_same_process": {
+      "index_equal": true,
+      "columns_equal": true,
+      "shape": [
+        48058,
+        10
+      ],
+      "max_abs_diff": 0.0,
+      "max_rel_err": 0.0,
+      "n_cells_differing": 0
+    },
+    "output_shape": [
+      48058,
+      10
+    ]
+  },
+  "timing": {
+    "protocol": "median of 3 timed reps after 1 warmup, in-process perf_counter, original and fast interleaved",
+    "original": {
+      "warmup_s": 4.848355884081684,
+      "times_s": [
+        4.680233534891158,
+        4.941637912066653,
+        4.545369111932814
+      ],
+      "median_s": 4.680233534891158
+    },
+    "fast": {
+      "cold_first_call_s": 0.21132469701115042,
+      "warmup_s": 0.12421873398125172,
+      "times_s": [
+        0.12087124900426716,
+        0.12121786398347467,
+        0.11944805504754186
+      ],
+      "median_s": 0.12087124900426716
+    },
+    "speedup_median": 38.72081717899623,
+    "note": "fast cold first call includes one-time build of the packaged-annotation cache; the original re-reads/rebuilds the packaged tables from pickle on every call."
+  },
+  "env": {
+    "python": "3.11.15",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "machine_cores": 224,
+    "input": "/data/users/lianchong/workspace1/testdata/eset_stad.parquet (60483x10, Ensembl)"
+  }
+}

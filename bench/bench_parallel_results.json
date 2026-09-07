@@ -1,0 +1,268 @@
+{
+  "description": "IOBRpy cibersort n_jobs scaling + identity vs n_jobs=1 reference",
+  "reference": {
+    "parquet": "/data/users/lianchong/workspace1/iobrx/refs/cibersort.parquet",
+    "shape": [
+      10,
+      25
+    ],
+    "median_s_per_setup_facts": 88.82
+  },
+  "task_granularity_from_source": {
+    "perm_parallel": "Parallel(n_jobs, prefer='threads') over exactly perm=100 tasks; 1 task = _one_perm_mixr = index draw + 3 NuSVR fits (nu .25/.5/.75) on 531x22 (LM22 common genes x 22 cell types); nu loop inside task",
+    "sample_parallel": "second Parallel over exactly N=10 sample solves (_solve_one)",
+    "backend": "joblib Parallel(prefer='threads') -> ThreadingBackend (joblib 1.5.3)"
+  },
+  "dispatch_benchmark": {
+    "note": "330 no-op (return 0) tasks, Parallel(n_jobs=J, prefer='threads'); 5 reps per J; characterizes dispatch overhead independent of SVR",
+    "loadavg": [
+      "11.26",
+      "9.59",
+      "9.64"
+    ],
+    "results": {
+      "16": {
+        "times_s": [
+          0.0284,
+          0.029,
+          0.0284,
+          0.0281,
+          0.0281
+        ],
+        "median_s": 0.0284
+      },
+      "64": {
+        "times_s": [
+          0.0291,
+          0.0297,
+          0.0282,
+          0.0297,
+          0.0302
+        ],
+        "median_s": 0.0297
+      },
+      "224": {
+        "times_s": [
+          0.0482,
+          0.1793,
+          0.0637,
+          0.0606,
+          0.059
+        ],
+        "median_s": 0.0606
+      }
+    }
+  },
+  "env": {
+    "python": "3.11.15",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "sklearn": "1.7.2",
+    "joblib": "1.5.3",
+    "cpu_count": 224,
+    "joblib_cpu_count": 224,
+    "thread_env_vars": {},
+    "loadavg_start": [
+      "10.06",
+      "7.48",
+      "9.02"
+    ],
+    "backend_for_prefer_threads": "ThreadingBackend"
+  },
+  "timing": {
+    "control": {
+      "median_s": null,
+      "single_instrumented_run_s": 95.172,
+      "note": "n_jobs=1 fresh control, single run (reps=0)"
+    },
+    "nj16": {
+      "median_s": 11.562,
+      "times_s": [
+        11.61,
+        11.562,
+        11.383
+      ]
+    },
+    "nj64": {
+      "median_s": 8.442,
+      "times_s": [
+        9.118,
+        7.686,
+        8.442
+      ]
+    },
+    "nj224": {
+      "median_s": 6.864,
+      "times_s": [
+        6.812,
+        6.864,
+        6.888
+      ]
+    }
+  },
+  "identity": {
+    "control": {
+      "vs_reference": {
+        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_control.parquet",
+        "same_index_exact": true,
+        "same_columns_exact": true,
+        "nan_mask_identical": true,
+        "max_abs_diff": 0.05000000000000002,
+        "max_rel_diff_isclose_style": 1.4999999999250002,
+        "columns_with_nonzero_abs_diff": {
+          "P-value": 0.05000000000000002
+        },
+        "n_columns_differing": 1,
+        "bit_identical_all_cells": false,
+        "bit_identical_excluding_P.value": true
+      },
+      "times_s": null,
+      "median_s": null,
+      "single_run_s": 95.172,
+      "phase_breakdown": {
+        "total_s": 95.172,
+        "perm_stage_s": 86.268,
+        "perm_stage_fraction": 0.9064,
+        "one_perm_tasks_dispatched": 100,
+        "core_alg_calls": 110
+      }
+    },
+    "nj16": {
+      "vs_reference": {
+        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_nj16.parquet",
+        "same_index_exact": true,
+        "same_columns_exact": true,
+        "nan_mask_identical": true,
+        "max_abs_diff": 0.04,
+        "max_rel_diff_isclose_style": 0.999999999975,
+        "columns_with_nonzero_abs_diff": {
+          "P-value": 0.04
+        },
+        "n_columns_differing": 1,
+        "bit_identical_all_cells": false,
+        "bit_identical_excluding_P.value": true
+      },
+      "times_s": [
+        11.61,
+        11.562,
+        11.383
+      ],
+      "median_s": 11.562,
+      "warmup_phase_breakdown": {
+        "total_s": 11.906,
+        "perm_stage_s": 7.657,
+        "perm_stage_fraction": 0.6431,
+        "do_perm_calls": 1,
+        "one_perm_tasks_dispatched": 100,
+        "core_alg_calls (expect 100+10=110)": 110
+      },
+      "vs_fresh_njobs1_control": {
+        "same_axes": true,
+        "max_abs_diff": 0.08,
+        "columns_differing": {
+          "P-value": 0.08
+        }
+      }
+    },
+    "nj64": {
+      "vs_reference": {
+        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_nj64.parquet",
+        "same_index_exact": true,
+        "same_columns_exact": true,
+        "nan_mask_identical": true,
+        "max_abs_diff": 0.05,
+        "max_rel_diff_isclose_style": 10000000000.0,
+        "columns_with_nonzero_abs_diff": {
+          "P-value": 0.05
+        },
+        "n_columns_differing": 1,
+        "bit_identical_all_cells": false,
+        "bit_identical_excluding_P.value": true
+      },
+      "times_s": [
+        9.118,
+        7.686,
+        8.442
+      ],
+      "median_s": 8.442,
+      "warmup_phase_breakdown": {
+        "total_s": 9.459,
+        "perm_stage_s": 6.204,
+        "perm_stage_fraction": 0.6559,
+        "do_perm_calls": 1,
+        "one_perm_tasks_dispatched": 100,
+        "core_alg_calls (expect 100+10=110)": 110
+      },
+      "vs_fresh_njobs1_control": {
+        "same_axes": true,
+        "max_abs_diff": 0.020000000000000018,
+        "columns_differing": {
+          "P-value": 0.020000000000000018
+        }
+      }
+    },
+    "nj224": {
+      "vs_reference": {
+        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_nj224.parquet",
+        "same_index_exact": true,
+        "same_columns_exact": true,
+        "nan_mask_identical": true,
+        "max_abs_diff": 0.020000000000000004,
+        "max_rel_diff_isclose_style": 0.9999999999,
+        "columns_with_nonzero_abs_diff": {
+          "P-value": 0.020000000000000004
+        },
+        "n_columns_differing": 1,
+        "bit_identical_all_cells": false,
+        "bit_identical_excluding_P.value": true
+      },
+      "times_s": [
+        6.812,
+        6.864,
+        6.888
+      ],
+      "median_s": 6.864,
+      "warmup_phase_breakdown": {
+        "total_s": 7.821,
+        "perm_stage_s": 4.701,
+        "perm_stage_fraction": 0.6011,
+        "do_perm_calls": 1,
+        "one_perm_tasks_dispatched": 100,
+        "core_alg_calls (expect 100+10=110)": 110
+      },
+      "vs_fresh_njobs1_control": {
+        "same_axes": true,
+        "max_abs_diff": 0.06,
+        "columns_differing": {
+          "P-value": 0.06
+        }
+      }
+    }
+  },
+  "derived_analysis": {
+    "speedup_vs_fresh_njobs1_control_95.172s": {
+      "nj16": 8.23,
+      "nj64": 11.27,
+      "nj224": 13.87
+    },
+    "perm_stage_seconds": {
+      "nj1": 86.268,
+      "nj16_warmup": 7.657,
+      "nj64_warmup": 6.204,
+      "nj224_warmup": 4.701
+    },
+    "perm_stage_speedup_vs_nj1": {
+      "nj16": 11.3,
+      "nj64": 13.9,
+      "nj224": 18.4
+    },
+    "parallel_efficiency_of_perm_stage": {
+      "nj16": 0.704,
+      "nj64": 0.217,
+      "nj224": 0.082
+    },
+    "ideal_one_wave_perm_stage_s (100 tasks x ~0.863s/task / 224 workers)": 0.863,
+    "identity_verdict": "index/columns/NaN-mask exactly equal and all 24 non-P-value columns bit-identical for every n_jobs AND for the fresh n_jobs=1 control; only the P-value column differs (max abs 0.02-0.05), because do_perm seeds come from an unseeded SeedSequence() -> null distribution differs between any two runs regardless of n_jobs. Not a threading effect.",
+    "loadavg_during_runs": "7-11 (shared machine; sibling processes active) - timings carry that noise"
+  }
+}

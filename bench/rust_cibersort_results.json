@@ -1,0 +1,71 @@
+{
+  "machine_cores": 224,
+  "numpy": "2.2.6",
+  "protocol": "in-process, DataFrame-in (no CSV), 1 warmup + 3 reps, median",
+  "input": "eset_stad_symbol.parquet (50181x10) + LM22 (547x22), common=531, perm=100, QN=True",
+  "fast_nthreads_1": {
+    "warmup_s": 87.582,
+    "times_s": [
+      87.42,
+      87.461,
+      87.378
+    ],
+    "median_s": 87.42
+  },
+  "fast_nthreads_64": {
+    "warmup_s": 3.426,
+    "times_s": [
+      3.076,
+      2.986,
+      3.284
+    ],
+    "median_s": 3.076
+  },
+  "fast_nthreads_224": {
+    "warmup_s": 2.706,
+    "times_s": [
+      2.249,
+      2.262,
+      2.496
+    ],
+    "median_s": 2.262
+  },
+  "phase_breakdown_nthreads_1": {
+    "prep_pandas_s": 0.0356,
+    "quantile_norm_s": 0.0174,
+    "solve_10_samples_s": 7.6482,
+    "perm_100_s": 79.4989,
+    "cibersort_core_perm0_s": 7.6655,
+    "cibersort_core_full_s": 87.1644,
+    "n_iter_sum": 84984516
+  },
+  "phase_breakdown_nthreads_64": {
+    "prep_pandas_s": 0.0618,
+    "quantile_norm_s": 0.0173,
+    "solve_10_samples_s": 1.1229,
+    "perm_100_s": 1.9224,
+    "cibersort_core_perm0_s": 1.1401,
+    "cibersort_core_full_s": 3.0626,
+    "n_iter_sum": 84984516
+  },
+  "phase_breakdown_nthreads_224": {
+    "prep_pandas_s": 0.0382,
+    "quantile_norm_s": 0.0172,
+    "solve_10_samples_s": 1.4833,
+    "perm_100_s": 0.8112,
+    "cibersort_core_perm0_s": 1.5005,
+    "cibersort_core_full_s": 2.3117,
+    "n_iter_sum": 84984516
+  },
+  "original_njobs1_baseline": {
+    "warmup_s": 81.23847539699636,
+    "times_s": [
+      87.17,
+      84.4,
+      95.41
+    ],
+    "median_s": 87.17
+  },
+  "speedup_vs_original_1thread": 1.0,
+  "speedup_vs_original_224thread": 38.5
+}

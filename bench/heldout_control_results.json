@@ -1,0 +1,991 @@
+{
+  "meta": {
+    "purpose": "held-out control: FINAL fast stack vs ORIGINAL IOBRpy on official data never used in any optimization round",
+    "heldout_data": "testdata/eset_blca.parquet (60483x5, Ensembl, TCGA BLCA)",
+    "datetime": "2026-09-07T23:11:23",
+    "machine_cores": 224,
+    "driver_loadavg": [
+      8.39501953125,
+      12.6767578125,
+      12.18994140625
+    ],
+    "protocol": "fresh subprocess per (side, stage); in-process median of 3 timed reps after 1 warmup (perf_counter); original cibersort n_jobs=1 via temp-CSV exactly as bench_baseline.py; fast cibersort n_threads=224 over DataFrame; symbol matrix built once by ORIGINAL anno_eset 'mean' and shared by both sides",
+    "driver_loadavg_end": [
+      24.0185546875,
+      15.25927734375,
+      13.0908203125
+    ]
+  },
+  "versions": {
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "scikit-learn": "1.7.2",
+    "gseapy": "1.3.0",
+    "iobrx_rust": "n/a"
+  },
+  "data_prep": {
+    "raw_shape": [
+      60483,
+      5
+    ],
+    "symbol_shape": [
+      41010,
+      5
+    ],
+    "symbol_builder": "ORIGINAL anno_eset(eset_blca, anno_grch38, 'mean')",
+    "gene_overlaps": {
+      "LM22": {
+        "size": 547,
+        "overlap": 522
+      },
+      "EPIC_TRef": {
+        "size": 23686,
+        "overlap": 19500
+      },
+      "quanTIseq_TIL10_after_rmgenes": {
+        "size": 153,
+        "overlap": 148
+      },
+      "MCPcounter_HUGO": {
+        "size": 232,
+        "overlap": 108
+      },
+      "ESTIMATE_common_genes": {
+        "size": 10412,
+        "overlap": 10036
+      }
+    }
+  },
+  "stages": {
+    "sig_pca": {
+      "orig": {
+        "side": "orig",
+        "stage": "sig_pca",
+        "loadavg_start": [
+          13.32861328125,
+          13.62841796875,
+          12.50048828125
+        ],
+        "warmup_s": 1.28366,
+        "times_s": [
+          1.263773,
+          1.265379,
+          1.313475
+        ],
+        "median_s": 1.265379,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_pca_orig.pkl",
+        "loadavg_end": [
+          12.82177734375,
+          13.51806640625,
+          12.470703125
+        ],
+        "subprocess_wall_s": 6.51
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "sig_pca",
+        "loadavg_start": [
+          12.82177734375,
+          13.51806640625,
+          12.470703125
+        ],
+        "warmup_s": 0.968718,
+        "times_s": [
+          0.951444,
+          0.955648,
+          1.014089
+        ],
+        "median_s": 0.955648,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_pca_fast.pkl",
+        "loadavg_end": [
+          12.1953125,
+          13.37646484375,
+          12.43017578125
+        ],
+        "subprocess_wall_s": 5.201
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              5,
+              314
+            ],
+            [
+              5,
+              314
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 1570,
+          "cells_bit_identical": 1570,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 1.32
+    },
+    "sig_zscore": {
+      "orig": {
+        "side": "orig",
+        "stage": "sig_zscore",
+        "loadavg_start": [
+          12.1953125,
+          13.37646484375,
+          12.43017578125
+        ],
+        "warmup_s": 0.970989,
+        "times_s": [
+          0.945463,
+          0.946794,
+          1.007793
+        ],
+        "median_s": 0.946794,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_zscore_orig.pkl",
+        "loadavg_end": [
+          11.61865234375,
+          13.2373046875,
+          12.39013671875
+        ],
+        "subprocess_wall_s": 5.203
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "sig_zscore",
+        "loadavg_start": [
+          11.61865234375,
+          13.2373046875,
+          12.39013671875
+        ],
+        "warmup_s": 0.933499,
+        "times_s": [
+          0.952823,
+          0.911837,
+          0.959526
+        ],
+        "median_s": 0.952823,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_zscore_fast.pkl",
+        "loadavg_end": [
+          11.32861328125,
+          13.14990234375,
+          12.3662109375
+        ],
+        "subprocess_wall_s": 5.032
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              5,
+              314
+            ],
+            [
+              5,
+              314
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 1570,
+          "cells_bit_identical": 1570,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 0.99
+    },
+    "sig_ssgsea": {
+      "orig": {
+        "side": "orig",
+        "stage": "sig_ssgsea",
+        "loadavg_start": [
+          11.32861328125,
+          13.14990234375,
+          12.3662109375
+        ],
+        "warmup_s": 0.45365,
+        "times_s": [
+          0.358537,
+          0.418942,
+          0.429195
+        ],
+        "median_s": 0.418942,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_ssgsea_orig.pkl",
+        "loadavg_end": [
+          10.74169921875,
+          12.99755859375,
+          12.32080078125
+        ],
+        "subprocess_wall_s": 2.926
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "sig_ssgsea",
+        "loadavg_start": [
+          10.74169921875,
+          12.99755859375,
+          12.32080078125
+        ],
+        "warmup_s": 0.184338,
+        "times_s": [
+          0.152119,
+          0.148746,
+          0.211536
+        ],
+        "median_s": 0.152119,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_ssgsea_fast.pkl",
+        "loadavg_end": [
+          10.74169921875,
+          12.99755859375,
+          12.32080078125
+        ],
+        "subprocess_wall_s": 1.951
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              5,
+              283
+            ],
+            [
+              5,
+              283
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 1415,
+          "cells_bit_identical": 1415,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 2.75
+    },
+    "sig_integration": {
+      "orig": {
+        "side": "orig",
+        "stage": "sig_integration",
+        "loadavg_start": [
+          10.74169921875,
+          12.99755859375,
+          12.32080078125
+        ],
+        "warmup_s": 2.5314,
+        "times_s": [
+          2.439367,
+          2.518796,
+          2.523451
+        ],
+        "median_s": 2.518796,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_integration_orig.pkl",
+        "loadavg_end": [
+          10.38720703125,
+          12.8486328125,
+          12.279296875
+        ],
+        "subprocess_wall_s": 11.282
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "sig_integration",
+        "loadavg_start": [
+          10.38720703125,
+          12.8486328125,
+          12.279296875
+        ],
+        "warmup_s": 1.819615,
+        "times_s": [
+          1.805398,
+          1.878304,
+          1.798136
+        ],
+        "median_s": 1.805398,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/sig_integration_fast.pkl",
+        "loadavg_end": [
+          9.7060546875,
+          12.62255859375,
+          12.21142578125
+        ],
+        "subprocess_wall_s": 8.628
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              5,
+              940
+            ],
+            [
+              5,
+              940
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 4700,
+          "cells_bit_identical": 4700,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 1.4
+    },
+    "anno_eset": {
+      "orig": {
+        "side": "orig",
+        "stage": "anno_eset",
+        "loadavg_start": [
+          9.7060546875,
+          12.62255859375,
+          12.21142578125
+        ],
+        "warmup_s": 0.094251,
+        "times_s": [
+          0.078074,
+          0.079509,
+          0.08293
+        ],
+        "median_s": 0.079509,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/anno_eset_orig.pkl",
+        "loadavg_end": [
+          9.7060546875,
+          12.62255859375,
+          12.21142578125
+        ],
+        "subprocess_wall_s": 0.84
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "anno_eset",
+        "loadavg_start": [
+          9.7060546875,
+          12.62255859375,
+          12.21142578125
+        ],
+        "warmup_s": 0.045934,
+        "times_s": [
+          0.022583,
+          0.024496,
+          0.022195
+        ],
+        "median_s": 0.022583,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/anno_eset_fast.pkl",
+        "loadavg_end": [
+          9.7060546875,
+          12.62255859375,
+          12.21142578125
+        ],
+        "subprocess_wall_s": 0.647
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              41010,
+              5
+            ],
+            [
+              41010,
+              5
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 205050,
+          "cells_bit_identical": 205050,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 3.52
+    },
+    "cibersort": {
+      "orig": {
+        "side": "orig",
+        "stage": "cibersort",
+        "loadavg_start": [
+          9.7060546875,
+          12.62255859375,
+          12.21142578125
+        ],
+        "warmup_s": 41.589782,
+        "times_s": [
+          43.822323,
+          45.752053,
+          48.474862
+        ],
+        "median_s": 45.752053,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/cibersort_orig.pkl",
+        "loadavg_end": [
+          8.806640625,
+          10.970703125,
+          11.6357421875
+        ],
+        "subprocess_wall_s": 180.652
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "cibersort",
+        "loadavg_start": [
+          8.806640625,
+          10.970703125,
+          11.6357421875
+        ],
+        "warmup_s": 1.040392,
+        "times_s": [
+          0.999702,
+          0.843721,
+          0.854246
+        ],
+        "median_s": 0.854246,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/cibersort_fast.pkl",
+        "loadavg_end": [
+          31.404296875,
+          15.61962890625,
+          13.13671875
+        ],
+        "subprocess_wall_s": 4.293
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              5,
+              25
+            ],
+            [
+              5,
+              25
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 120,
+          "cells_bit_identical": 120,
+          "max_abs_diff": 0.0,
+          "excluded_columns_report": {
+            "P-value": {
+              "max_abs_diff": 0.08999999999999997,
+              "cells_bit_identical": 0,
+              "numeric_cells": 5,
+              "min_value": 0.03,
+              "max_value": 0.89
+            }
+          }
+        },
+        "Pvalue_note": "original permutations are unseeded (SeedSequence OS entropy), so exact p-values are not reproducible by design; formula identical, granularity 1/perm"
+      },
+      "speedup": 53.56
+    },
+    "epic": {
+      "orig": {
+        "side": "orig",
+        "stage": "epic",
+        "loadavg_start": [
+          31.404296875,
+          15.61962890625,
+          13.13671875
+        ],
+        "warmup_s": 0.023086,
+        "times_s": [
+          0.013888,
+          0.013301,
+          0.013151
+        ],
+        "median_s": 0.013301,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/epic_orig.pkl",
+        "loadavg_end": [
+          31.404296875,
+          15.61962890625,
+          13.13671875
+        ],
+        "subprocess_wall_s": 0.938
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "epic",
+        "loadavg_start": [
+          31.404296875,
+          15.61962890625,
+          13.13671875
+        ],
+        "warmup_s": 0.017139,
+        "times_s": [
+          0.007697,
+          0.007308,
+          0.007329
+        ],
+        "median_s": 0.007329,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/epic_fast.pkl",
+        "loadavg_end": [
+          29.36962890625,
+          15.45947265625,
+          13.09814453125
+        ],
+        "subprocess_wall_s": 0.903
+      },
+      "compare": {
+        "kind": "dict",
+        "keys_equal": true,
+        "keys": [
+          "cellFractions",
+          "fit_gof",
+          "mRNAProportions"
+        ],
+        "per_key": {
+          "cellFractions": {
+            "shape": [
+              [
+                5,
+                8
+              ],
+              [
+                5,
+                8
+              ]
+            ],
+            "shape_equal": true,
+            "index_equal": true,
+            "columns_equal": true,
+            "dtypes_equal": true,
+            "numeric_cells": 40,
+            "cells_bit_identical": 40,
+            "max_abs_diff": 0.0
+          },
+          "fit_gof": {
+            "shape": [
+              [
+                5,
+                12
+              ],
+              [
+                5,
+                12
+              ]
+            ],
+            "shape_equal": true,
+            "index_equal": true,
+            "columns_equal": true,
+            "dtypes_equal": true,
+            "numeric_cells": 60,
+            "cells_bit_identical": 60,
+            "max_abs_diff": 0.0
+          },
+          "mRNAProportions": {
+            "shape": [
+              [
+                5,
+                8
+              ],
+              [
+                5,
+                8
+              ]
+            ],
+            "shape_equal": true,
+            "index_equal": true,
+            "columns_equal": true,
+            "dtypes_equal": true,
+            "numeric_cells": 40,
+            "cells_bit_identical": 40,
+            "max_abs_diff": 0.0
+          }
+        },
+        "primary": {
+          "shape": [
+            [
+              5,
+              8
+            ],
+            [
+              5,
+              8
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 40,
+          "cells_bit_identical": 40,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 1.81
+    },
+    "quantiseq": {
+      "orig": {
+        "side": "orig",
+        "stage": "quantiseq",
+        "loadavg_start": [
+          29.36962890625,
+          15.45947265625,
+          13.09814453125
+        ],
+        "warmup_s": 0.916486,
+        "times_s": [
+          0.90164,
+          0.875377,
+          0.877386
+        ],
+        "median_s": 0.877386,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/quantiseq_orig.pkl",
+        "loadavg_end": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "subprocess_wall_s": 4.658
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "quantiseq",
+        "loadavg_start": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "warmup_s": 0.12253,
+        "times_s": [
+          0.054598,
+          0.053275,
+          0.051468
+        ],
+        "median_s": 0.053275,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/quantiseq_fast.pkl",
+        "loadavg_end": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "subprocess_wall_s": 1.353
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              5,
+              12
+            ],
+            [
+              5,
+              12
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 60,
+          "cells_bit_identical": 60,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 16.47
+    },
+    "mcpcounter": {
+      "orig": {
+        "side": "orig",
+        "stage": "mcpcounter",
+        "loadavg_start": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "warmup_s": 0.014628,
+        "times_s": [
+          0.007114,
+          0.006894,
+          0.006811
+        ],
+        "median_s": 0.006894,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/mcpcounter_orig.pkl",
+        "loadavg_end": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "subprocess_wall_s": 0.558
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "mcpcounter",
+        "loadavg_start": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "warmup_s": 0.005947,
+        "times_s": [
+          0.001516,
+          0.001387,
+          0.001377
+        ],
+        "median_s": 0.001387,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/mcpcounter_fast.pkl",
+        "loadavg_end": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "subprocess_wall_s": 0.471
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              10,
+              5
+            ],
+            [
+              10,
+              5
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 50,
+          "cells_bit_identical": 50,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 4.97
+    },
+    "estimate": {
+      "orig": {
+        "side": "orig",
+        "stage": "estimate",
+        "loadavg_start": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "warmup_s": 0.04593,
+        "times_s": [
+          0.038342,
+          0.037558,
+          0.037464
+        ],
+        "median_s": 0.037558,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/estimate_orig.pkl",
+        "loadavg_end": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "subprocess_wall_s": 0.63
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "estimate",
+        "loadavg_start": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "warmup_s": 0.030951,
+        "times_s": [
+          0.011283,
+          0.010963,
+          0.010686
+        ],
+        "median_s": 0.010963,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/estimate_fast.pkl",
+        "loadavg_end": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "subprocess_wall_s": 0.529
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              3,
+              5
+            ],
+            [
+              3,
+              5
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 15,
+          "cells_bit_identical": 15,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 3.43
+    },
+    "count2tpm": {
+      "orig": {
+        "side": "orig",
+        "stage": "count2tpm",
+        "loadavg_start": [
+          27.578125,
+          15.31884765625,
+          13.06494140625
+        ],
+        "warmup_s": 4.360771,
+        "times_s": [
+          4.044916,
+          4.243577,
+          4.072598
+        ],
+        "median_s": 4.072598,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/count2tpm_orig.pkl",
+        "loadavg_end": [
+          24.0185546875,
+          15.25927734375,
+          13.0908203125
+        ],
+        "subprocess_wall_s": 17.408
+      },
+      "fast": {
+        "side": "fast",
+        "stage": "count2tpm",
+        "loadavg_start": [
+          24.0185546875,
+          15.25927734375,
+          13.0908203125
+        ],
+        "warmup_s": 0.139171,
+        "times_s": [
+          0.08502,
+          0.08338,
+          0.083354
+        ],
+        "median_s": 0.08338,
+        "saved": "/data/users/lianchong/workspace1/outputs/_heldout/count2tpm_fast.pkl",
+        "loadavg_end": [
+          24.0185546875,
+          15.25927734375,
+          13.0908203125
+        ],
+        "subprocess_wall_s": 0.887
+      },
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              39709,
+              5
+            ],
+            [
+              39709,
+              5
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 198545,
+          "cells_bit_identical": 198545,
+          "max_abs_diff": 0.0
+        }
+      },
+      "speedup": 48.84
+    }
+  },
+  "totals": {
+    "orig_sum_of_medians_s": 55.989,
+    "fast_sum_of_medians_s": 4.899,
+    "total_speedup": 11.43
+  },
+  "imvigor_cibersort": {
+    "input_shape": [
+      872,
+      348
+    ],
+    "decision": {
+      "blca_orig_s_per_sample": 9.15,
+      "projected_orig_s_for_348": 3184.3,
+      "threshold_s": 2400,
+      "subsampled": true,
+      "n_samples_used": 100,
+      "note": "348-sample original projected > ~40 min -> ran first 100 sample columns instead (per benchmark spec)"
+    },
+    "fast_full_348_once_s": 0.074441,
+    "fast_full_348_times_s": [
+      0.074441
+    ],
+    "subset": {
+      "n_samples": 100,
+      "fast_once_s": 0.050028,
+      "orig_once_s": 0.355972,
+      "speedup": 7.1,
+      "compare": {
+        "kind": "DataFrame",
+        "verify": {
+          "shape": [
+            [
+              100,
+              25
+            ],
+            [
+              100,
+              25
+            ]
+          ],
+          "shape_equal": true,
+          "index_equal": true,
+          "columns_equal": true,
+          "dtypes_equal": true,
+          "numeric_cells": 2400,
+          "cells_bit_identical": 2400,
+          "max_abs_diff": 0.0,
+          "excluded_columns_report": {
+            "P-value": {
+              "max_abs_diff": 0.09000000000000008,
+              "cells_bit_identical": 7,
+              "numeric_cells": 100,
+              "min_value": 0.0,
+              "max_value": 1.0
+            }
+          }
+        },
+        "Pvalue_note": "original unseeded; excluded from headline diff"
+      }
+    },
+    "loadavg": {
+      "fast_full": [
+        24.0185546875,
+        15.25927734375,
+        13.0908203125
+      ],
+      "orig_sub": [
+        24.0185546875,
+        15.25927734375,
+        13.0908203125
+      ]
+    }
+  }
+}

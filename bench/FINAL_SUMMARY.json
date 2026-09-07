@@ -1,0 +1,982 @@
+{
+  "title": "iobrx fast stack \u2014 FINAL FREEZE VALIDATION (measurement only, no code changes)",
+  "datetime": "2026-09-08T00:05:57",
+  "official_gates": {
+    "protocol": "fresh subprocess; 11 official stages vs frozen refs in iobrx/refs/ (bench_full_e2e.py --worker --verify, cibersort n_threads=224)",
+    "loadavg": {
+      "before": [
+        5.86767578125,
+        8.59423828125,
+        10.0048828125
+      ],
+      "after": [
+        5.74072265625,
+        8.4755859375,
+        9.95068359375
+      ]
+    },
+    "stages": {
+      "sig_pca": {
+        "ref": "sig_pca.parquet",
+        "shape": [
+          348,
+          60
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 20532,
+        "numeric_cells": 20532,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "sig_zscore": {
+        "ref": "sig_zscore.parquet",
+        "shape": [
+          348,
+          60
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 20532,
+        "numeric_cells": 20532,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "sig_ssgsea": {
+        "ref": "sig_ssgsea.parquet",
+        "shape": [
+          348,
+          32
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 10788,
+        "numeric_cells": 10788,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "sig_integration": {
+        "ref": "sig_integration.parquet",
+        "shape": [
+          348,
+          178
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 61596,
+        "numeric_cells": 61596,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "anno_eset": {
+        "ref": "anno_eset.parquet",
+        "shape": [
+          50181,
+          10
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 501810,
+        "numeric_cells": 501810,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "cibersort": {
+        "ref": "cibersort.parquet",
+        "shape": [
+          10,
+          25
+        ],
+        "max_abs_diff": 0.030000000000000006,
+        "cells_bit_identical": 243,
+        "numeric_cells": 250,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "epic": {
+        "ref": "epic.pkl",
+        "shape": [
+          10,
+          8
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 270,
+        "numeric_cells": 270,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "quantiseq": {
+        "ref": "quantiseq.parquet",
+        "shape": [
+          10,
+          12
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 110,
+        "numeric_cells": 110,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "mcpcounter": {
+        "ref": "mcpcounter.parquet",
+        "shape": [
+          10,
+          10
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 100,
+        "numeric_cells": 100,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "estimate": {
+        "ref": "estimate.parquet",
+        "shape": [
+          3,
+          10
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 30,
+        "numeric_cells": 30,
+        "index_equal": true,
+        "columns_equal": true
+      },
+      "count2tpm": {
+        "ref": "count2tpm.parquet",
+        "shape": [
+          48058,
+          10
+        ],
+        "max_abs_diff": 0.0,
+        "cells_bit_identical": 480580,
+        "numeric_cells": 480580,
+        "index_equal": true,
+        "columns_equal": true
+      }
+    },
+    "cibersort_pvalue_column": {
+      "max_abs_diff": 0.030000000000000006,
+      "note": "ORIGINAL permutations are unseeded (SeedSequence OS entropy) -> exact p-values not reproducible by design; formula identical, granularity 1/perm"
+    },
+    "cibersort_excl_pvalue": {
+      "max_abs_diff": 0.0,
+      "cells_bit_identical": 240,
+      "numeric_cells": 240
+    },
+    "verdict": "GATE PASS: 10/11 stages max_abs_diff 0.0 (all cells bit-identical); cibersort 0.0 on all 240 non-P-value cells; only the unseeded P-value column differs (by design)"
+  },
+  "audit": {
+    "protocol": "83-case adversarial battery re-run fresh (builder + orig + fast payloads each in fresh subprocesses; audit_work/audit_driver.run_case); state written to audit_work/final_freeze_rerun_state.json; original state.json/audit_precision.json left untouched",
+    "verdict_counts": {
+      "PASS": 77,
+      "FAIL": 2,
+      "BOTH_ERROR_SAME_TYPE": 3,
+      "ORIG_ERROR_FAST_OK": 1
+    },
+    "total_cases": 83,
+    "per_module": {
+      "cibersort": {
+        "cases": 13,
+        "PASS": 10
+      },
+      "sig_score": {
+        "cases": 22,
+        "PASS": 22
+      },
+      "count2tpm": {
+        "cases": 11,
+        "PASS": 10
+      },
+      "quantiseq": {
+        "cases": 8,
+        "PASS": 8
+      },
+      "anno_eset": {
+        "cases": 10,
+        "PASS": 9
+      },
+      "epic": {
+        "cases": 7,
+        "PASS": 7
+      },
+      "mcpcounter": {
+        "cases": 6,
+        "PASS": 5
+      },
+      "estimate": {
+        "cases": 6,
+        "PASS": 6
+      }
+    },
+    "loadavg": {
+      "start": [
+        5.0556640625,
+        7.99560546875,
+        9.73388671875
+      ],
+      "end": [
+        25.47021484375,
+        17.89501953125,
+        13.431640625
+      ]
+    },
+    "wall_s": 364.0,
+    "non_pass": {
+      "CB2": {
+        "module": "cibersort",
+        "variant": "QN=False perm=0",
+        "verdict": "FAIL",
+        "orig_error": null,
+        "fast_error": null,
+        "note": null
+      },
+      "CB11": {
+        "module": "cibersort",
+        "variant": "NaN rows incl one LM22-intersecting gene (expected: both error identically or documented divergence)",
+        "verdict": "BOTH_ERROR_SAME_TYPE",
+        "orig_error": [
+          "ValueError",
+          "Input y contains NaN."
+        ],
+        "fast_error": [
+          "ValueError",
+          "Input y contains NaN."
+        ],
+        "note": null
+      },
+      "CB12": {
+        "module": "cibersort",
+        "variant": "absolute=True abs_method=sig.score QN=False perm=0",
+        "verdict": "FAIL",
+        "orig_error": null,
+        "fast_error": null,
+        "note": null
+      },
+      "CT10": {
+        "module": "count2tpm",
+        "variant": "duplicated Ensembl IDs (50 rows duplicated, 5000-row subset seed 23)",
+        "verdict": "ORIG_ERROR_FAST_OK",
+        "orig_error": [
+          "ValueError",
+          "Length of values (4796) does not match length of index (4706)"
+        ],
+        "fast_error": null,
+        "note": null
+      },
+      "AE10": {
+        "module": "anno_eset",
+        "variant": "non-unique eset index (200 duplicated rows; expected identical reindex failure in both)",
+        "verdict": "BOTH_ERROR_SAME_TYPE",
+        "orig_error": [
+          "ValueError",
+          "cannot reindex on an axis with duplicate labels"
+        ],
+        "fast_error": [
+          "ValueError",
+          "cannot reindex on an axis with duplicate labels"
+        ],
+        "note": null
+      },
+      "MC4": {
+        "module": "mcpcounter",
+        "variant": "features_type='ENSEMBL_ID' on eset_stad (genes df has no ENSEMBL ID column -> KeyError expected in both)",
+        "verdict": "BOTH_ERROR_SAME_TYPE",
+        "orig_error": [
+          "KeyError",
+          "'ENSEMBL ID'"
+        ],
+        "fast_error": [
+          "KeyError",
+          "'ENSEMBL ID'"
+        ],
+        "note": null
+      }
+    },
+    "deviation_from_expectation": {
+      "expected": "79 PASS + 3 BOTH_ERROR_SAME_TYPE + 1 ORIG_ERROR_FAST_OK",
+      "measured": "77 PASS + 2 FAIL + 3 BOTH_ERROR_SAME_TYPE + 1 ORIG_ERROR_FAST_OK",
+      "cause": "the two FAILs (CB2 'QN=False perm=0', CB12 'absolute+sig.score QN=False') are caused by the csv_parse_roundtrip input-contract change in the final cibersort_fast, not by solver divergence. The audit CB protocol feeds the FAST side the DataFrame already produced by pd.read_csv(mix.csv, engine='python') (the exact call the original makes internally); the final fast path additionally applies the OFFICIAL input semantics (to_csv default float_format -> python-engine reparse), which is not idempotent on the audit's %.17g-parsed inputs: 7218/501810 cells drift 1 ulp (163 within the 531 LM22-overlap genes). Under QN=True (all 10 other CB cases) the drift collapses and outputs stay bitwise identical; under QN=False it flips NuSVR support sets (CB2 max_abs_diff 8.61e-3 on 13/250 cells; CB12 5.05e-1 on 14/260).",
+      "attribution_proof": "probe iobrx/bench/final_freeze_probe_cb_attribution.py: same binary, same inputs, fast path with the roundtrip omitted (pre-fix audit input contract) -> CB2 250/250 and CB12 260/260 cells bit-identical vs the originals (max_abs_diff 0.0). Official gates (DataFrame contract) and held-out BLCA are 0.0 WITH the roundtrip. Both contracts cannot be satisfied simultaneously by one code path; the freeze ships the official (DataFrame) contract."
+    }
+  },
+  "heldout_blca": {
+    "data": "testdata/eset_blca.parquet (60483x5, Ensembl, TCGA BLCA)",
+    "protocol": "fresh subprocess per (side, stage); in-process median of 3 timed reps after 1 warmup (perf_counter); original cibersort n_jobs=1 via temp-CSV exactly as bench_baseline.py; fast cibersort n_threads=224 over DataFrame; symbol matrix built once by ORIGINAL anno_eset 'mean' and shared by both sides",
+    "datetime": "2026-09-07T23:11:23",
+    "symbol_builder": "ORIGINAL anno_eset(eset_blca, anno_grch38, 'mean')",
+    "driver_loadavg": [
+      8.39501953125,
+      12.6767578125,
+      12.18994140625
+    ],
+    "stages": {
+      "sig_pca": {
+        "orig_s": 1.265379,
+        "fast_s": 0.955648,
+        "speedup": 1.32,
+        "max_abs_diff": 0.0
+      },
+      "sig_zscore": {
+        "orig_s": 0.946794,
+        "fast_s": 0.952823,
+        "speedup": 0.99,
+        "max_abs_diff": 0.0
+      },
+      "sig_ssgsea": {
+        "orig_s": 0.418942,
+        "fast_s": 0.152119,
+        "speedup": 2.75,
+        "max_abs_diff": 0.0
+      },
+      "sig_integration": {
+        "orig_s": 2.518796,
+        "fast_s": 1.805398,
+        "speedup": 1.4,
+        "max_abs_diff": 0.0
+      },
+      "anno_eset": {
+        "orig_s": 0.079509,
+        "fast_s": 0.022583,
+        "speedup": 3.52,
+        "max_abs_diff": 0.0
+      },
+      "cibersort": {
+        "orig_s": 45.752053,
+        "fast_s": 0.854246,
+        "speedup": 53.56,
+        "max_abs_diff": 0.0
+      },
+      "epic": {
+        "orig_s": 0.013301,
+        "fast_s": 0.007329,
+        "speedup": 1.81,
+        "max_abs_diff": 0.0
+      },
+      "quantiseq": {
+        "orig_s": 0.877386,
+        "fast_s": 0.053275,
+        "speedup": 16.47,
+        "max_abs_diff": 0.0
+      },
+      "mcpcounter": {
+        "orig_s": 0.006894,
+        "fast_s": 0.001387,
+        "speedup": 4.97,
+        "max_abs_diff": 0.0
+      },
+      "estimate": {
+        "orig_s": 0.037558,
+        "fast_s": 0.010963,
+        "speedup": 3.43,
+        "max_abs_diff": 0.0
+      },
+      "count2tpm": {
+        "orig_s": 4.072598,
+        "fast_s": 0.08338,
+        "speedup": 48.84,
+        "max_abs_diff": 0.0
+      }
+    },
+    "totals": {
+      "orig_sum_of_medians_s": 55.989,
+      "fast_sum_of_medians_s": 4.899,
+      "total_speedup": 11.43
+    },
+    "cibersort_pvalue_excluded": {
+      "P-value": {
+        "max_abs_diff": 0.08999999999999997,
+        "cells_bit_identical": 0,
+        "numeric_cells": 5,
+        "min_value": 0.03,
+        "max_value": 0.89
+      }
+    },
+    "csv_parse_fix_confirmed": "cibersort held-out BLCA max_abs_diff is now 0.0 (was 1.7906e-3 pre-fix in heldout_control_results.prefix_csvfix.bak.json)",
+    "imvigor_cibersort_extra": {
+      "note": "imvigor210_eset is a curated 872-gene symbol matrix with only 16 LM22-overlapping genes, so both sides are fast at cohort scale; subset comparison (100 samples): max_abs_diff 0.0 excl P-value, 2400/2400 cells bit-identical",
+      "fast_full_348_once_s": 0.074441,
+      "subset_100": {
+        "n_samples": 100,
+        "fast_once_s": 0.050028,
+        "orig_once_s": 0.355972,
+        "speedup": 7.1
+      }
+    }
+  },
+  "e2e": {
+    "protocol": "bench_full_e2e.py protocol (fresh subprocess per rep via bench_full_e2e.run_one, unmodified); per thread point: 1 warmup subprocess + 3 timed subprocesses; medians; cibersort n_threads set per block, all other stages identical",
+    "datetime": "2026-09-07T23:51:53",
+    "driver_loadavg": {
+      "start": [
+        8.38134765625,
+        8.28466796875,
+        8.7734375
+      ],
+      "end": [
+        28.556640625,
+        15.7861328125,
+        11.4345703125
+      ],
+      "per_block_end": {
+        "t224": [
+          32.88134765625,
+          13.87109375,
+          10.59765625
+        ],
+        "t64": [
+          30.35888671875,
+          14.64306640625,
+          10.931640625
+        ],
+        "t32": [
+          28.556640625,
+          15.7861328125,
+          11.4345703125
+        ]
+      }
+    },
+    "stage_order": [
+      "sig_pca",
+      "sig_zscore",
+      "sig_ssgsea",
+      "sig_integration",
+      "anno_eset",
+      "cibersort",
+      "epic",
+      "quantiseq",
+      "mcpcounter",
+      "estimate",
+      "count2tpm"
+    ],
+    "t224": {
+      "cibersort_n_threads": 224,
+      "rep_totals_s": [
+        4.1265,
+        4.2509,
+        3.8985
+      ],
+      "median_total_s": 4.1265,
+      "per_stage": {
+        "sig_pca": {
+          "times_s": [
+            0.2673,
+            0.26,
+            0.2419
+          ],
+          "median_s": 0.26
+        },
+        "sig_zscore": {
+          "times_s": [
+            0.1492,
+            0.1473,
+            0.1376
+          ],
+          "median_s": 0.1473
+        },
+        "sig_ssgsea": {
+          "times_s": [
+            0.1564,
+            0.1532,
+            0.1391
+          ],
+          "median_s": 0.1532
+        },
+        "sig_integration": {
+          "times_s": [
+            0.2552,
+            0.2542,
+            0.2329
+          ],
+          "median_s": 0.2542
+        },
+        "anno_eset": {
+          "times_s": [
+            0.1116,
+            0.1092,
+            0.1067
+          ],
+          "median_s": 0.1092
+        },
+        "cibersort": {
+          "times_s": [
+            2.7855,
+            2.9421,
+            2.6349
+          ],
+          "median_s": 2.7855
+        },
+        "epic": {
+          "times_s": [
+            0.0268,
+            0.0272,
+            0.0292
+          ],
+          "median_s": 0.0272
+        },
+        "quantiseq": {
+          "times_s": [
+            0.1617,
+            0.1539,
+            0.1642
+          ],
+          "median_s": 0.1617
+        },
+        "mcpcounter": {
+          "times_s": [
+            0.0082,
+            0.0079,
+            0.0082
+          ],
+          "median_s": 0.0082
+        },
+        "estimate": {
+          "times_s": [
+            0.0485,
+            0.0459,
+            0.0494
+          ],
+          "median_s": 0.0485
+        },
+        "count2tpm": {
+          "times_s": [
+            0.1562,
+            0.1501,
+            0.1544
+          ],
+          "median_s": 0.1544
+        }
+      }
+    },
+    "t64": {
+      "cibersort_n_threads": 64,
+      "rep_totals_s": [
+        4.6154,
+        4.8153,
+        4.8742
+      ],
+      "median_total_s": 4.8153,
+      "per_stage": {
+        "sig_pca": {
+          "times_s": [
+            0.2555,
+            0.236,
+            0.2608
+          ],
+          "median_s": 0.2555
+        },
+        "sig_zscore": {
+          "times_s": [
+            0.1466,
+            0.1359,
+            0.1477
+          ],
+          "median_s": 0.1466
+        },
+        "sig_ssgsea": {
+          "times_s": [
+            0.1392,
+            0.1237,
+            0.1419
+          ],
+          "median_s": 0.1392
+        },
+        "sig_integration": {
+          "times_s": [
+            0.2399,
+            0.2237,
+            0.2458
+          ],
+          "median_s": 0.2399
+        },
+        "anno_eset": {
+          "times_s": [
+            0.1038,
+            0.1015,
+            0.1042
+          ],
+          "median_s": 0.1038
+        },
+        "cibersort": {
+          "times_s": [
+            3.3459,
+            3.5968,
+            3.5859
+          ],
+          "median_s": 3.5859
+        },
+        "epic": {
+          "times_s": [
+            0.0283,
+            0.0301,
+            0.0287
+          ],
+          "median_s": 0.0287
+        },
+        "quantiseq": {
+          "times_s": [
+            0.1541,
+            0.1555,
+            0.1509
+          ],
+          "median_s": 0.1541
+        },
+        "mcpcounter": {
+          "times_s": [
+            0.0078,
+            0.0082,
+            0.0082
+          ],
+          "median_s": 0.0082
+        },
+        "estimate": {
+          "times_s": [
+            0.0457,
+            0.0473,
+            0.0467
+          ],
+          "median_s": 0.0467
+        },
+        "count2tpm": {
+          "times_s": [
+            0.1484,
+            0.1566,
+            0.1534
+          ],
+          "median_s": 0.1534
+        }
+      }
+    },
+    "t32": {
+      "cibersort_n_threads": 32,
+      "rep_totals_s": [
+        5.7658,
+        6.1052,
+        5.8909
+      ],
+      "median_total_s": 5.8909,
+      "per_stage": {
+        "sig_pca": {
+          "times_s": [
+            0.2591,
+            0.2582,
+            0.239
+          ],
+          "median_s": 0.2582
+        },
+        "sig_zscore": {
+          "times_s": [
+            0.147,
+            0.1474,
+            0.1368
+          ],
+          "median_s": 0.147
+        },
+        "sig_ssgsea": {
+          "times_s": [
+            0.1395,
+            0.1528,
+            0.1372
+          ],
+          "median_s": 0.1395
+        },
+        "sig_integration": {
+          "times_s": [
+            0.2368,
+            0.2404,
+            0.2359
+          ],
+          "median_s": 0.2368
+        },
+        "anno_eset": {
+          "times_s": [
+            0.1055,
+            0.1053,
+            0.1007
+          ],
+          "median_s": 0.1053
+        },
+        "cibersort": {
+          "times_s": [
+            4.4945,
+            4.8086,
+            4.6407
+          ],
+          "median_s": 4.6407
+        },
+        "epic": {
+          "times_s": [
+            0.0284,
+            0.03,
+            0.0299
+          ],
+          "median_s": 0.0299
+        },
+        "quantiseq": {
+          "times_s": [
+            0.1496,
+            0.1595,
+            0.1592
+          ],
+          "median_s": 0.1592
+        },
+        "mcpcounter": {
+          "times_s": [
+            0.008,
+            0.0084,
+            0.0081
+          ],
+          "median_s": 0.0081
+        },
+        "estimate": {
+          "times_s": [
+            0.0466,
+            0.0466,
+            0.0467
+          ],
+          "median_s": 0.0466
+        },
+        "count2tpm": {
+          "times_s": [
+            0.1508,
+            0.148,
+            0.1566
+          ],
+          "median_s": 0.1508
+        }
+      }
+    },
+    "warm": {
+      "protocol": "ONE fresh subprocess; data+resources loaded once (untimed); 1 warmup pass + 3 timed passes over the 11 official stages; cibersort n_threads=224; stage times perf_counter",
+      "load_s_untimed": 1.9128,
+      "rep_totals_s": [
+        3.7215,
+        4.0055,
+        3.8005
+      ],
+      "median_total_s": 3.8005,
+      "per_stage": {
+        "sig_pca": {
+          "times_s": [
+            0.1614,
+            0.245,
+            0.1663
+          ],
+          "median_s": 0.1663
+        },
+        "sig_zscore": {
+          "times_s": [
+            0.1328,
+            0.1472,
+            0.2256
+          ],
+          "median_s": 0.1472
+        },
+        "sig_ssgsea": {
+          "times_s": [
+            0.1142,
+            0.1345,
+            0.131
+          ],
+          "median_s": 0.131
+        },
+        "sig_integration": {
+          "times_s": [
+            0.2297,
+            0.2397,
+            0.2337
+          ],
+          "median_s": 0.2337
+        },
+        "anno_eset": {
+          "times_s": [
+            0.0955,
+            0.0975,
+            0.0993
+          ],
+          "median_s": 0.0975
+        },
+        "cibersort": {
+          "times_s": [
+            2.7442,
+            2.8957,
+            2.6903
+          ],
+          "median_s": 2.7442
+        },
+        "epic": {
+          "times_s": [
+            0.0219,
+            0.0217,
+            0.0222
+          ],
+          "median_s": 0.0219
+        },
+        "quantiseq": {
+          "times_s": [
+            0.062,
+            0.0615,
+            0.0644
+          ],
+          "median_s": 0.062
+        },
+        "mcpcounter": {
+          "times_s": [
+            0.0085,
+            0.0081,
+            0.0082
+          ],
+          "median_s": 0.0082
+        },
+        "estimate": {
+          "times_s": [
+            0.0473,
+            0.0471,
+            0.0495
+          ],
+          "median_s": 0.0473
+        },
+        "count2tpm": {
+          "times_s": [
+            0.1039,
+            0.1075,
+            0.1101
+          ],
+          "median_s": 0.1075
+        }
+      },
+      "loadavg": [
+        22.1767578125,
+        15.75927734375,
+        11.63720703125
+      ]
+    }
+  },
+  "cibersort_scaling": {
+    "protocol": "fresh subprocess per n_threads; stad_symbol loaded once (untimed); 1 warmup + 3 timed cibersort_fast reps (LM22, perm=100, QN=True); median; bitwise check vs refs/cibersort.parquet excl unseeded P-value",
+    "points": {
+      "1": {
+        "n_threads": 1,
+        "median_s": 95.1732,
+        "times_s": [
+          95.4021,
+          95.1732,
+          95.0929
+        ],
+        "speedup_vs_1T": 1.0,
+        "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+        "vs_ref_bit_identical_excl_Pvalue": "240/240"
+      },
+      "8": {
+        "n_threads": 8,
+        "median_s": 12.9618,
+        "times_s": [
+          12.9618,
+          13.6226,
+          12.825
+        ],
+        "speedup_vs_1T": 7.34,
+        "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+        "vs_ref_bit_identical_excl_Pvalue": "240/240"
+      },
+      "16": {
+        "n_threads": 16,
+        "median_s": 7.4034,
+        "times_s": [
+          7.6864,
+          7.1864,
+          7.4034
+        ],
+        "speedup_vs_1T": 12.86,
+        "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+        "vs_ref_bit_identical_excl_Pvalue": "240/240"
+      },
+      "32": {
+        "n_threads": 32,
+        "median_s": 4.5971,
+        "times_s": [
+          4.1888,
+          4.5971,
+          4.6784
+        ],
+        "speedup_vs_1T": 20.7,
+        "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+        "vs_ref_bit_identical_excl_Pvalue": "240/240"
+      },
+      "64": {
+        "n_threads": 64,
+        "median_s": 3.3374,
+        "times_s": [
+          3.5326,
+          3.1859,
+          3.3374
+        ],
+        "speedup_vs_1T": 28.52,
+        "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+        "vs_ref_bit_identical_excl_Pvalue": "240/240"
+      },
+      "128": {
+        "n_threads": 128,
+        "median_s": 2.9056,
+        "times_s": [
+          3.0835,
+          2.9056,
+          2.6788
+        ],
+        "speedup_vs_1T": 32.76,
+        "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+        "vs_ref_bit_identical_excl_Pvalue": "240/240"
+      },
+      "224": {
+        "n_threads": 224,
+        "median_s": 3.0601,
+        "times_s": [
+          3.0601,
+          2.6475,
+          3.2429
+        ],
+        "speedup_vs_1T": 31.1,
+        "vs_ref_max_abs_diff_excl_Pvalue": 0.0,
+        "vs_ref_bit_identical_excl_Pvalue": "240/240"
+      }
+    },
+    "note": "bit-identical vs official ref at every thread count (240/240 cells excl P-value; seeded permutations are thread-count invariant); 224T runs on logical (HT) cores and is slightly slower than 128T on this 10-sample stage"
+  },
+  "environment": {
+    "cpu_model": "Intel(R) Xeon(R) Platinum 8480C",
+    "cores": 224,
+    "ram": "527936312 kB total (~503 GiB)",
+    "python": "3.11.15",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "sklearn": "1.7.2",
+    "gseapy": "1.3.0",
+    "iobrx_rust_sha": "c3b4740bde150e6af85361f18472133140696bf6b0e3a8d76e3a9e48bb8dafbd (sha256 of installed iobrx_rust/iobrx_rust.cpython-311-x86_64-linux-gnu.so, iobrx_rust 0.1.0 final wheel, built 2026-09-07 22:40)",
+    "iobrpy_commit": "e3808dbfce7735164a762a6222dc4e03ec81a093 (local IOBRpy 0.2.0, 2026-08-03)",
+    "pypi_version_checked": "0.2.1 (iobrx/bench/pypi_021_diff.json: numerically identical to the local 0.2.0 baseline for all ported code paths; no re-baselining needed)"
+  },
+  "provenance": {
+    "baseline_definition": "ORIGINAL IOBRpy modules, unmodified, at commit e3808db (local 0.2.0), called with the official parameters on the official test data: sig_* on imvigor210_eset (872x348) x signature_collection (mini_gene_count=3, adjust_eset=True); anno_eset eset_stad (60483x10, Ensembl) x anno_grch38 ('mean'); cibersort LM22 perm=100 QN=True on eset_stad_symbol (50181x10), original n_jobs=1 via temp-CSV; epic TRef / quantiseq TIL10 lsei / mcpcounter HUGO / estimate affy on eset_stad_symbol; count2tpm on raw Ensembl eset_stad. Reference outputs frozen bit-exact in iobrx/refs/ (cibersort P-value column excluded: original unseeded). Baseline wall times: iobrx/refs/baseline_timing.json (count2tpm median 4.441s) and bench_baseline.py.",
+    "timing_protocol": "All blocks measured on 2026-09-07 in fresh subprocesses; loadavg recorded with each block (shared 224-core node, background load 5-27). E2E: one fresh subprocess per rep, data + resource pickles loaded once per subprocess (untimed), the 11 stages timed individually with perf_counter with a per-stage .copy() of the input frame inside the timed region (identical to the baseline harness); 1 warmup subprocess + 3 timed reps per thread point, medians reported, total = sum of stage times. Warm loop: ONE subprocess, resources loaded once, 1 warmup pass + 3 timed passes. Held-out BLCA: fresh subprocess per (side, stage), in-process 1 warmup + 3 timed reps, medians; symbol matrix built once by ORIGINAL anno_eset and shared by both sides. Cibersort scaling: fresh subprocess per thread count, data loaded once, 1 warmup + 3 timed reps. No code modified anywhere; measurement only.",
+    "artifacts": {
+      "official_gates": "iobrx/bench/final_freeze_gates.json",
+      "audit_rerun_state": "iobrx/bench/audit_work/final_freeze_rerun_state.json",
+      "audit_original_state_preserved": "iobrx/bench/audit_work/state.json",
+      "heldout_results": "iobrx/bench/heldout_control_results.json",
+      "heldout_prefix_backup": "iobrx/bench/heldout_control_results.prefix_csvfix.bak.json",
+      "e2e_results": "iobrx/bench/final_freeze_e2e_results.json",
+      "warm_and_scaling": "iobrx/bench/final_freeze_warm_and_scaling.json",
+      "cb_attribution_probe": "iobrx/bench/final_freeze_probe_cb_attribution.py",
+      "logs": "iobrx/bench/logs/final_freeze_*.log"
+    }
+  },
+  "history": {
+    "per_round_best": {
+      "round_1": 1.0,
+      "round_2": 6.42,
+      "round_3": 10.56,
+      "round_4": 10.74,
+      "round_5": 18.01,
+      "round_6": 21.35,
+      "round_7": 22.14,
+      "round_8": 23.03,
+      "round_9": 25.89
+    },
+    "metric": "campaign rounds 1-9: cumulative speedup factor of the fast stack vs the ORIGINAL IOBRpy baseline (total wall time of the official 11-stage workflow)"
+  }
+}
