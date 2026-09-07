@@ -40,11 +40,18 @@ measurements.
   **1 warmup + 3 timed reps, medians reported**; loadavg recorded per block
   (FINAL_SUMMARY.json `provenance.timing_protocol`, `e2e.protocol`). The
   warm loop is the one exception (one subprocess, 1 warmup + 3 timed passes;
-  FINAL_SUMMARY.json `e2e.warm.protocol`). Replicate spread: controlled
-  in-process stage reps sit at CV 0.0–1.7% (median 0.7%; computed from the
-  rep lists in count2tpm_fast_results.json, quantiseq_fast_results.json,
-  misc_fast_results.json), while fresh-subprocess e2e totals on the shared
-  node run at CV 2.8–4.4% (computed from FINAL_SUMMARY.json
+  FINAL_SUMMARY.json `e2e.warm.protocol`). Replicate spread: the six
+  fast/steady-state stage legs sit at CV 0.0–1.7% (median 0.6%; sample sd
+  over the fast-side `times_s` rep lists in count2tpm_fast_results.json
+  `timing.fast`, quantiseq_fast_results.json `timing.wrapper_cached`,
+  misc_fast_results.json `anno_eset/epic/mcpcounter/estimate.timing_fast`);
+  over ALL thirteen timing rep lists in those three files — adding the six
+  ORIGINAL-side lists and quantiseq's `wrapper_cold_pair` steady-state list
+  — the range widens to 0.0–28.5% (median 0.8%; dominated by the ORIGINAL
+  quantiseq `original_same_process` list still decaying 1.788→1.060 s at
+  28.5%, its cold-pair steady list at 5.0% and the ORIGINAL count2tpm list
+  at 4.3%), while fresh-subprocess e2e totals on the shared node run at CV
+  2.8–4.4% (computed from FINAL_SUMMARY.json
   `e2e.t224/t64/t32.rep_totals_s`) — which is why medians of 3 and loadavg
   logging are used everywhere.
 - **Speedup denominator:** the campaign-ledger baseline total of **97.13 s**
@@ -63,7 +70,7 @@ measurements.
 | **R2** vectorized-Python stages alone | numpy/pandas rewrites of the non-solver stages, no Rust | stage-level only (no full-stack route was frozen at this stage) | count2tpm **38.7x** stage; quantiseq **16.9x** stage (below) | bit-exact on every rewritten stage (count2tpm_fast_results.json `precision`; quantiseq_fast_results.json `precision`; misc_fast_results.json per-stage gates) | count2tpm 4.680 s → 0.1209 s (count2tpm_fast_results.json `timing`); quantiseq 1.2037 s → 0.0711 s cached (quantiseq_fast_results.json `timing`); smaller wins: anno_eset 3.77x, epic 1.58x, mcpcounter 4.24x, estimate 2.53x (misc_fast_results.json); sig stages then: pca 1.17x, integration 1.05x, zscore 0.92x (sig_compose_results.json `timings`). Combined parallel+vectorized campaign rounds reached 10.56x / 10.74x (FINAL_SUMMARY.json `history.per_round_best.round_3/round_4`) |
 | **R3** Rust bit-faithful cibersort | vendored sklearn-1.7.2 libsvm `svm.cpp` + rayon, byte-exact solver semantics | cibersort stage route | **34.3x stage** @224T vs ORIGINAL n_jobs=1 median 88.82 s (2.5866 s; scaling_coldstart.json `1_thread_scaling`), **38.5x** vs 87.17 s DataFrame protocol (2.262 s in-process; rust_cibersort_results.json) | weights/Corr/RMSE **bit-identical** incl. csv-parse semantics: 240/240 non-P-value cells vs the frozen official reference (pool_hoist_results.json `gates.gate1`); outputs **thread-count invariant** 1/64/224T, n_iter_sum 84,984,516 identical (pool_hoist_results.json `gates.gate2`) | single-thread Rust already matches the original (87.42 s vs 87.17 s; rust_cibersort_results.json); phase split @224T: perm stage 0.8112 s of 2.3117 s core time (rust_cibersort_results.json `phase_breakdown_nthreads_224`) |
 | **R4** full fast stack, stepwise | Rust cibersort + Rust ssGSEA/integration legs + vectorized stages + cold builders + pool hoist + Rust PCA/z-score | evolution across rounds | **18.0x → 21.4x → 22.1x → 23.0x → 25.9x** (rounds 5–9; FINAL_SUMMARY.json `history.per_round_best`) | every added leg gated bit-exact against the frozen refs before it entered the stack (rust_ssgsea_results.json `gate_rust_vs_ref`; integration_rust_results.json `gate_fast_rust_vs_ref`; cold_builders_results.json `gate_*`; final_round9_results.json `part1_gate_A/B`, `part2_gates`) | see the step table in §3 |
-| **R5** FINAL = `frozen_stack_v1` **(shipped)** | the R4 endpoint, frozen and re-validated end-to-end | **3.75–4.13 s** fresh-process depending on node load: 3.7515 s (25.89x, final_round9_results.json `e2e.t224`) → 3.8736 s after the audit fixes (25.07x, full_e2e_results.json `t224`) → 4.1265 s under freeze-day load 8–27 (23.54x, FINAL_SUMMARY.json `e2e.t224`); **warm 3.63–3.80 s** (cold_builders_results.json `warm_inproc_e2e`; FINAL_SUMMARY.json `e2e.warm`) | **official gates: 10/11 stages max abs diff 0.0, every numeric cell bit-identical; cibersort 0.0 on all 240 non-P-value cells** (FINAL_SUMMARY.json `official_gates`) | t64 4.8153 s (20.17x), t32 5.8909 s (16.49x) (FINAL_SUMMARY.json `e2e.t64/t32`; ratios computed); per-stage table in §4 |
+| **R5** FINAL = `frozen_stack_v1` **(shipped)** | the R4 endpoint, frozen and re-validated end-to-end | **3.75–4.13 s** fresh-process depending on node load: 3.7515 s (25.89x, final_round9_results.json `e2e.t224`) → 3.8736 s after the audit fixes (25.07x, full_e2e_results.json `t224`) → 4.1265 s under freeze-day load 8–33 (23.54x, FINAL_SUMMARY.json `e2e.t224`); **warm 3.63–3.80 s** (cold_builders_results.json `warm_inproc_e2e`; FINAL_SUMMARY.json `e2e.warm`) | **official gates: 10/11 stages max abs diff 0.0, every numeric cell bit-identical; cibersort 0.0 on all 240 non-P-value cells** (FINAL_SUMMARY.json `official_gates`) | t64 4.8153 s (20.17x), t32 5.8909 s (16.49x) (FINAL_SUMMARY.json `e2e.t64/t32`; ratios computed); per-stage table in §4 |
 | **Held-out control (BLCA)** | R5 stack vs ORIGINAL on TCGA-BLCA data never used in any optimization round (eset_blca 60483×5) | **55.989 s → 4.899 s** | **11.43x** total | **all 11 stages max abs diff 0.0** (heldout_control_results.json `stages.*.compare.verify`, `totals`; FINAL_SUMMARY.json `heldout_blca`) | stage highlights: cibersort **53.56x** (45.752 s → 0.8542 s), count2tpm **48.84x** (4.0726 s → 0.0834 s), quantiseq 16.47x, mcpcounter 4.97x, anno_eset 3.52x, estimate 3.43x, ssGSEA 2.75x, integration 1.40x, pca 1.32x, epic 1.81x, zscore 0.99x (heldout_control_results.json `stages`); imvigor cibersort subset (100 samples): 7.1x, 2400/2400 cells bit-identical excl P-value (heldout_control_results.json `imvigor_cibersort`) |
 
 ## 3. Route R4 — what each step added
@@ -101,8 +108,9 @@ is *computed* (ORIGINAL ÷ fast) from the two cited cells.
 | **total** | **97.13 s campaign baseline** (literature_anchors.json `internal_reference_point`) | **4.1265 s** median-of-rep-totals (FINAL_SUMMARY.json `e2e.t224.median_total_s`; sum of the stage medians above is 4.109 s, computed) | **23.5x** (computed) | 10/11 stages max abs diff 0.0 + cibersort 0.0 excl P-value | 25.89x at quiet load (final_round9_results.json `e2e.t224`) |
 
 Reading notes: the freeze e2e per-stage medians were taken in fresh
-subprocesses on a node with background load 8–27 (FINAL_SUMMARY.json
-`e2e.protocol`, `e2e.loadavg`), so the four sub-30 ms stages (anno_eset, epic,
+subprocesses on a node with background load 8.3–32.9 (FINAL_SUMMARY.json
+`e2e.protocol`, `e2e.driver_loadavg` — driver start 8.28–8.77, per-block
+end peaks up to 32.88), so the four sub-30 ms stages (anno_eset, epic,
 mcpcounter, estimate) show e2e ratios at-or-below 1 that are lower bounds —
 their controlled same-process comparisons (last column) are the meaningful
 stage numbers. The ORIGINAL per-stage medians were each measured in their own
@@ -179,8 +187,9 @@ fix_round11_results.json `regression.a_audit_battery`) — the five findings
 were: a count2tpm keep-mask bug (CT7), an estimate first-vs-last-occurrence
 gene-position map (ES5), a 1-ulp Rust-libm `exp2` plus a numpy reduction-order
 mismatch in cibersort's X standardization (CB6b), a Rust panic on NaN input
-(CB11), and an F-contiguous misread in the exposed QN helper (F5)
-(fix_round11_results.json `findings`). The **final freeze rerun** measured
+(CB11), and an F-contiguous misread in the exposed QN helper (F5;
+`findings.FINDING_5_quantile_normalize_np`, cross-listed in `crate_changes`)
+(fix_round11_results.json). The **final freeze rerun** measured
 77 PASS + 2 FAIL + 3 BOTH_ERROR_SAME_TYPE + 1 ORIG_ERROR_FAST_OK
 (FINAL_SUMMARY.json `audit.verdict_counts`).
 
@@ -219,7 +228,7 @@ pandas parse bitwise on six datasets — BLCA 205,050/205,050, STAD
 501,810/501,810, CB6b 11,750/11,750, CB1 501,810/501,810, imvigor
 303,456/303,456, synthetic 130,042/130,042; repr-token parity on
 6,198,527/6,198,527 random values — at a steady-state cost of ~9.6 ms per
-502k values (forensic_blca_results.json `fix_validation`, `gates.GATE3`).
+502k values (median 9.58 ms @224T; forensic_blca_results.json `fix_validation`, `gates.GATE3_perf.mapping_steady_state_224T.median_ms`).
 Known inherited caveat: the parse is not idempotent (pandas' own is not
 either), and this is exactly the audit-contract effect above.
 
