@@ -1,6 +1,6 @@
 # iobrx
 
-[![PyPI](https://img.shields.io/badge/PyPI-0.1.0-blue)](https://pypi.org/project/iobrx/)
+[![version](https://img.shields.io/badge/version-0.1.0-blue)](./CHANGELOG.md)
 [![build](https://img.shields.io/badge/build-maturin-orange)](./rust/Cargo.toml)
 [![tests](https://img.shields.io/badge/tests-13%2F13%20smoke%20%2B%2011%2F11%20full-brightgreen)](./tests)
 [![license](https://img.shields.io/badge/license-MIT-black)](./LICENSE)
@@ -35,9 +35,9 @@ to a frozen artifact in [`bench/`](bench/). The short version:
 
 ## Install
 
-iobrx is a hybrid Python + Rust (maturin) package; there are no prebuilt
-wheels yet, so a source build needs a Rust toolchain (`cargo` ≥ 1.7x) and a
-C++17 compiler:
+iobrx is **not yet on PyPI** — build it from source. It is a hybrid
+Python + Rust (maturin) package; there are no prebuilt wheels, so a source
+build needs a Rust toolchain (`cargo` ≥ 1.7x) and a C++17 compiler:
 
 ```bash
 pip install .          # compiles the Rust extension (see BENCHMARKS.md §6 for build times)
