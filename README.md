@@ -55,45 +55,93 @@ pip install .          # compiles the Rust extension (see BENCHMARKS.md §6 for 
 
 ## Quickstart
 
-Verified verbatim against this repository (rc=0, ~3 s wall on the official
-IMvigor210 + STAD cohorts); the two parquet inputs come from the IOBR
-`data-v1.0` release (or point `IOBRX_TESTDATA` at a local copy —
-[`examples/quickstart.py`](examples/quickstart.py) resolves them for you):
+Block 1 is **self-sufficient**: seeded synthetic matrices (~200 genes × 20
+samples each, numpy-generated) built on the reference data packaged with
+iobrpy — no download of any kind. Verified verbatim in a fresh venv with
+`IOBRX_TESTDATA` unset and the download mirrors unreachable: rc=0, ~3 s wall.
+Block 2 then runs the **official IMvigor210 cohort** through the documented
+data resolution (`$IOBRX_TESTDATA` → local cache → mirror download) and skips
+with a clear message when neither is available:
 
 ```python
-import iobrx, pandas as pd
+import pickle
 
-# --- part 1: symbol-indexed cohort (IMvigor210, 872 genes x 348 samples) ---
-eset = pd.read_parquet("imvigor210_eset.parquet")
+import numpy as np
+import pandas as pd
+import iobrx
+from importlib.resources import files
 
-# CIBERSORT against LM22 -- Rust NuSVR under rayon threads
-cib = iobrx.cibersort(eset, perm=100, QN=True)
-print(cib.shape)        # (348, 25): 22 cell types + P-value/Corr/RMSE columns
+rng = np.random.default_rng(20260907)          # everything below is seeded
 
-# per-sample signature scores over the full signature_collection
-pca  = iobrx.calculate_sig_score(eset, "signature_collection", method="pca")
-ss   = iobrx.calculate_sig_score(eset, "signature_collection", method="ssgsea")
-both = iobrx.calculate_sig_score(eset, "signature_collection",
-                                 method="integration")
-est  = iobrx.estimate_score(eset, platform="affy")
 
-# --- part 2: Ensembl counts cohort (STAD) -> symbols, then the rest ---
-raw  = pd.read_parquet("eset_stad.parquet")            # 60483 x 10 probes
-anno = pd.read_parquet("anno_grch38.parquet")
-sym  = iobrx.anno_eset(raw, anno, symbol="symbol", probe="id")  # 50181 x 10
+def synth(index, n=20):
+    """A small synthetic cohort: len(index) genes x n samples."""
+    return pd.DataFrame(rng.lognormal(0.0, 1.0, (len(index), n)),
+                        index=list(index), columns=[f"S{i}" for i in range(n)])
 
-epi = iobrx.epic(sym)                   # TRef reference by default
-til = iobrx.quantiseq(sym)              # TIL10, lsei
-mcp = iobrx.mcpcounter(sym)             # MCP-counter, HUGO symbols
-tpm = iobrx.count2tpm(raw, idType="Ensembl", org="hsa")  # counts -> TPM
+
+res = files("iobrpy.resources")   # LM22 / signatures / annotation packaged with iobrpy
+
+# --- part 1: symbol-indexed cohort (200 LM22 genes x 20 samples) ---
+lm22 = pd.read_csv(res.joinpath("lm22.txt"), sep=r"\s+", engine="python", index_col=0)
+eset = synth(lm22.index[:200])
+
+cib = iobrx.cibersort(eset.copy(), perm=10, QN=True)      # Rust NuSVR, rayon threads
+pca = iobrx.calculate_sig_score(eset.copy(), "signature_collection", method="pca")
+ssg = iobrx.calculate_sig_score(eset.copy(), "signature_collection", method="ssgsea")
+est = iobrx.estimate_score(eset.copy(), platform="affy")
+mcp = iobrx.mcpcounter(eset.copy(), features_type="HUGO_symbols")
+print("cibersort/PCA/ssGSEA/ESTIMATE/MCP:",
+      cib.shape, pca.shape, ssg.shape, est.shape, mcp.shape)
+
+# --- part 2: Ensembl counts cohort -> symbols + TPM (200 probes x 20) ---
+with open(str(res.joinpath("anno_eset.pkl")), "rb") as f:
+    anno = pd.DataFrame(pickle.load(f)["anno_grch38"])
+counts = synth(anno["id"].dropna().sample(200, random_state=7).tolist())
+sym = iobrx.anno_eset(counts.copy(), "anno_grch38", symbol="symbol", probe="id")
+tpm = iobrx.count2tpm(counts.copy(), idType="Ensembl", org="hsa")
+print("anno_eset/count2tpm:", sym.shape, tpm.shape)
+
+# --- part 3: deconvolution against the packaged references ---
+til = pd.read_pickle(str(res.joinpath("quantiseq_data.pkl")))["TIL10_signature"]
+tref = pd.read_pickle(str(res.joinpath("epic_TRef_BRef.pkl")))["TRef"]
+epi_genes = list(dict.fromkeys(list(tref["sigGenes"])
+                               + list(tref["refProfiles"].index[:150])))[:200]
+til_out = iobrx.quantiseq(synth(til.index.astype(str)[:200]))          # TIL10, lsei
+epi_out = iobrx.epic(synth(epi_genes))                                 # TRef
+print("quanTIseq/EPIC:", til_out.shape, epi_out["cellFractions"].shape)
 
 # threads: n_threads=None -> min(8, os.cpu_count()); per call or globally
 iobrx.set_threads(64)
 ```
 
-Runnable scripts: [`examples/quickstart.py`](examples/quickstart.py) and
-[`examples/full_workflow.py`](examples/full_workflow.py) (the 11-stage
-official workflow with a per-stage timing table and optional
+```python
+# --- official cohorts (optional): the documented data resolution ---------
+# iobrx.load_official(name) resolves $IOBRX_TESTDATA/<name>.parquet|.rda,
+# then a local cache, then the IOBR data-v1.0 release via mirrors
+# (github.com direct, gh-proxy.com, ghproxy.net). Offline it raises
+# iobrx.OfficialDataUnavailable with the remediation spelled out.
+import iobrx
+
+try:
+    eset = iobrx.load_official("imvigor210_eset")       # 872 genes x 348 samples
+except iobrx.OfficialDataUnavailable as exc:
+    print(f"[official-data demo skipped] {exc}")
+else:
+    cib = iobrx.cibersort(eset.copy(), perm=100, QN=True)
+    print(cib.shape)                                    # (348, 25)
+    both = iobrx.calculate_sig_score(eset.copy(), "signature_collection",
+                                     method="integration")
+    est = iobrx.estimate_score(eset.copy(), platform="affy")
+```
+
+The official STAD cohort calls of the older quickstart (anno_eset, EPIC,
+quanTIseq, MCP-counter, count2TPM on `eset_stad` × `anno_grch38`) are the 11
+stages of [`examples/full_workflow.py`](examples/full_workflow.py), which
+also prints the per-stage timing table. Runnable scripts:
+[`examples/quickstart.py`](examples/quickstart.py) (official IMvigor210
+cohort, per-step timings) and
+[`examples/full_workflow.py`](examples/full_workflow.py) (optional
 `--verify-parity`).
 
 ## API
