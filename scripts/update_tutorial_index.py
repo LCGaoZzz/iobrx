@@ -45,7 +45,7 @@ def main():
             title = spec["zh"] if zh else spec["title"]
             shape = " × ".join(f"{n:,}" for n in row["input_shape"])
             parity = PARITY[spec["slug"]][1 if zh else 0]
-            table.append(f'| [{title}](tutorials/{spec["slug"]}.ipynb) | {shape} | **{duration(row["median_seconds"])}** | {duration(row["first_call_seconds"])} | {parity} |')
+            table.append(f'| [{title}](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/{spec["slug"]}.ipynb) | {shape} | **{duration(row["median_seconds"])}** | {duration(row["first_call_seconds"])} | {parity} |')
         path = ROOT / filename
         before, rest = path.read_text(encoding="utf-8").split("<!-- BENCHMARK_TABLE_START -->")
         _, after = rest.split("<!-- BENCHMARK_TABLE_END -->")

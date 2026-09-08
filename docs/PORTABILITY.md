@@ -55,6 +55,10 @@ and numerical validation and are not advertised as supported here.
 
 Runtime fallback is distinct from installation: maturin still builds a native
 wheel during `pip install .`, so source installation needs Rust and C++.
+The 0.2.0 release supplies a CPython 3.11 manylinux2014 x86-64 wheel for
+binary-only pip installation. Release checks install all dependencies without
+compilation on Ubuntu 24.04 and test a Debian 12 container; the wheel's glibc
+baseline alone does not certify the entire dependency stack on older Linux.
 For a pre-existing environment with all dependencies installed, a source-tree
 fallback can be used without compiling by placing `src/` on `PYTHONPATH` and
 setting `IOBRX_DISABLE_RUST=1`. This does not solve missing upstream packages.
@@ -62,9 +66,10 @@ setting `IOBRX_DISABLE_RUST=1`. This does not solve missing upstream packages.
 ## Numerical contract
 
 - CI uses [the validated versions](../tests/constraints-validated.txt).
-  Broader version ranges in package metadata are not all independently
-  certified for exact equality. NumPy and scikit-learn upper bounds preserve
-  the previously validated numerical line.
+  Package metadata pins IOBRpy, NumPy, SciPy, scikit-learn and GSEApy to the
+  exact validated versions. Other bounded ranges are not a guarantee of
+  equality for every combination. The release workflow also tests ordinary
+  pip dependency resolution; the container locks the complete dependency set.
 - Official tests compare against IOBRpy executed on the same fixtures, not
   against a plot or a correlation threshold. They assert matching labels and
   exact numerical values.

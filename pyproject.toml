@@ -1,5 +1,5 @@
 [build-system]
-requires = ["maturin>=1.5,<2.0"]
+requires = ["maturin>=1.9.3,<2.0"]
 build-backend = "maturin"
 
 [project]
@@ -8,6 +8,7 @@ version = "0.2.0"
 description = "Bit-exact, multithreaded acceleration layer for IOBRpy (CIBERSORT, signature scoring, TPM, EPIC, quanTIseq, MCP-counter, ESTIMATE, annotation)"
 readme = "README.md"
 license = { text = "MIT" }
+license-files = ["LICENSE", "rust/vendor/THIRD_PARTY_NOTICES.md", "rust/vendor/LICENSE.*"]
 authors = [{ name = "iobrx contributors" }]
 requires-python = ">=3.11"
 keywords = ["bioinformatics", "deconvolution", "cibersort", "ssgsea", "iobr", "tumor-microenvironment"]
@@ -20,24 +21,24 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
-    "iobrpy>=0.2.0",
+    "iobrpy==0.2.1",
     # Parity line: the ORIGINAL's reduction semantics moved in numpy 2.4
     # (e.g. a global X.mean() differs by 1 ulp from 2.2.x, which flips NuSVR
     # support sets in CIBERSORT). iobrx reproduces the frozen 2.2.x numbers;
-    # pin to the validated <2.3 line so original and fast stay bit-identical
-    # (see README Caveats).
-    "numpy>=1.22,<2.3",
-    "pandas>=1.5",
-    "scipy>=1.9",
+    # Publish the validated version rather than selecting a new numerical
+    # implementation implicitly (see docs/PORTABILITY.md).
+    "numpy==2.2.6",
+    "pandas>=2.3,<3",
+    "scipy==1.16.3",
     # The vendored libsvm kernel is scikit-learn 1.7.2's svm.cpp; the
     # ORIGINAL's NuSVR numerics drifted in sklearn 1.9.0, which would make
     # iobrx bit-exact vs the frozen 1.7.2 references but NOT vs a >=1.8
-    # original. Pin to the validated 1.x<1.8 line (see README Caveats).
-    "scikit-learn>=1.2,<1.8",
-    "gseapy>=1.0.6",
-    "joblib>=1.1",
-    "pyarrow>=10.0",
-    "pyreadr>=0.4",
+    # original. Publish the exact validated version.
+    "scikit-learn==1.7.2",
+    "gseapy==1.3.1",
+    "joblib>=1.3",
+    "pyarrow>=20,<21",
+    "pyreadr>=0.5.6,<0.6",
 ]
 
 [project.optional-dependencies]
