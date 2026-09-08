@@ -1,0 +1,15 @@
+{
+  "analysis": "10_mcpcounter",
+  "seconds": 0.011704787000780925,
+  "input_shape": [
+    48058,
+    10
+  ],
+  "output_shapes": {
+    "result": [
+      10,
+      10
+    ]
+  },
+  "threads": 8
+}

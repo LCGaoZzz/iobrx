@@ -1,0 +1,15 @@
+{
+  "analysis": "01_gene_annotation",
+  "seconds": 0.03822194901295006,
+  "input_shape": [
+    60483,
+    10
+  ],
+  "output_shapes": {
+    "result": [
+      50181,
+      10
+    ]
+  },
+  "threads": 8
+}

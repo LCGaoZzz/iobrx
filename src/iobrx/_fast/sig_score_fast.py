@@ -132,8 +132,11 @@ def _ensure_rust_pca():
     hits, _ = _find_bundled_openblas()
     if not hits:
         return False
-    lib = _ctypes.CDLL(hits[0])
-    addr = _ctypes.cast(lib.scipy_dgesdd_, _ctypes.c_void_p).value
+    try:
+        lib = _ctypes.CDLL(hits[0])
+        addr = _ctypes.cast(lib.scipy_dgesdd_, _ctypes.c_void_p).value
+    except (OSError, AttributeError):
+        return False
     _ir.init_blas(0, 0, addr)
     _dgesdd_inited = True
     return True

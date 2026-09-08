@@ -1,0 +1,38 @@
+{
+  "imvigor210_eset": {
+    "source": "https://github.com/IOBR/IOBR/releases/download/data-v1.0/imvigor210_eset.rda",
+    "shape": [
+      872,
+      348
+    ],
+    "parquet_sha256": "62594d4b2e00a44be561d40f79ae62cff9269baafade507b8b362947a4113b2c",
+    "source_rda_sha256": "ed0d1bbae062ad9f68be3874b869fbfbf3aeee0949f6aac2c4b355b28ecd580d"
+  },
+  "eset_stad": {
+    "source": "https://github.com/IOBR/IOBR/releases/download/data-v1.0/eset_stad.rda",
+    "shape": [
+      60483,
+      10
+    ],
+    "parquet_sha256": "6f0db67de1c84a5dc18f030b2c391b7953cc587a5ac19f78abecd6dd9c1707ef",
+    "source_rda_sha256": "80e73dbd0a0989f6c5098bc20d1b9ac04e13ea5abe0049e53d8808ab92581d29"
+  },
+  "anno_grch38": {
+    "source": "https://github.com/IOBR/IOBR/releases/download/data-v1.0/anno_grch38.rda",
+    "shape": [
+      66533,
+      11
+    ],
+    "parquet_sha256": "41d48c0c372e6bd5d3b9098b8030f74d57e7a9c06e11f2192f5b38702389af6b",
+    "source_rda_sha256": "f96a0ebf0e9e2dfef94c3fb134e366e0fb1bea229292c6934afe579b0d41b0e6"
+  },
+  "eset_blca": {
+    "source": "https://github.com/IOBR/IOBR/releases/download/data-v1.0/eset_blca.rda",
+    "shape": [
+      60483,
+      5
+    ],
+    "parquet_sha256": "009401bab3a5a1b61e6224bfccd5b8426912b6f3cb9cfdc4553faca54949890d",
+    "source_rda_sha256": "b45c5366d26a1e185be31f8f41c62e1852078ed81df6144326a7651209a78afa"
+  }
+}

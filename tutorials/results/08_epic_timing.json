@@ -1,0 +1,23 @@
+{
+  "analysis": "08_epic",
+  "seconds": 0.3233146980055608,
+  "input_shape": [
+    48058,
+    10
+  ],
+  "output_shapes": {
+    "mRNAProportions": [
+      10,
+      8
+    ],
+    "cellFractions": [
+      10,
+      8
+    ],
+    "fit_gof": [
+      10,
+      12
+    ]
+  },
+  "threads": 8
+}

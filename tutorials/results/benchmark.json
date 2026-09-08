@@ -1,0 +1,224 @@
+{
+  "method": "One fresh process per analysis; first call reported separately; median of three subsequent calls. Input loading/preparation and plotting excluded. Workflow includes its count-to-TPM stage. OS file caches may be warm. No concurrent benchmark workers.",
+  "repeats": 3,
+  "hardware": {
+    "cpu": "13th Gen Intel(R) Core(TM) i9-13900KF",
+    "logical_cpus": 32,
+    "avx2": true,
+    "avx512f": false
+  },
+  "environment": {
+    "python": "3.11.15",
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "iobrx": "0.2.0",
+    "threads": 8,
+    "native_available": true,
+    "native_reason": null,
+    "sorting": "numpy CPU dispatch",
+    "requires_avx512": false,
+    "bundled_openblas_found": true,
+    "versions": {
+      "numpy": "2.2.6",
+      "pandas": "2.3.3",
+      "scipy": "1.16.3",
+      "scikit-learn": "1.7.2",
+      "iobrpy": "0.2.1",
+      "gseapy": "1.3.1",
+      "matplotlib": "3.10.9"
+    }
+  },
+  "analyses": [
+    {
+      "analysis": "01_gene_annotation",
+      "input_shape": [
+        60483,
+        10
+      ],
+      "first_call_seconds": 0.036024710003403015,
+      "repeat_seconds": [
+        0.016815144001157023,
+        0.016721184001653455,
+        0.016589503997238353
+      ],
+      "median_seconds": 0.016721184001653455,
+      "min_seconds": 0.016589503997238353,
+      "max_seconds": 0.016815144001157023
+    },
+    {
+      "analysis": "02_counts_to_tpm",
+      "input_shape": [
+        60483,
+        10
+      ],
+      "first_call_seconds": 0.11161556500883307,
+      "repeat_seconds": [
+        0.070133960005478,
+        0.06569269100145902,
+        0.06753846000356134
+      ],
+      "median_seconds": 0.06753846000356134,
+      "min_seconds": 0.06569269100145902,
+      "max_seconds": 0.070133960005478
+    },
+    {
+      "analysis": "03_signature_pca",
+      "input_shape": [
+        872,
+        348
+      ],
+      "first_call_seconds": 0.6003879149939166,
+      "repeat_seconds": [
+        0.2440724229963962,
+        0.3720462939963909,
+        0.22641816799296066
+      ],
+      "median_seconds": 0.2440724229963962,
+      "min_seconds": 0.22641816799296066,
+      "max_seconds": 0.3720462939963909
+    },
+    {
+      "analysis": "04_signature_zscore",
+      "input_shape": [
+        872,
+        348
+      ],
+      "first_call_seconds": 0.4878097470063949,
+      "repeat_seconds": [
+        0.07818986399797723,
+        0.11550564800563734,
+        0.07856044100481085
+      ],
+      "median_seconds": 0.07856044100481085,
+      "min_seconds": 0.07818986399797723,
+      "max_seconds": 0.11550564800563734
+    },
+    {
+      "analysis": "05_signature_ssgsea",
+      "input_shape": [
+        872,
+        348
+      ],
+      "first_call_seconds": 0.495881050999742,
+      "repeat_seconds": [
+        0.08666888100560755,
+        0.11951021899585612,
+        0.08038609901268501
+      ],
+      "median_seconds": 0.08666888100560755,
+      "min_seconds": 0.08038609901268501,
+      "max_seconds": 0.11951021899585612
+    },
+    {
+      "analysis": "06_signature_integration",
+      "input_shape": [
+        872,
+        348
+      ],
+      "first_call_seconds": 0.8178977950010449,
+      "repeat_seconds": [
+        0.22944179899059236,
+        0.33600783500878606,
+        0.3508929110103054
+      ],
+      "median_seconds": 0.33600783500878606,
+      "min_seconds": 0.22944179899059236,
+      "max_seconds": 0.3508929110103054
+    },
+    {
+      "analysis": "07_cibersort",
+      "input_shape": [
+        48058,
+        10
+      ],
+      "first_call_seconds": 26.98787768300099,
+      "repeat_seconds": [
+        26.365606199993636,
+        27.356058987003053,
+        26.26304791000439
+      ],
+      "median_seconds": 26.365606199993636,
+      "min_seconds": 26.26304791000439,
+      "max_seconds": 27.356058987003053
+    },
+    {
+      "analysis": "08_epic",
+      "input_shape": [
+        48058,
+        10
+      ],
+      "first_call_seconds": 0.3019198789988877,
+      "repeat_seconds": [
+        0.006831366001279093,
+        0.006617744991672225,
+        0.008170728004188277
+      ],
+      "median_seconds": 0.006831366001279093,
+      "min_seconds": 0.006617744991672225,
+      "max_seconds": 0.008170728004188277
+    },
+    {
+      "analysis": "09_quantiseq",
+      "input_shape": [
+        48058,
+        10
+      ],
+      "first_call_seconds": 0.4752177960035624,
+      "repeat_seconds": [
+        0.03376839400152676,
+        0.043717117005144246,
+        0.040890317992307246
+      ],
+      "median_seconds": 0.040890317992307246,
+      "min_seconds": 0.03376839400152676,
+      "max_seconds": 0.043717117005144246
+    },
+    {
+      "analysis": "10_mcpcounter",
+      "input_shape": [
+        48058,
+        10
+      ],
+      "first_call_seconds": 0.010040301000117324,
+      "repeat_seconds": [
+        0.001066299999365583,
+        0.0010593999904813245,
+        0.0009253000025637448
+      ],
+      "median_seconds": 0.0010593999904813245,
+      "min_seconds": 0.0009253000025637448,
+      "max_seconds": 0.001066299999365583
+    },
+    {
+      "analysis": "11_estimate",
+      "input_shape": [
+        48058,
+        10
+      ],
+      "first_call_seconds": 0.031009854006697424,
+      "repeat_seconds": [
+        0.014470227994024754,
+        0.01579091300664004,
+        0.016116628001327626
+      ],
+      "median_seconds": 0.01579091300664004,
+      "min_seconds": 0.014470227994024754,
+      "max_seconds": 0.016116628001327626
+    },
+    {
+      "analysis": "12_complete_workflow",
+      "input_shape": [
+        60483,
+        10
+      ],
+      "first_call_seconds": 29.589319598002476,
+      "repeat_seconds": [
+        29.12555984899518,
+        28.28583848499693,
+        27.558003104000818
+      ],
+      "median_seconds": 28.28583848499693,
+      "min_seconds": 27.558003104000818,
+      "max_seconds": 29.12555984899518
+    }
+  ]
+}

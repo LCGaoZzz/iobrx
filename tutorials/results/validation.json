@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-08",
+  "environment": "Existing Omicos Python 3.11.15 environment, WSL2 Ubuntu, Intel Core i9-13900KF, no AVX-512",
+  "package_under_test": "Installed iobrx 0.2.0 manylinux_2_34_x86_64 wheel; tests imported the installed wheel rather than the source tree",
+  "checks": [
+    {
+      "command": "IOBRX_TESTDATA=tutorials/data python -m pytest -q -o addopts=",
+      "passed": 34,
+      "failed": 0,
+      "seconds": 85.22,
+      "scope": "13 existing smoke tests + 10 portability cases + 11 official-data parity cases"
+    },
+    {
+      "command": "IOBRX_DISABLE_RUST=1 python -m pytest -q tests/test_api_smoke.py",
+      "passed": 13,
+      "failed": 0,
+      "seconds": 7.67,
+      "scope": "Public API with native acceleration disabled"
+    },
+    {
+      "command": "NPY_DISABLE_CPU_FEATURES=AVX2,FMA3,AVX512F,AVX512CD,AVX512_SKX,AVX512_CLX,AVX512_CNL,AVX512_ICL python -m pytest -q tests/test_portability.py -k 'quantile or argsort'",
+      "passed": 4,
+      "failed": 0,
+      "seconds": 0.64,
+      "scope": "Local NumPy baseline dispatch, ties, NaNs and array layouts"
+    },
+    {
+      "command": "python scripts/execute_tutorials.py",
+      "passed": 12,
+      "failed": 0,
+      "scope": "Final revision: fresh kernels, embedded figures, actual analysis output; individual durations are in notebook_execution.json"
+    },
+    {
+      "command": "python scripts/validate_tutorials.py",
+      "scope": "12 executed notebooks, 36 figure exports, 4 SHA-256 dataset checksums",
+      "passed": true
+    }
+  ],
+  "notes": [
+    "Expected pandas fragmentation and upstream gene-length filtering warnings remain; all assertions passed.",
+    "Exact equality excludes CIBERSORT P-values because the reference uses unseeded random draws.",
+    "AVX-512-disabled sorting checks do not certify unrelated CPU architectures or operating systems."
+  ]
+}

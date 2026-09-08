@@ -1,0 +1,15 @@
+{
+  "analysis": "11_estimate",
+  "seconds": 0.03274994499224704,
+  "input_shape": [
+    48058,
+    10
+  ],
+  "output_shapes": {
+    "result": [
+      3,
+      10
+    ]
+  },
+  "threads": 8
+}

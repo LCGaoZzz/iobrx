@@ -1,0 +1,15 @@
+{
+  "analysis": "06_signature_integration",
+  "seconds": 0.793958141002804,
+  "input_shape": [
+    872,
+    348
+  ],
+  "output_shapes": {
+    "result": [
+      348,
+      178
+    ]
+  },
+  "threads": 8
+}

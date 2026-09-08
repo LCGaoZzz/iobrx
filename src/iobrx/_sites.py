@@ -11,9 +11,9 @@ than hard-coding any environment path.
 
 If numpy/scipy were NOT installed from wheels (e.g. conda, where OpenBLAS
 lives in the environment's ``lib`` directory and the symbols are un-prefixed),
-resolution fails and :func:`find_bundled_openblas` returns empty lists; the
-callers raise a clear ``RuntimeError`` explaining that pip-installed
-numpy/scipy wheels are required.
+resolution fails and :func:`find_bundled_openblas` returns empty lists;
+the public auto backend falls back to IOBRpy for BLAS-dependent kernels.
+Explicit native requests raise a clear ``RuntimeError``.
 """
 from __future__ import annotations
 
@@ -38,12 +38,14 @@ def find_bundled_openblas() -> tuple[list[str], list[str]]:
     ``scipy_ddot_`` / ``scipy_dgesdd_``). ``numpy_ilp64_hits``: numpy's
     private ILP64 OpenBLAS (exports ``scipy_cblas_dgemv64_``).
     """
-    site = site_packages()
+    import scipy
+    numpy_site = site_packages()
+    scipy_site = os.path.dirname(os.path.dirname(os.path.abspath(scipy.__file__)))
     scipy_hits = sorted(
-        glob.glob(os.path.join(site, "scipy.libs", "libscipy_openblas-*.so*"))
+        glob.glob(os.path.join(scipy_site, "scipy.libs", "libscipy_openblas-*.so*"))
     )
     numpy_hits = sorted(
-        glob.glob(os.path.join(site, "numpy.libs", "libscipy_openblas64*.so*"))
+        glob.glob(os.path.join(numpy_site, "numpy.libs", "libscipy_openblas64*.so*"))
     )
     return scipy_hits, numpy_hits
 

@@ -1,0 +1,15 @@
+{
+  "analysis": "04_signature_zscore",
+  "seconds": 0.5471123149909545,
+  "input_shape": [
+    872,
+    348
+  ],
+  "output_shapes": {
+    "result": [
+      348,
+      60
+    ]
+  },
+  "threads": 8
+}

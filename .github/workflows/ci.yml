@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      IOBRX_TESTDATA: ${{ github.workspace }}/tutorials/data
     steps:
       - uses: actions/checkout@v4
 
@@ -23,22 +25,23 @@ jobs:
       - name: Build wheel and install (maturin source build)
         run: |
           python -m pip install --upgrade pip
-          pip install .[test]
+          pip install -c tests/constraints-validated.txt .[test]
 
-      - name: Smoke tests
-        # The Rust extension unconditionally compiles its argsort path for
-        # the AVX-512 kernel numpy dispatches (bit-exactness contract, see
-        # README "Install"). On runners whose CPU lacks AVX-512 the tests
-        # would die with SIGILL, so gate on CPU flags: build + install are
-        # always verified; tests run whenever the runner has the ISA.
-        run: |
-          model="$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | xargs)"
-          echo "Runner CPU: ${model:-unknown}"
-          if grep -qm1 avx512f /proc/cpuinfo; then
-            pytest -q
-          else
-            echo "::warning::Runner CPU lacks AVX-512 — smoke tests skipped."
-            echo "The iobrx extension targets the AVX-512 argsort kernel by"
-            echo "design (bit-exactness contract). Wheel build and install were"
-            echo "verified above; run pytest on AVX-512 hardware."
-          fi
+      - name: Smoke and CPU portability tests (every runner)
+        run: python -m pytest -q
+
+      - name: Official-data numerical parity (offline fixtures)
+        run: python -m pytest -q -m full
+
+      - name: Public API with native extension disabled
+        env:
+          IOBRX_DISABLE_RUST: "1"
+        run: python -m pytest -q tests/test_api_smoke.py
+
+      - name: Baseline NumPy sorting dispatch
+        env:
+          NPY_DISABLE_CPU_FEATURES: AVX2,FMA3,AVX512F,AVX512CD,AVX512_SKX,AVX512_CLX,AVX512_CNL,AVX512_ICL
+        run: python -m pytest -q tests/test_portability.py -k 'quantile or argsort'
+
+      - name: Verify committed tutorials and data integrity
+        run: python scripts/validate_tutorials.py

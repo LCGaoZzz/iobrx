@@ -1,0 +1,17 @@
+*.py text eol=lf
+*.rs text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.txt text eol=lf
+LICENSE text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+*.ipynb text eol=lf
+*.svg text eol=lf
+*.csv text eol=lf
+*.parquet binary
+*.png binary
+*.pdf binary

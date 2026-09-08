@@ -9,14 +9,18 @@ run in a Rust extension (rayon threads + vendored libsvm/OpenBLAS entry
 points); the remaining stages are vectorized numpy/pandas with per-process
 resource caching.
 
-Quick start (self-sufficient; see README "Quickstart")::
+Quick start (downloads a public signature-scoring example)::
 
     import iobrx
 
     eset = iobrx.load_official("imvigor210_eset")  # $IOBRX_TESTDATA -> cache
-    cib = iobrx.cibersort(eset, perm=100, QN=True)  # ~50x faster
     scores = iobrx.calculate_sig_score(eset, "signature_collection",
                                        method="pca")
+    print(iobrx.backend_info())
+
+The optional native extension uses NumPy's local sorting dispatch and does
+not require AVX-512. Full-transcriptome deconvolution examples and measured
+desktop timings are provided in the repository's executed tutorials.
 
 Every function accepts DataFrames in the same orientation as IOBRpy
 (genes/samples x samples/genes as documented per function) and returns frames
@@ -30,18 +34,12 @@ import os
 import sys
 
 from iobrx._threads import get_threads, resolve_threads, set_threads
+from iobrx._backend import backend_info, select_backend
 from iobrx._testdata import MIRRORS, OfficialDataUnavailable, load_official
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
-# Import the compiled extension eagerly (fail fast with a clear error if the
-# Rust half is missing, e.g. a pure-python install) and register the
-# historical top-level alias `iobrx_rust` for it, so `import iobrx_rust`
-# keeps working in code written against the development stack once iobrx has
-# been imported. The extension's canonical import path is `iobrx._rust`.
-from . import _rust as _rust_ext  # noqa: E402
-
-sys.modules.setdefault("iobrx_rust", _rust_ext)
+# The optional native module and historical alias are managed by _backend.
 
 __all__ = [
     "cibersort",
@@ -58,6 +56,7 @@ __all__ = [
     "MIRRORS",
     "set_threads",
     "get_threads",
+    "backend_info",
     "__version__",
 ]
 
@@ -102,6 +101,7 @@ def cibersort(
     absolute: bool = False,
     abs_method: str = "sig.score",
     n_threads: int | None = None,
+    backend: str = "auto",
 ):
     """CIBERSORT deconvolution against the LM22 signature (NuSVR), accelerated.
 
@@ -119,8 +119,9 @@ def cibersort(
     perm : int, default 100
         Number of permutations for the P-value estimate.
     QN : bool, default True
-        Quantile-normalize the mixture before fitting (recommended, and the
-        only mode validated bit-exact on the official data).
+        Quantile-normalize the mixture before fitting. Retained for backward
+        compatibility; RNA-seq workflows generally use False, while
+        microarray workflows commonly use True. Match the data and protocol.
     absolute : bool, default False
         Also report the absolute-score column.
     abs_method : {'sig.score', 'no.sumto1'}, default 'sig.score'
@@ -128,6 +129,11 @@ def cibersort(
     n_threads : int or None, optional
         Rayon threads for the solver. ``None`` resolves to
         ``min(8, os.cpu_count())`` (see :func:`set_threads`).
+    backend : {'auto', 'rust', 'python'}, default 'auto'
+        Auto uses native NuSVR when its BLAS requirements are available,
+        otherwise the original Python workflow. Explicit rust fails clearly
+        if unavailable. Native permutations use seed 0; the Python fallback
+        retains the upstream unseeded P-values.
 
     Returns
     -------
@@ -136,16 +142,30 @@ def cibersort(
         the original) plus ``P-value``, ``Correlation``, ``RMSE`` and, when
         ``absolute=True``, ``Absolute_score_(<abs_method>)``.
     """
-    from iobrx._fast.cibersort_fast import cibersort_fast
+    threads = resolve_threads(n_threads)
+    if select_backend(backend):
+        from iobrx._fast.cibersort_fast import cibersort_fast, _init_blas
+        try:
+            _init_blas()
+        except (RuntimeError, OSError, AttributeError) as exc:
+            if backend == "rust":
+                raise RuntimeError("Rust CIBERSORT needs compatible bundled OpenBLAS; use backend='python'") from exc
+        else:
+            return cibersort_fast(
+                eset, perm=perm, QN=QN, absolute=absolute,
+                abs_method=abs_method, n_threads=threads,
+            )
 
-    return cibersort_fast(
-        eset,
-        perm=perm,
-        QN=QN,
-        absolute=absolute,
-        abs_method=abs_method,
-        n_threads=resolve_threads(n_threads),
-    )
+    # Preserve the original file-input semantics in a private temporary
+    # directory, including cleanup on exceptions and concurrent calls.
+    import tempfile
+    from pathlib import Path
+    from iobrpy.workflow.cibersort import cibersort as original
+    with tempfile.TemporaryDirectory(prefix="iobrx-") as directory:
+        path = Path(directory) / "mixture.csv"
+        eset.to_csv(path)
+        return original(str(path), perm=perm, QN=QN, absolute=absolute,
+                        abs_method=abs_method, n_jobs=threads)
 
 
 # ---------------------------------------------------------------------------
@@ -158,6 +178,7 @@ def calculate_sig_score(
     mini_gene_count: int = 3,
     adjust_eset: bool = True,
     n_threads: int | None = None,
+    backend: str = "auto",
 ):
     """Score gene signatures per sample (PCA / z-score / ssGSEA / integration).
 
@@ -187,6 +208,9 @@ def calculate_sig_score(
     n_threads : int or None, optional
         Threads for the per-signature PCA leg (joblib threads) and the
         ssGSEA Rust core. ``None`` resolves to ``min(8, os.cpu_count())``.
+    backend : {'auto', 'rust', 'python'}, default 'auto'
+        Auto uses the optional extension, with the original workflow as
+        fallback. Python explicitly selects the original IOBRpy workflow.
 
     Returns
     -------
@@ -195,16 +219,19 @@ def calculate_sig_score(
         signature; ``TMEscore_CIR`` / ``TMEscore_plus`` contrasts are appended
         when both constituents are present, matching the original.
     """
-    from iobrx._fast.sig_score_fast import calculate_sig_score_fast
-
     names = [signature] if isinstance(signature, str) else list(signature)
+    threads = resolve_threads(n_threads)
+    if not select_backend(backend):
+        from iobrpy.workflow.calculate_sig_score import calculate_sig_score as original
+        return original(eset, names, method, mini_gene_count, adjust_eset, threads)
+    from iobrx._fast.sig_score_fast import calculate_sig_score_fast
     return calculate_sig_score_fast(
         eset,
         names,
         method,
         mini_gene_count,
         adjust_eset,
-        resolve_threads(n_threads),
+        threads,
     )
 
 
@@ -476,14 +503,14 @@ def estimate_score(eset, platform: str = "affy"):
     eset : pandas.DataFrame
         Expression matrix, genes (index) x samples (columns).
     platform : {'affy', 'affymetrix', ...}, default 'affy'
-        ``'affy'`` / ``'affymetrix'`` adds the ``TumorPurity`` row (the
-        cos-based conversion), as upstream.
+        Only the exact spelling ``'affymetrix'`` adds ``TumorPurity``, as
+        upstream. The legacy ``'affy'`` default returns the three scores.
 
     Returns
     -------
     pandas.DataFrame
         Rows ``StromalSignature`` / ``ImmuneSignature`` / ``ESTIMATEScore``
-        (+ ``TumorPurity`` on affy platforms), columns = samples.
+        (+ ``TumorPurity`` for ``platform='affymetrix'``), columns = samples.
     """
     from iobrx._fast.estimate_fast import estimate_score as _estimate_score
 

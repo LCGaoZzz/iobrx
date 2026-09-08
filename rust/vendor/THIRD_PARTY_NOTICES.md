@@ -1,7 +1,9 @@
 # Third-party notices for vendored sources
 
 The Rust crate vendors three third-party C/C++ sources under this directory.
-They are compiled, unmodified, into the `iobrx_rust` extension module.
+The scikit-learn/libsvm sources are compiled, unmodified, into the native
+extension. The historical x86-simd-sort snapshot is retained for provenance
+but is **not compiled or linked in version 0.2.0**; sorting now calls NumPy.
 
 ## sklearn/svm/src/libsvm/svm.cpp, svm.h, _svm_cython_blas_helpers.h
 ## sklearn/svm/src/newrand/newrand.h

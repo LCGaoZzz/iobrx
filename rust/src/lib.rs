@@ -38,7 +38,7 @@ fn global_pool(n_threads: usize) -> Result<Arc<rayon::ThreadPool>, String> {
 }
 
 // ------------------------------------------------------------------
-// extern C surface (wrapper.cpp / argsort_wrapper.cpp)
+// extern C surface (baseline libsvm wrapper.cpp)
 // ------------------------------------------------------------------
 extern "C" {
     fn iobrx_svm_init();
@@ -59,7 +59,6 @@ extern "C" {
         out_n_iter: *mut i32,
         out_fit_status: *mut i32,
     ) -> i32;
-    fn iobrx_argsort_f64(arr_scratch: *mut f64, arg: *mut u64, n: u64);
 }
 
 // ------------------------------------------------------------------
@@ -360,40 +359,18 @@ fn corr_pearson_fast(a: &[f64], b: &[f64], buf: &mut Vec<f64>) -> f64 {
 // quantile normalization (numpy-exact incl. argsort tie semantics)
 // ------------------------------------------------------------------
 // Y is row-major (g, n). Replicates quantile_normalize_fast:
-//   order = np.argsort(Y, axis=0)                      -> per-column x86-simd-sort
+//   order = np.argsort(Y, axis=0)                      -> local NumPy CPU dispatch
 //   sorted_Y = take_along_axis(Y, order, axis=0)
 //   mean_sorted = sorted_Y.mean(axis=1)                -> pairwise over row of n
 //   inv_order[order[r,j], j] = r
 //   out[i,j] = mean_sorted[inv_order[i,j]]
-fn quantile_normalize(y: &mut [f64], g: usize, n: usize) {
-    debug_assert!(y.len() == g * n);
-    let mut order: Vec<u64> = vec![0; g];
-    let mut rank: Vec<u64> = vec![0; g * n];
-    let mut sorted: Vec<f64> = vec![0.0; g * n]; // row-major [r][j]
-    let mut col = vec![0.0f64; g];
-    for j in 0..n {
-        for i in 0..g {
-            col[i] = y[i * n + j];
-        }
-        let arg = &mut order[..];
-        unsafe {
-            iobrx_argsort_f64(col.as_mut_ptr(), arg.as_mut_ptr(), g as u64);
-        }
-        for r in 0..g {
-            let i = order[r] as usize;
-            sorted[r * n + j] = y[i * n + j];
-            rank[i * n + j] = r as u64;
-        }
-    }
-    let mut mean_sorted = vec![0.0f64; g];
-    for r in 0..g {
-        mean_sorted[r] = pairwise_sum_f64(&sorted[r * n..(r + 1) * n]) / (n as f64);
-    }
-    for j in 0..n {
-        for i in 0..g {
-            y[i * n + j] = mean_sorted[rank[i * n + j] as usize];
-        }
-    }
+fn quantile_normalize(py: Python, y: &mut [f64], g: usize, n: usize) -> PyResult<()> {
+    let input = y.to_vec().into_pyarray_bound(py).reshape([g, n])?;
+    let result = py.import_bound("iobrx._sorting")?
+        .getattr("quantile_normalize")?.call1((input,))?;
+    let result = result.extract::<PyReadonlyArray2<f64>>()?;
+    y.copy_from_slice(result.as_slice().map_err(|_| PyRuntimeError::new_err("NumPy sort result must be contiguous"))?);
+    Ok(())
 }
 
 // ------------------------------------------------------------------
@@ -1306,12 +1283,9 @@ fn fit_nusvr_linear_py(
 #[pyfunction]
 #[pyo3(name = "argsort_f64_np")]
 fn argsort_f64_np_py(py: Python, x: PyReadonlyArray1<f64>) -> PyResult<Py<PyArray1<u64>>> {
-    let xs = x.as_slice().map_err(|_| PyRuntimeError::new_err("need contiguous"))?;
-    let n = xs.len();
-    let mut arr: Vec<f64> = xs.to_vec();
-    let mut arg: Vec<u64> = vec![0; n];
-    unsafe { iobrx_argsort_f64(arr.as_mut_ptr(), arg.as_mut_ptr(), n as u64) };
-    Ok(arg.into_pyarray_bound(py).unbind())
+    let input = x.as_array().to_owned().into_pyarray_bound(py);
+    py.import_bound("iobrx._sorting")?.getattr("argsort")?
+        .call1((input,))?.extract::<Py<PyArray1<u64>>>()
 }
 
 /// quantile_normalize_fast parity helper. Layout-correct: the values are
@@ -1343,7 +1317,7 @@ fn quantile_normalize_np_py(
             }
         }
     }
-    quantile_normalize(&mut data, g, n);
+    quantile_normalize(py, &mut data, g, n)?;
     Ok(data
         .into_pyarray_bound(py)
         .reshape([g, n])
@@ -1453,37 +1427,39 @@ fn cibersort_core_py(
         return Err(PyRuntimeError::new_err("no overlapping genes"));
     }
 
+    // NumPy sorting needs the GIL; all solver work below still releases it.
+    // -- step 3: exp2 heuristic on FULL Y. When exp2_done=true the CALLER
+    // already applied the original heuristic + numpy's vectorized exp2
+    // (np.max(Y) < 50 -> np.exp2(Y, out=Y)); numpy's exp2 and Rust's
+    // libm exp2 differ by 1 ulp on ~5% of inputs, and those last bits
+    // are what the bit-exactness contract is built on, so the numpy
+    // path is the only one the shim uses. The internal branch below is
+    // kept only for direct cibersort_core callers that opt out.
+    let mut y_full: Vec<f64> = mix.to_vec();
+    let exp2_applied;
+    if exp2_done {
+        exp2_applied = true;
+    } else {
+        let mut ymax = f64::NEG_INFINITY;
+        for &v in y_full.iter() {
+            if v > ymax {
+                ymax = v;
+            }
+        }
+        exp2_applied = ymax < 50.0;
+        if exp2_applied {
+            for v in y_full.iter_mut() {
+                *v = v.exp2();
+            }
+        }
+    }
+    // -- step 4: quantile normalization on FULL Y
+    if use_qn {
+        quantile_normalize(py, &mut y_full, gtot, n)?;
+    }
+
     let out_dict = PyDict::new_bound(py);
     let r = py.allow_threads(move || -> Result<(Vec<f32>, Vec<f32>, Vec<f32>, Vec<f32>, Vec<f32>, Vec<f64>, Vec<f32>, Vec<i32>, bool, f64, f64, Vec<f64>, f64, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>, Vec<f64>), String> {
-        // -- step 3: exp2 heuristic on FULL Y. When exp2_done=true the CALLER
-        // already applied the original heuristic + numpy's vectorized exp2
-        // (np.max(Y) < 50 -> np.exp2(Y, out=Y)); numpy's exp2 and Rust's
-        // libm exp2 differ by 1 ulp on ~5% of inputs, and those last bits
-        // are what the bit-exactness contract is built on, so the numpy
-        // path is the only one the shim uses. The internal branch below is
-        // kept only for direct cibersort_core callers that opt out.
-        let mut y_full: Vec<f64> = mix.to_vec();
-        let exp2_applied;
-        if exp2_done {
-            exp2_applied = true;
-        } else {
-            let mut ymax = f64::NEG_INFINITY;
-            for &v in y_full.iter() {
-                if v > ymax {
-                    ymax = v;
-                }
-            }
-            exp2_applied = ymax < 50.0;
-            if exp2_applied {
-                for v in y_full.iter_mut() {
-                    *v = v.exp2();
-                }
-            }
-        }
-        // -- step 4: quantile normalization on FULL Y
-        if use_qn {
-            quantile_normalize(&mut y_full, gtot, n);
-        }
         // -- step 6: common restriction
         let mut yc: Vec<f64> = Vec::with_capacity(gc * n);
         let mut row_of_common: Vec<usize> = Vec::with_capacity(gc);

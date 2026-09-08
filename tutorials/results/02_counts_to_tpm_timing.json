@@ -1,0 +1,15 @@
+{
+  "analysis": "02_counts_to_tpm",
+  "seconds": 0.1050746800028719,
+  "input_shape": [
+    60483,
+    10
+  ],
+  "output_shapes": {
+    "result": [
+      48058,
+      10
+    ]
+  },
+  "threads": 8
+}

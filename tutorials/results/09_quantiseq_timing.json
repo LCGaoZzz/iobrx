@@ -1,0 +1,15 @@
+{
+  "analysis": "09_quantiseq",
+  "seconds": 0.5340240009973058,
+  "input_shape": [
+    48058,
+    10
+  ],
+  "output_shapes": {
+    "result": [
+      10,
+      12
+    ]
+  },
+  "threads": 8
+}
