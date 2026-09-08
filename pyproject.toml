@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "iobrx"
-version = "0.2.0"
+version = "0.3.0"
 description = "Bit-exact, multithreaded acceleration layer for IOBRpy (CIBERSORT, signature scoring, TPM, EPIC, quanTIseq, MCP-counter, ESTIMATE, annotation)"
 readme = "README.md"
 license = { text = "MIT" }
