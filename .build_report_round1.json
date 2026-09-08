@@ -2,7 +2,7 @@
   "round": 1,
   "task": "package the finished fast stack as installable library 'iobrx' in a new GitHub-ready repo",
   "datetime": "2026-09-08T00:45:22",
-  "repo": "/data/users/lianchong/workspace1/iobrx-github",
+  "repo": "/data/users/user/workspace1/iobrx-github",
   "git": {
     "initial_commit": "afa892c",
     "files_tracked": 58,
@@ -30,7 +30,7 @@
       "where": "fresh venv creation (VERIFY step 1)",
       "error": "'python3 -m venv' yields Python 3.10.12; iobrpy ships cp311-only wheels (0.2.1: cp311 manylinux2014) -> unresolvable dependency",
       "cause": "system python3 is 3.10; iobrpy wheels are cp311-only",
-      "fix": "created the fresh venv with python3.11 (3.11.15 at /home/lianchong/.local/bin/python3.11); pyproject already requires-python>=3.11",
+      "fix": "created the fresh venv with python3.11 (3.11.15 at /home/user/.local/bin/python3.11); pyproject already requires-python>=3.11",
       "status": "environment workaround, documented"
     },
     {

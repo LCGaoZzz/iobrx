@@ -73,6 +73,6 @@
     "numpy": "2.2.6",
     "pandas": "2.3.3",
     "machine_cores": 224,
-    "input": "/data/users/lianchong/workspace1/testdata/eset_stad.parquet (60483x10, Ensembl)"
+    "input": "/data/users/user/workspace1/testdata/eset_stad.parquet (60483x10, Ensembl)"
   }
 }

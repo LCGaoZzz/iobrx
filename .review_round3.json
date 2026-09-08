@@ -1,0 +1,218 @@
+{
+  "review": "independent fresh-environment review, round 3",
+  "reviewer": "independent-review-r3 (no prior contact with the project)",
+  "date": "2026-09-07",
+  "repo": "/data/users/user/workspace1/iobrx-github",
+  "machine": "224-core Linux; cargo 1.97 available; PyPI reachable; github.com BLOCKED in this environment (curl HEAD to github.com times out; urllib raises RemoteDisconnected)",
+  "environment_notes": [
+    "python3.11 found at /home/user/.local/bin/python3.11 (3.11.15, uv-managed symlink); /usr/bin/python3.11 does NOT exist (not a blocker, documented fallback found)",
+    "official testdata present at /data/users/user/workspace1/testdata/ (imvigor210_eset, eset_stad, anno_grch38 parquet+rda, and more) - used only via the README-documented IOBRX_TESTDATA path after the documented download fallback failed"
+  ],
+
+  "steps": {
+    "1_readme": {
+      "wall_time_s": null,
+      "notes": [
+        "README is detailed and unusually honest about caveats (P-value nondeterminism, NaN contract, csv-parse semantics, parity pins, thread guidance)",
+        "CONFUSING: 'cargo >= 1.7x' is odd notation (means 1.70+? unclear)",
+        "CONFUSING: Quickstart code block reads parquet by bare relative path with no data-resolution logic; the resolution note is in the preceding prose and points to examples/quickstart.py, which covers only part 1 (no STAD/anno/EPIC/quanTIseq/TPM part)"
+      ]
+    },
+    "2_fresh_venv": {
+      "python": "/home/user/.local/bin/python3.11 (3.11.15); /usr/bin/python3.11 absent; system python3 is 3.10.12",
+      "venv_create_s": 3.1,
+      "pip_upgrade_s": 2.0,
+      "blockers": []
+    },
+    "3_install": {
+      "command": "pip install . (from repo root, fresh venv)",
+      "rc": 0,
+      "wall_time_s": 71.2,
+      "notes": [
+        "maturin source build succeeded first try; wheel iobrx-0.1.0-cp311-cp3-linux_x86_64.whl 600,572 bytes",
+        "resolved env: numpy 2.2.6, scikit-learn 1.7.2 (both parity pins respected), scipy 1.17.1, gseapy 1.3.1, pandas 2.3.3, iobrpy 0.2.1",
+        "'import iobrx' OK; get_threads()=8 as documented; no build errors",
+        "71.2 s used the pre-existing gitignored rust/target cache in the snapshot; repo-doc'd cold figure is 124.4 s (.build_report_round1.json)"
+      ],
+      "blockers": []
+    },
+    "4_quickstart": {
+      "verbatim_in_scratch_dir": {"rc": 1, "wall_time_s": 0.4, "error": "FileNotFoundError: [Errno 2] No such file or directory: 'imvigor210_eset.parquet'"},
+      "examples_quickstart_download_fallback": {"rc": 1, "wall_time_s": 90.9, "error": "urllib RemoteDisconnected downloading https://github.com/IOBR/IOBR/releases/download/data-v1.0/imvigor210_eset.rda (github.com blocked in this environment; PyPI works, 0.4 s)"},
+      "examples_quickstart_with_IOBRX_TESTDATA": {"rc": 0, "wall_time_s": 2.0, "result": "cibersort 348x25 in 0.118 s, PCA 1.212 s, ssGSEA 0.159 s, MCP 0.002 s"},
+      "full_verbatim_snippet_with_data_present": {"rc": 0, "wall_time_s": 3.3, "result": "all 11 README quickstart calls succeed; (348, 25) as documented; README '~3 s wall' claim reproduced"}
+    },
+    "5_pytest_plain": {
+      "command": "python -m pytest -q (repo root)",
+      "rc": 1,
+      "wall_time_s": 147.3,
+      "result": "13 passed, 11 errors (1395 warnings)",
+      "error": "the 11 full-marked tests are NOT deselected by default; each module errors at data-load with urllib.error.URLError (github.com unreachable)",
+      "smoke_only_minus_m_not_full": {"rc": 0, "wall_time_s": 10.8, "result": "13 passed, 11 deselected"},
+      "documented_flag_check": "tests/test_parity_official.py docstring offers 'pytest -q --run-full'; flag DOES NOT EXIST (no conftest.py in repo) -> 'error: unrecognized arguments: --run-full'"
+    },
+    "6_full_marker": {
+      "command": "IOBRX_TESTDATA=/data/users/user/workspace1/testdata pytest -q -m full",
+      "rc": 0,
+      "wall_time_s": 110.3,
+      "result": "11 passed, 13 deselected - all 11 official parity gates pass on the fly (fresh venv, scipy 1.17.1/gseapy 1.3.1, i.e. newer than the frozen doc env)"
+    },
+    "7_full_workflow_example": {
+      "command": "IOBRX_TESTDATA=... python examples/full_workflow.py --verify-parity",
+      "rc": 0,
+      "wall_time_s_subprocess": 97.0,
+      "printed_fast_total_s": 15.202,
+      "threads": "default 8 (cibersort 12.800 s dominates; doc 3.75-4.13 s figures are 224T)",
+      "parity": "ALL 11 stages max_abs_diff 0.0 BIT-EXACT (cibersort excl. P-value); 'All parity gates passed (bit-exact).'"
+    },
+    "8_api_friendliness": {
+      "wall_time_s": 1.8,
+      "method": "README API table only, no source reading",
+      "results": {
+        "cibersort_small_matrix_perm5": "OK first try: (6, 25), Correlation column present",
+        "calculate_sig_score_pca_and_ssgsea": "OK first try: pca (6, 32), ssgsea (6, 14) - fewer ssgsea cols on small overlap is upstream mini_gene_count semantics, covered by README Caveat 3",
+        "count2tpm_counts_to_tpm": "OK first try: (500, 4), column sums ~1e6"
+      },
+      "had_to_open_source": "never"
+    },
+    "9_docs_accuracy": {
+      "method": "every numeric claim cross-checked against the cited bench/ artifact in-repo (JSON paths resolved and values compared; computed claims re-derived)",
+      "claims_checked": 110,
+      "claims_correct_and_traced": 107,
+      "claims_ambiguous_or_imprecise": 3,
+      "claims_misleading": 1,
+      "claims_fabricated_or_untraceable": 0,
+      "detail": [
+        "AMBIGUOUS: BENCHMARKS S1 'controlled in-process stage reps sit at CV 0.0-1.7% (median 0.7%; computed from the rep lists in count2tpm_fast/quantiseq_fast/misc_fast_results)' - median (0.711%) and lower bound reproduce, but the 1.7% upper bound holds only for the fast/steady-state lists; over ALL rep lists in the three cited files the range extends to 28.5% (count2tpm original 4.4%, anno_eset original 2.8%, quantiseq cold-pair 5.0%). The companion e2e CV claim '2.8-4.4%' reproduces EXACTLY (4.37/2.84/2.90).",
+        "CITATION IMPRECISE: S7 '~9.6 ms per 502k values ... gates.GATE3' - actual key is gates.GATE3_perf.mapping_steady_state_224T.median_ms = 9.58 (number matches, key slightly misnamed).",
+        "CITATION IMPRECISE: S7 'an F-contiguous misread in the exposed QN helper (F5) (fix_round11_results.json findings)' - findings.FINDING_5_F5 is an empty {}; the F5 detail lives in crate_changes of the same file (claim still traceable in the cited artifact).",
+        "RANGE UNDERSTATED: S4 note 'background load 8-27 (FINAL_SUMMARY e2e.loadavg)' - artifact loadavg spans ~8.4 to 32.9 (per-block peaks 32.88); upper bound understated by a few loadavg points.",
+        "MISLEADING BADGE (non-numeric): README badge '[PyPI 0.1.0]' links to pypi.org/project/iobrx/ which returns 404 - the package is NOT on PyPI; the Install section honestly says 'no prebuilt wheels yet', so the badge contradicts the text."
+      ],
+      "headline_numbers_verified": [
+        "97.13 s baseline = 1.0x (literature_anchors.internal_reference_point) OK",
+        "R1 6.42x (FINAL_SUMMARY history.round_2) OK",
+        "count2tpm 38.7x (count2tpm_fast speedup_median 38.72) OK",
+        "quantiseq 16.9x (quantiseq_fast speedup 16.92) OK",
+        "R3 34.3x @224T (88.82/2.5866=34.32) OK; 38.5x vs 87.17 (rust_cibersort 2.262) OK",
+        "R5 3.7515/25.89x, 3.8736/25.07x, 4.1265/23.54x (final_round9/full_e2e/FINAL_SUMMARY) OK",
+        "warm 3.63-3.80 (cold_builders 3.6268; FINAL_SUMMARY 3.8005) OK",
+        "t64 4.8153/20.17x, t32 5.8909/16.49x OK (ratios re-derived)",
+        "official gates 10/11 max_abs_diff 0.0 + cibersort 240/240 excl-P (FINAL_SUMMARY official_gates) OK - ALSO EMPIRICALLY REPRODUCED (steps 6-7)",
+        "held-out BLCA 55.989->4.899 = 11.43x, all stages 0.0, incl. cibersort 53.56x (45.752->0.8542) and count2tpm 48.84x (4.0726->0.0834) OK",
+        "thread scaling 1/8/16/32/64/128/224T = 95.1732/12.9618/7.4034/4.5971/3.3374/2.9056/3.0601 with 240/240 bitwise at every row OK",
+        "~95 s -> ~3 s README headline = 95.17->3.06 OK; 128T 2.91 vs 224T 3.06 OK",
+        "memory +277 MiB @224T (283,520 KiB) vs +9.5 MiB @1T (9,768 KiB), ~1.24 MiB/thread (283520/224/1024=1.236) OK",
+        "cold start 3.316/3.069/3.119 s; import 0.0004 s; numpy+pandas 0.26 s OK",
+        "wheel 501,213 B; builds 9.74-9.97/13.71 s; fresh install 124.4 s OK",
+        "83-case audit 76+3+1+2+1 pre-fix -> 79+3+1 post-fix -> 77+2+3+1 freeze OK (all three verdict_counts found); CB2 8.61e-3 13/250, CB12 5.05e-1 14/260, 7218/501810, 163/531, attribution CB2 250/250 CB12 260/260 OK",
+        "tolerance experiment 0.0793 (~8pp), 127/220, raw 0.0110 OK (tolerance_results)",
+        "csv-parse 12%, 23930/205050, six-dataset bitwise parity, 6,198,527/6,198,527 repr tokens OK (forensic_blca)",
+        "exp2 1-ulp 594/11750, 8192-chunk pairwise OK (fix_round11)",
+        "audit-history '136 numeric claim rows, 136 traced, 0 untraceable; 19/19 blocks' matches .docs_report_round2.json OK",
+        "README 'imvigor210's 16 LM22 genes' - empirically recomputed: overlap = 16 OK",
+        "per-stage table S4: all 11 ORIGINAL and fast medians and cell counts verified individually; all 11 computed speedups re-derived exactly (1.02/1.26/6.56/3.79/0.82/34.1/0.60/7.44/0.88/0.90/28.8); totals 4.109 sum / ~103 s sum re-derived OK",
+        "anchors A1/A5/A6/A10/A11/A12 quoted numbers all present in literature_anchors.json OK",
+        "pypi_021_diff: ported modules identical + numerics bit-exact verdicts present OK"
+      ]
+    },
+    "10_hygiene": {
+      "license": "MIT present (1075 B), year 2026, matches badge",
+      "gitignore": "sane (target/, dist/, __pycache__, .pytest_cache, _pkgcache, editors)",
+      "git_log": "4 clean commits (afa892c..3f0b935), conventional messages, git status clean, 0 files tracked under target/",
+      "junk": "149 MB gitignored rust/target/ EXISTS in the delivered disk snapshot (predates this review; would NOT appear in a git clone) - observation only",
+      "vendored_third_party": "rust/vendor/{svm.cpp,svm.h,sklearn headers,x86-simd-sort} + THIRD_PARTY_NOTICES.md present as documented",
+      "ci": "NO CI workflow (.github/ absent) - observation, not a blocker",
+      "cleanup_by_reviewer": ".pytest_cache and __pycache__ created by this review's test runs were removed; git status clean afterwards"
+    }
+  },
+
+  "blockers": [
+    {
+      "id": "B1",
+      "step": "4 (README quickstart verbatim)",
+      "severity": "moderate",
+      "title": "README quickstart code block is not runnable as pasted",
+      "detail": "Copy-pasting the Quickstart snippet into any fresh directory fails at line 4: FileNotFoundError: 'imvigor210_eset.parquet'. The snippet contains no data-resolution; the prose above it says the files 'come from the IOBR data-v1.0 release (or point IOBRX_TESTDATA ... examples/quickstart.py resolves them for you)', and quickstart.py only covers part 1. STOPS a naive copy-paste user at the first line of the advertised quickstart."
+    },
+    {
+      "id": "B2",
+      "step": "4 (documented download fallback)",
+      "severity": "moderate (environment-dependent)",
+      "title": "Documented data download fails in this environment",
+      "detail": "examples/quickstart.py and the full-marker tests fall back to downloading .rda from github.com/IOBR/IOBR/releases; here every attempt dies after ~90 s with http.client.RemoteDisconnected (github.com unreachable; PyPI works fine). Without a local IOBRX_TESTDATA copy the quickstart and the full test suite dead-end. Recorded exactly as encountered; the repo itself documents the IOBRX_TESTDATA alternative, which works."
+    },
+    {
+      "id": "B3",
+      "step": "5 (pytest -q)",
+      "severity": "moderate",
+      "title": "Plain 'pytest -q' fails on a fresh clone: 13 passed, 11 ERRORS",
+      "detail": "pytestmark = pytest.mark.full only MARKS the official tests; nothing deselects them by default (no conftest.py, no addopts). Running the obvious 'pytest -q' from the repo root executes the 11 full tests, which attempt GitHub downloads and error (urllib.error.URLError), rc=1, 147 s mostly spent timing out. The test docstring's 'Enable with: pytest -m full' implies opt-in that does not exist, and the README never gives the working smoke-only command ('pytest -q -m \"not full\"' -> 13/13 in 10 s). SIGNIFICANTLY MISLEADS a naive user into thinking the test suite is broken."
+    },
+    {
+      "id": "B4",
+      "step": "5/6 (documented flag)",
+      "severity": "minor",
+      "title": "Documented '--run-full' pytest flag does not exist",
+      "detail": "tests/test_parity_official.py docstring: 'pytest -q -m full  # or  pytest -q --run-full'. Actual: 'error: unrecognized arguments: --run-full' (no conftest registers it)."
+    },
+    {
+      "id": "B5",
+      "step": "1/10 (README badge)",
+      "severity": "minor",
+      "title": "PyPI badge links to a 404",
+      "detail": "Badge shows 'PyPI 0.1.0' -> https://pypi.org/project/iobrx/ returns 404; iobrx is not published on PyPI (iobrpy 0.2.1 is). Contradicts the Install section's own 'no prebuilt wheels yet'."
+    }
+  ],
+
+  "pass_fail_summary": {
+    "install_source_build": "PASS rc=0 71.2 s",
+    "quickstart_verbatim_no_data": "FAIL (B1)",
+    "quickstart_download_fallback": "FAIL in this environment (B2)",
+    "quickstart_IOBRX_TESTDATA": "PASS rc=0 2.0 s",
+    "readme_full_snippet_with_data": "PASS rc=0 3.3 s (README ~3 s claim holds)",
+    "pytest_-q": "FAIL 13 passed / 11 errors (B3)",
+    "pytest_-m_not_full": "PASS 13/13 10.8 s",
+    "pytest_-m_full": "PASS 11/11 110.3 s",
+    "full_workflow_--verify-parity": "PASS all 11 BIT-EXACT, fast total 15.202 s @8T, 97.0 s subprocess",
+    "api_audit_3_tasks": "PASS 3/3 first-try from README alone",
+    "docs_claims": "110 checked: 107 correct+traced, 3 imprecise/ambiguous, 1 misleading badge, 0 fabricated",
+    "hygiene": "LICENSE/.gitignore/git clean; 149 MB gitignored rust/target on disk (not in clone); no CI"
+  },
+
+  "wall_times_s": {
+    "venv_create": 3.1,
+    "pip_upgrade": 2.0,
+    "pip_install_dot": 71.2,
+    "quickstart_verbatim_fail": 0.4,
+    "quickstart_download_fail": 90.9,
+    "quickstart_with_testdata": 2.0,
+    "readme_full_snippet": 3.3,
+    "pytest_plain": 147.3,
+    "pytest_smoke_only": 10.8,
+    "pytest_full_marker": 110.3,
+    "full_workflow_verify_parity": 97.0,
+    "api_audit": 1.8
+  },
+
+  "verdict": {
+    "ship_as_is": "ALMOST - code, tests, benchmarks and traceability are publication-grade; the blockers are documentation/config polish, not defects",
+    "must_change": [
+      "B1: make the Quickstart snippet self-sufficient (reuse the resolver) or restructure it as 'run examples/quickstart.py' so copy-paste cannot fail",
+      "B3: deselect the full marker by default (pyproject addopts = '-m \"not full\"' or a conftest), or document the smoke-only command in README",
+      "B4: delete the nonexistent '--run-full' from the test docstring",
+      "B5: remove or correct the PyPI badge"
+    ],
+    "should_change": [
+      "Add a CI workflow (even lint+smoke) - currently absent",
+      "Strip the 149 MB rust/target from any distributed snapshot (gitignored, but bloats archives)",
+      "Tighten the S1 stage-CV sentence to say which rep lists the 0.0-1.7% range covers, and fix the two subkey citations (GATE3_perf; FINDING_5 in crate_changes)"
+    ],
+    "strengths": [
+      "Every headline number in README/BENCHMARKS traces to an in-repo frozen artifact; 110 claims checked, zero fabricated numbers found",
+      "11/11 bit-exact official gates and the full 11-stage --verify-parity workflow reproduce in a genuinely fresh venv on NEWER deps (scipy 1.17.1, gseapy 1.3.1, iobrpy 0.2.1) than the frozen doc env, exactly as the parity-pins section predicts",
+      "API is genuinely friendly: all three audit tasks worked first-try from the README alone",
+      "Honest limitation writing (P-value nondeterminism, csv-parse contract, QN=False edge, thread memory costs) is exemplary"
+    ]
+  }
+}

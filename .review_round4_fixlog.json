@@ -1,8 +1,8 @@
 {
   "report": "fix-and-freeze log, round 4 (response to .review_round3.json)",
   "date": "2026-09-07",
-  "repo": "/data/users/lianchong/workspace1/iobrx-github",
-  "machine": "224-core Linux; cargo 1.97.1; python 3.11.15 at /home/lianchong/.local/bin/python3.11 (freeze venv built from it)",
+  "repo": "/data/users/user/workspace1/iobrx-github",
+  "machine": "224-core Linux; cargo 1.97.1; python 3.11.15 at /home/user/.local/bin/python3.11 (freeze venv built from it)",
   "environment_note": "unlike the round-3 review environment, github.com was PARTIALLY reachable this session: HEAD succeeds but asset GET via github.com failed twice and the mirror list rescued the download (gh-proxy.com once, ghproxy.net once). Offline behavior was therefore simulated exactly as the task prescribed: IOBRX_TESTDATA unset, /tmp cache cleared, and the download pointed at an unreachable host via the new $IOBRX_TESTDATA_MIRRORS override (http://127.0.0.1:9/... -> instant connection refused).",
 
   "fixes": {

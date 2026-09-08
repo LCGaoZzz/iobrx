@@ -1,7 +1,7 @@
 {
   "description": "IOBRpy cibersort n_jobs scaling + identity vs n_jobs=1 reference",
   "reference": {
-    "parquet": "/data/users/lianchong/workspace1/iobrx/refs/cibersort.parquet",
+    "parquet": "/data/users/user/workspace1/iobrx/refs/cibersort.parquet",
     "shape": [
       10,
       25
@@ -103,7 +103,7 @@
   "identity": {
     "control": {
       "vs_reference": {
-        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_control.parquet",
+        "parquet": "/data/users/user/workspace1/iobrx/bench/parallel_out/cibersort_control.parquet",
         "same_index_exact": true,
         "same_columns_exact": true,
         "nan_mask_identical": true,
@@ -129,7 +129,7 @@
     },
     "nj16": {
       "vs_reference": {
-        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_nj16.parquet",
+        "parquet": "/data/users/user/workspace1/iobrx/bench/parallel_out/cibersort_nj16.parquet",
         "same_index_exact": true,
         "same_columns_exact": true,
         "nan_mask_identical": true,
@@ -166,7 +166,7 @@
     },
     "nj64": {
       "vs_reference": {
-        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_nj64.parquet",
+        "parquet": "/data/users/user/workspace1/iobrx/bench/parallel_out/cibersort_nj64.parquet",
         "same_index_exact": true,
         "same_columns_exact": true,
         "nan_mask_identical": true,
@@ -203,7 +203,7 @@
     },
     "nj224": {
       "vs_reference": {
-        "parquet": "/data/users/lianchong/workspace1/iobrx/bench/parallel_out/cibersort_nj224.parquet",
+        "parquet": "/data/users/user/workspace1/iobrx/bench/parallel_out/cibersort_nj224.parquet",
         "same_index_exact": true,
         "same_columns_exact": true,
         "nan_mask_identical": true,

@@ -175,7 +175,7 @@
     "tag": "cp311-cp311-manylinux_2_34_x86_64",
     "bytes": 501213,
     "previous_recorded_bytes": 497371,
-    "build_command": "maturin build --release -o /tmp/whl -i /home/lianchong/.omicos/env/.venv/bin/python3",
+    "build_command": "maturin build --release -o /tmp/whl -i /home/user/.omicos/env/.venv/bin/python3",
     "build_rc": 0,
     "build_time_s": 9.97,
     "cargo_warnings": "6 (all pre-existing dead_code: FortranDdot/get_ddot/CoreFitScratch fields d+y32z_buf/CoreOut/core_alg/SSGSEA_NORM_CUSTOM)",

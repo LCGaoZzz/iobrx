@@ -2,7 +2,7 @@
   "round": 2,
   "task": "finish iobrx-github docs: vendored evidence, BENCHMARKS.md numbers document with full traceability, final README with verbatim-verified quickstart, commit + report",
   "datetime": "2026-09-08T01:05:00+08:00",
-  "repo": "/data/users/lianchong/workspace1/iobrx-github",
+  "repo": "/data/users/user/workspace1/iobrx-github",
   "git": {
     "commit": "bc629e73ab74ce11292a5e8a5626ca6456fd4fba",
     "parent": "9752579 (round-1 build report)",

@@ -5,8 +5,10 @@ benchmark summary traces to a file in this directory. These are **verbatim
 copies** of the benchmark-harness outputs from the development workspace
 (`iobrx/bench/`, plus `iobrx/refs/baseline_timing.json`); they are read-only
 evidence, not scripts. Any absolute paths inside them refer to that
-development workspace. Nothing in `src/`, `rust/` or `tests/` was modified to
-produce them, and no file here was edited after copying.
+development workspace; before public release the local username in those path
+strings was redacted to `user` (path strings only — every measurement value is
+untouched). Nothing in `src/`, `rust/` or `tests/` was modified to
+produce them, and no file here was edited after copying except that redaction.
 
 ## Index
 
