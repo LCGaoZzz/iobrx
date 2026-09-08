@@ -3,11 +3,11 @@
 **Fast, faithful tumor microenvironment analysis with a pandas API.**
 
 [![CI](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml/badge.svg)](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
-[![tutorials](https://img.shields.io/badge/executed_notebooks-12-teal)](tutorials/README.md)
-[![license](https://img.shields.io/badge/code-MIT-black)](LICENSE)
+[![version](https://img.shields.io/badge/version-0.2.0-blue)](https://github.com/LCGaoZzz/iobrx/blob/main/CHANGELOG.md)
+[![tutorials](https://img.shields.io/badge/executed_notebooks-12-teal)](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md)
+[![license](https://img.shields.io/badge/code-MIT-black)](https://github.com/LCGaoZzz/iobrx/blob/main/LICENSE)
 
-English · [中文说明](README.zh-CN.md) · [Tutorial gallery](tutorials/README.md) · [CPU compatibility](docs/PORTABILITY.md)
+English · [中文说明](https://github.com/LCGaoZzz/iobrx/blob/main/README.zh-CN.md) · [Tutorial gallery](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md) · [CPU compatibility](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md)
 
 `iobrx` accelerates [IOBRpy](https://pypi.org/project/iobrpy/) with Rust,
 parallel execution and vectorized Python. It reuses IOBRpy's references and
@@ -18,7 +18,7 @@ original workflow semantics. Inputs and outputs are ordinary DataFrames.
 - **Results you can inspect:** 12 executed notebooks with public data, explanatory code, result tables, and PNG/PDF/SVG figures, refined in two visual-review rounds.
 - **Measured numerical fidelity:** 11 official-data parity gates pass on the validated environment. CIBERSORT weights, correlation and RMSE match exactly; stochastic P-values are handled separately.
 
-![Example: CIBERSORT composition and all 22 LM22 populations](tutorials/figures/07_cibersort.png)
+![Example: CIBERSORT composition and all 22 LM22 populations](https://raw.githubusercontent.com/LCGaoZzz/iobrx/main/tutorials/figures/07_cibersort.png)
 
 ## Install
 
@@ -73,7 +73,7 @@ uses locked dependencies and does not start a Jupyter server.
 IOBRpy's binary distribution limits straightforward installation on other
 Python/platform combinations. Windows users can use WSL2; macOS, ARM and
 native Windows are not claimed as validated full-stack targets. See the
-[compatibility notes](docs/PORTABILITY.md) for fallback behavior and limits.
+[compatibility notes](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md) for fallback behavior and limits.
 
 ## Start with a real dataset
 
@@ -104,7 +104,7 @@ scores = iobrx.calculate_sig_score(
 print(cib.head())
 ```
 
-Open [the complete workflow notebook](tutorials/12_complete_workflow.ipynb)
+Open [the complete workflow notebook](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/12_complete_workflow.ipynb)
 for input checks, interpretation, plots, and per-stage timers. The four
 standalone signature tutorials instead use the public IMvigor210 demonstration
 panel: 872 features × 348 samples.
@@ -121,18 +121,18 @@ own normalization and analysis stages. OS file caches may already be warm.
 <!-- BENCHMARK_TABLE_START -->
 | Analysis / notebook | Input: features × samples | Median | First call | Parity vs IOBRpy |
 | --- | --- | ---: | ---: | --- |
-| [Gene annotation and duplicate resolution](tutorials/01_gene_annotation.ipynb) | 60,483 × 10 | **16.7 ms** | 36.0 ms | bit-identical |
-| [Count-to-TPM normalization](tutorials/02_counts_to_tpm.ipynb) | 60,483 × 10 | **67.5 ms** | 111.6 ms | bit-identical |
-| [PCA signature scoring](tutorials/03_signature_pca.ipynb) | 872 × 348 | **244.1 ms** | 600.4 ms | bit-identical |
-| [Mean-based signature scoring](tutorials/04_signature_zscore.ipynb) | 872 × 348 | **78.6 ms** | 487.8 ms | bit-identical |
-| [ssGSEA signature enrichment](tutorials/05_signature_ssgsea.ipynb) | 872 × 348 | **86.7 ms** | 495.9 ms | bit-identical |
-| [Integrated signature scoring](tutorials/06_signature_integration.ipynb) | 872 × 348 | **336.0 ms** | 817.9 ms | bit-identical |
-| [CIBERSORT immune composition](tutorials/07_cibersort.ipynb) | 48,058 × 10 | **26.37 s** | 26.99 s | bit-identical, P-value excepted |
-| [EPIC cell fractions and mRNA proportions](tutorials/08_epic.ipynb) | 48,058 × 10 | **6.8 ms** | 301.9 ms | bit-identical |
-| [quanTIseq immune deconvolution](tutorials/09_quantiseq.ipynb) | 48,058 × 10 | **40.9 ms** | 475.2 ms | bit-identical |
-| [MCP-counter population scores](tutorials/10_mcpcounter.ipynb) | 48,058 × 10 | **1.1 ms** | 10.0 ms | bit-identical |
-| [ESTIMATE stromal and immune scores](tutorials/11_estimate.ipynb) | 48,058 × 10 | **15.8 ms** | 31.0 ms | bit-identical |
-| [A complete, inspectable TME workflow](tutorials/12_complete_workflow.ipynb) | 60,483 × 10 | **28.29 s** | 29.59 s | per stage, as rows above |
+| [Gene annotation and duplicate resolution](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/01_gene_annotation.ipynb) | 60,483 × 10 | **16.7 ms** | 36.0 ms | bit-identical |
+| [Count-to-TPM normalization](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/02_counts_to_tpm.ipynb) | 60,483 × 10 | **67.5 ms** | 111.6 ms | bit-identical |
+| [PCA signature scoring](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/03_signature_pca.ipynb) | 872 × 348 | **244.1 ms** | 600.4 ms | bit-identical |
+| [Mean-based signature scoring](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/04_signature_zscore.ipynb) | 872 × 348 | **78.6 ms** | 487.8 ms | bit-identical |
+| [ssGSEA signature enrichment](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/05_signature_ssgsea.ipynb) | 872 × 348 | **86.7 ms** | 495.9 ms | bit-identical |
+| [Integrated signature scoring](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/06_signature_integration.ipynb) | 872 × 348 | **336.0 ms** | 817.9 ms | bit-identical |
+| [CIBERSORT immune composition](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/07_cibersort.ipynb) | 48,058 × 10 | **26.37 s** | 26.99 s | bit-identical, P-value excepted |
+| [EPIC cell fractions and mRNA proportions](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/08_epic.ipynb) | 48,058 × 10 | **6.8 ms** | 301.9 ms | bit-identical |
+| [quanTIseq immune deconvolution](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/09_quantiseq.ipynb) | 48,058 × 10 | **40.9 ms** | 475.2 ms | bit-identical |
+| [MCP-counter population scores](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/10_mcpcounter.ipynb) | 48,058 × 10 | **1.1 ms** | 10.0 ms | bit-identical |
+| [ESTIMATE stromal and immune scores](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/11_estimate.ipynb) | 48,058 × 10 | **15.8 ms** | 31.0 ms | bit-identical |
+| [A complete, inspectable TME workflow](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/12_complete_workflow.ipynb) | 60,483 × 10 | **28.29 s** | 29.59 s | per stage, as rows above |
 <!-- BENCHMARK_TABLE_END -->
 
 These are local wall-clock measurements, not a promise for other hardware or
@@ -142,25 +142,25 @@ The complete workflow runs integration scoring on the full STAD expression
 matrix, so its total is not the sum of the standalone rows.
 
 The **Parity** column is not a timing: it states what the official gates
-([`tests/test_parity_official.py`](tests/test_parity_official.py)) assert for
+([`tests/test_parity_official.py`](https://github.com/LCGaoZzz/iobrx/blob/main/tests/test_parity_official.py)) assert for
 that analysis on the same fixtures — equal index, labels and column names, and
 exact equality of every numeric cell (`max_abs_diff == 0.0`) against the
 ORIGINAL `iobrpy` implementations executed in the same environment
-([validation record](tutorials/results/validation.json)). The single
+([validation record](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/results/validation.json)). The single
 exception is CIBERSORT's P-value: the original seeds its permutations from OS
 entropy and is not reproducible run-to-run even by itself, whereas iobrx's
 P-values are seeded — stable across runs and thread counts, with the
 identical formula and `1/perm` granularity. All 11 gates are re-run by CI on
 every push and pull request under the
-[validated constraints](tests/constraints-validated.txt), and the same
+[validated constraints](https://github.com/LCGaoZzz/iobrx/blob/main/tests/constraints-validated.txt), and the same
 contract held on the historical 224-thread Xeon campaign
-([BENCHMARKS.md](BENCHMARKS.md)). Exact parity is an observed result on those
+([BENCHMARKS.md](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)). Exact parity is an observed result on those
 environments, not a cross-platform floating-point guarantee
-([details](docs/PORTABILITY.md)).
+([details](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md)).
 
-[Raw repeats, ranges and environment](tutorials/results/benchmark.json) ·
-[Benchmark method and reproduction](tutorials/BENCHMARKS.md) ·
-[Historical Xeon performance campaign](BENCHMARKS.md)
+[Raw repeats, ranges and environment](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/results/benchmark.json) ·
+[Benchmark method and reproduction](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/BENCHMARKS.md) ·
+[Historical Xeon performance campaign](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)
 
 The historical 224-thread Xeon speedups are retained as a separate experiment;
 they are not used to advertise desktop performance.
@@ -201,14 +201,14 @@ prevent using the public analysis API when IOBRpy and its dependencies are
 installed. Missing compatible OpenBLAS triggers fallback for CIBERSORT/PCA.
 
 All 11 official gates run in CI on every push and pull request under the
-[validated constraints](tests/constraints-validated.txt); their assertion is
+[validated constraints](https://github.com/LCGaoZzz/iobrx/blob/main/tests/constraints-validated.txt); their assertion is
 exact equality — labels and every numeric cell — against the ORIGINAL
 executed on the same fixtures. Exact parity is an **observed result on
 specified inputs and dependency versions**, not a cross-platform
 floating-point guarantee. Native CIBERSORT uses seeded permutations; the
 original Python implementation uses unseeded permutations. Its P-value column
 is excluded from exact-equality assertions. See
-[precision and fallback details](docs/PORTABILITY.md).
+[precision and fallback details](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md).
 
 ## Reproduce, test, contribute
 
@@ -222,8 +222,8 @@ python scripts/validate_tutorials.py     # outputs, exports and data checksums
 
 Tutorials can be read directly on GitHub. To run them interactively:
 `python -m jupyterlab tutorials`. Plotting helpers are in
-[`tutorials/_common.py`](tutorials/_common.py); every analysis call remains
-visible in its notebook. [The figure-review record](tutorials/FIGURE_REVIEW.md)
+[`tutorials/_common.py`](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/_common.py); every analysis call remains
+visible in its notebook. [The figure-review record](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/FIGURE_REVIEW.md)
 documents both refinements, with draft and final overview images.
 
 Contributions should preserve the official parity gates and add a focused
@@ -237,6 +237,6 @@ Cite IOBR/IOBRpy and the original methods used in your analysis. iobrx provides
 acceleration and tutorials; it does not replace those methods or validate
 clinical conclusions from an unlabeled example dataset.
 
-iobrx code: [MIT](LICENSE). Vendored sources retain their
-[third-party notices](rust/vendor/THIRD_PARTY_NOTICES.md). Public example data
-retains its [upstream attribution and GPL-3 terms](tutorials/data/README.md).
+iobrx code: [MIT](https://github.com/LCGaoZzz/iobrx/blob/main/LICENSE). Vendored sources retain their
+[third-party notices](https://github.com/LCGaoZzz/iobrx/blob/main/rust/vendor/THIRD_PARTY_NOTICES.md). Public example data
+retains its [upstream attribution and GPL-3 terms](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/data/README.md).
