@@ -1,0 +1,9 @@
+# Numerical environment used for the 0.2.0 WSL audit and CI.
+iobrpy==0.2.1
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.16.3
+scikit-learn==1.7.2
+gseapy==1.3.1
+pyarrow==20.0.0
+pyreadr==0.5.6

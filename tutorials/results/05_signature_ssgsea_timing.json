@@ -1,0 +1,15 @@
+{
+  "analysis": "05_signature_ssgsea",
+  "seconds": 0.5740615999966394,
+  "input_shape": [
+    872,
+    348
+  ],
+  "output_shapes": {
+    "result": [
+      348,
+      32
+    ]
+  },
+  "threads": 8
+}

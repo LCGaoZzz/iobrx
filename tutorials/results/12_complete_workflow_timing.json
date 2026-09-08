@@ -1,0 +1,39 @@
+{
+  "analysis": "12_complete_workflow",
+  "seconds": 28.663300960994093,
+  "input_shape": [
+    60483,
+    10
+  ],
+  "output_shapes": {
+    "annotation": [
+      50181,
+      10
+    ],
+    "TPM": [
+      48058,
+      10
+    ],
+    "signatures": [
+      10,
+      940
+    ],
+    "CIBERSORT": [
+      10,
+      25
+    ],
+    "quanTIseq": [
+      10,
+      12
+    ],
+    "MCP-counter": [
+      10,
+      10
+    ],
+    "ESTIMATE": [
+      3,
+      10
+    ]
+  },
+  "threads": 8
+}

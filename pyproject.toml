@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "iobrx"
-version = "0.1.0"
+version = "0.2.0"
 description = "Bit-exact, multithreaded acceleration layer for IOBRpy (CIBERSORT, signature scoring, TPM, EPIC, quanTIseq, MCP-counter, ESTIMATE, annotation)"
 readme = "README.md"
 license = { text = "MIT" }
@@ -16,7 +16,6 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Rust",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
@@ -43,6 +42,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest>=7.0"]
+tutorials = ["matplotlib>=3.7", "nbformat>=5.9", "nbclient>=0.10", "ipykernel>=6", "jupyterlab>=4"]
 
 [project.urls]
 Homepage = "https://github.com/LCGaoZzz/iobrx"
@@ -70,7 +70,7 @@ include = [
 ]
 
 [tool.pytest.ini_options]
-# Default run = the 13 synthetic smoke tests only: the 11 official parity
+# Default run = synthetic smoke and portability tests: the 11 official parity
 # gates are marked `full` and need the official data (IOBRX_TESTDATA or a
 # mirror download), so they are deselected by default. Opt in explicitly
 # with `pytest -m full` (or `pytest --run-full`, see tests/conftest.py);

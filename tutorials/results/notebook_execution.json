@@ -1,0 +1,74 @@
+[
+  {
+    "notebook": "01_gene_annotation.ipynb",
+    "execution_seconds": 1.9654950620024465,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "02_counts_to_tpm.ipynb",
+    "execution_seconds": 1.945850814008736,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "03_signature_pca.ipynb",
+    "execution_seconds": 2.9635745249979664,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "04_signature_zscore.ipynb",
+    "execution_seconds": 2.643620230999659,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "05_signature_ssgsea.ipynb",
+    "execution_seconds": 2.8421204290061723,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "06_signature_integration.ipynb",
+    "execution_seconds": 3.0246603679988766,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "07_cibersort.ipynb",
+    "execution_seconds": 29.34254173100635,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "08_epic.ipynb",
+    "execution_seconds": 2.62617372800014,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "09_quantiseq.ipynb",
+    "execution_seconds": 3.0478194630122744,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "10_mcpcounter.ipynb",
+    "execution_seconds": 2.1758714049938135,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "11_estimate.ipynb",
+    "execution_seconds": 2.051686338003492,
+    "embedded_figures": 1,
+    "errors": 0
+  },
+  {
+    "notebook": "12_complete_workflow.ipynb",
+    "execution_seconds": 31.019473893000395,
+    "embedded_figures": 1,
+    "errors": 0
+  }
+]

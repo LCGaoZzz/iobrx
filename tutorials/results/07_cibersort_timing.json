@@ -1,0 +1,15 @@
+{
+  "analysis": "07_cibersort",
+  "seconds": 26.760327322990634,
+  "input_shape": [
+    48058,
+    10
+  ],
+  "output_shapes": {
+    "result": [
+      10,
+      25
+    ]
+  },
+  "threads": 8
+}

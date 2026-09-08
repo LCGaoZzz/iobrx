@@ -6,15 +6,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-08
+
 ### Changed
 
-- CI: smoke tests are gated on the runner CPU exposing `avx512f` — the
-  extension's argsort path is deliberately compiled for the AVX-512 kernel
-  numpy dispatches (bit-exactness contract), which SIGILLs on CPUs without
-  AVX-512; build + install remain verified on every runner, tests run
-  whenever the ISA is present, and a `::warning::` is logged on skip.
-- README "Install" now states the AVX-512 CPU as a hard requirement instead
-  of only "validated on AVX-512 hardware".
+- Removed mandatory AVX-512 compilation and linking. Quantile normalization
+  and its parity helper delegate sorting/reductions to the installed NumPy,
+  preserving local tie order on an AVX2-only desktop CPU.
+- Made native import optional. Added `backend="auto"|"rust"|"python"` to
+  CIBERSORT and signature scoring, `IOBRX_DISABLE_RUST`, and `backend_info()`.
+  Auto CIBERSORT falls back to IOBRpy for unsupported BLAS layouts; PCA can
+  use sklearn when the matching bundled LAPACK entry point is unavailable.
+- Resolve NumPy and SciPy libraries from their own installation directories,
+  including split/overlay environments.
+- CI runs smoke/portability tests on every runner rather than skipping CPUs
+  without AVX-512, plus official parity, disabled-native and baseline-sorting
+  checks with the validated dependency constraints.
+- Rewrote the English README and added a Chinese README with actual desktop
+  timings, tutorial links, input-scale guidance, and explicit platform limits.
+- Corrected documentation of annotation duplicate selection, the upstream
+  `zscore` method, RNA-seq quantile-normalization choices, and ESTIMATE's exact
+  `affymetrix` platform spelling. Existing numerical defaults are retained.
+
+### Added
+
+- Twelve executed notebooks: eleven individual analyses and a complete TME
+  workflow, public fixtures with provenance/checksums, compact result tables,
+  36 figure exports, and a documented two-round visual review.
+- Tutorial generation/execution, integrity validation, repeated benchmarking,
+  and README/gallery synchronization scripts.
+- Tests for tied/NaN sorting, array layouts, explicit/automatic backend
+  selection, missing BLAS and disabled native imports.
+
+### Validation scope
+
+- Built and executed on WSL2 Ubuntu / Python 3.11 / i9-13900KF without AVX-512.
+- Native CIBERSORT non-P-value columns remain exact against IOBRpy on the
+  tested fixtures; seeded native P-values differ from upstream unseeded draws.
+- Removing the CPU instruction requirement does not certify all operating
+  systems: upstream IOBRpy packaging still limits installation combinations.
 
 ## [0.1.0] - 2026-09-08
 
