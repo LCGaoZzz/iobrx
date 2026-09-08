@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-08
+
 ### Fixed
 
 - README Quickstart now starts from a self-sufficient seeded synthetic cohort
@@ -37,11 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   data-resolution helper (env var → local cache → mirror download).
 - GitHub Actions CI (`.github/workflows/ci.yml`): ubuntu-latest, Python 3.11,
   cargo cache, maturin wheel build via `pip install .[test]`, `pytest -q`.
-
-## [0.1.0] - 2026-09-07
-
-### Added
-
 - Initial packaged release of the finished fast stack as the installable
   library `iobrx` (hybrid maturin build: `src/iobrx` Python package +
   `iobrx_rust` cdylib from `rust/`).
