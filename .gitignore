@@ -23,3 +23,6 @@ htmlcov/
 
 # runtime caches
 src/iobrx/_fast/_pkgcache/
+
+# local agent-harness example results
+agent-harness/examples/runs/

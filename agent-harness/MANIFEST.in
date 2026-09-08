@@ -1,0 +1,6 @@
+include LICENSE README.md VALIDATION.md install_omicos.py
+recursive-include omicos *.md *.py
+recursive-include examples *.json
+recursive-include tests *.py
+global-exclude *.pyc
+prune examples/runs

@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "analysis": "signature_pca",
+  "input": {
+    "path": "../../tutorials/data/imvigor210_eset.parquet",
+    "orientation": "genes_by_samples",
+    "scale": "preprocessed",
+    "gene_id": "symbol",
+    "organism": "hsa"
+  },
+  "parameters": {"signature": ["signature_collection"], "adjust_eset": true, "backend": "auto"},
+  "threads": 4,
+  "output_dir": "runs/imvigor-pca"
+}

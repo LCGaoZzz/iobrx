@@ -109,6 +109,27 @@ for input checks, interpretation, plots, and per-stage timers. The four
 standalone signature tutorials instead use the public IMvigor210 demonstration
 panel: 872 features × 348 samples.
 
+## Omicos and agent workflows
+
+The [agent harness](https://github.com/LCGaoZzz/iobrx/tree/main/agent-harness) adds a JSON CLI, an optional
+stdio MCP server and a portable Omicos Agent/Skill pair for all 11 analyses.
+It validates matrix orientation, declared scale and gene IDs, then records
+parameters, input/output hashes, versions, backend and elapsed time in a result
+manifest. Analyses use the existing iobrx API and preserve its result layouts.
+
+After installing iobrx, from this checkout:
+
+```bash
+python -m pip install ./agent-harness
+iobrx-agent doctor
+iobrx-agent run --request agent-harness/examples/signature_pca.json
+```
+
+See [Omicos setup](https://github.com/LCGaoZzz/iobrx/blob/main/agent-harness/omicos/README.md) for workspace/catalog
+installation and MCP configuration, and [harness validation](https://github.com/LCGaoZzz/iobrx/blob/main/agent-harness/VALIDATION.md)
+for the actual test record. The companion harness is installed from this
+repository; it is not yet a separately published PyPI package.
+
 ## How long does each analysis take?
 
 Measured on **Intel Core i9-13900KF, WSL2 Ubuntu, Python 3.11, 8 requested
