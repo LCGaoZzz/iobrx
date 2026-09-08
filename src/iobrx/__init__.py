@@ -37,7 +37,7 @@ from iobrx._threads import get_threads, resolve_threads, set_threads
 from iobrx._backend import backend_info, select_backend
 from iobrx._testdata import MIRRORS, OfficialDataUnavailable, load_official
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 # The optional native module and historical alias are managed by _backend.
 
