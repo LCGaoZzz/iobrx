@@ -40,6 +40,28 @@ precise performance claim based on only three repeats.
 Thus the complete-workflow time is **not** the sum of the standalone rows.
 None of these times is an acceleration ratio versus an upstream baseline.
 
+## Parity versus IOBRpy
+
+Each benchmark row corresponds to an official parity gate in
+[`tests/test_parity_official.py`](../tests/test_parity_official.py). A gate
+runs the ORIGINAL `iobrpy` implementation on the same fixtures in the same
+environment and asserts equal index, labels and column names plus exact
+equality of every numeric cell (`max_abs_diff == 0.0`,
+`cells_bit_identical == numeric_cells`). Eleven analyses are bit-identical;
+CIBERSORT is bit-identical in every column except the P-value, whose
+upstream OS-entropy seeding makes it unreproducible even for the original
+itself — iobrx uses a seeded port with the identical formula and `1/perm`
+granularity. The complete workflow composes stages that each carry their own
+gate.
+
+The gates are part of CI (every push and pull request, under the validated
+constraints) and were additionally executed in the release validation
+([results/validation.json](results/validation.json)): 34 tests passed on the
+desktop environment above — 13 smoke, 10 portability, 11 parity. Exact
+equality is observed on the stated environments and dependency versions; it
+is not a guarantee across CPU dispatch paths, BLAS builds or platforms —
+see [PORTABILITY.md](../docs/PORTABILITY.md).
+
 ## Environment
 
 Intel Core i9-13900KF; WSL2 Ubuntu; Python 3.11.15; 32 visible logical CPUs;

@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- README timing tables (English and Chinese) now carry a "Parity vs IOBRpy"
+  column stating each analysis's verified numerical relationship to the
+  original — bit-identical everywhere except CIBERSORT's P-value — generated
+  by `scripts/update_tutorial_index.py` so re-benchmarking keeps it. Both
+  READMEs, `tutorials/BENCHMARKS.md` and the fidelity sections now spell out
+  the gate's exact assertion (equal labels; every numeric cell
+  `max_abs_diff == 0.0` vs the same-environment original), the validation
+  record, and that CI re-runs all 11 gates on every push and pull request.
+
 ## [0.2.0] - 2026-09-08
 
 ### Changed

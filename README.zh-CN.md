@@ -55,26 +55,39 @@ scores = iobrx.calculate_sig_score(
 “首次”指新进程内的首次分析调用，操作系统文件缓存可能已热。
 
 <!-- BENCHMARK_TABLE_START -->
-| 分析 / 教程 | 输入：特征 × 样本 | 中位耗时 | 首次调用 |
-| --- | --- | ---: | ---: |
-| [基因注释与重复条目处理](tutorials/01_gene_annotation.ipynb) | 60,483 × 10 | **16.7 ms** | 36.0 ms |
-| [Count 转 TPM](tutorials/02_counts_to_tpm.ipynb) | 60,483 × 10 | **67.5 ms** | 111.6 ms |
-| [PCA 基因签名评分](tutorials/03_signature_pca.ipynb) | 872 × 348 | **244.1 ms** | 600.4 ms |
-| [zscore 方法基因签名评分](tutorials/04_signature_zscore.ipynb) | 872 × 348 | **78.6 ms** | 487.8 ms |
-| [ssGSEA 基因集富集](tutorials/05_signature_ssgsea.ipynb) | 872 × 348 | **86.7 ms** | 495.9 ms |
-| [PCA、zscore 与 ssGSEA 联合评分](tutorials/06_signature_integration.ipynb) | 872 × 348 | **336.0 ms** | 817.9 ms |
-| [CIBERSORT 免疫细胞组成](tutorials/07_cibersort.ipynb) | 48,058 × 10 | **26.37 s** | 26.99 s |
-| [EPIC 细胞比例与 mRNA 比例](tutorials/08_epic.ipynb) | 48,058 × 10 | **6.8 ms** | 301.9 ms |
-| [quanTIseq 免疫细胞反卷积](tutorials/09_quantiseq.ipynb) | 48,058 × 10 | **40.9 ms** | 475.2 ms |
-| [MCP-counter 细胞群丰度评分](tutorials/10_mcpcounter.ipynb) | 48,058 × 10 | **1.1 ms** | 10.0 ms |
-| [ESTIMATE 基质与免疫评分](tutorials/11_estimate.ipynb) | 48,058 × 10 | **15.8 ms** | 31.0 ms |
-| [完整的 TME 分析工作流](tutorials/12_complete_workflow.ipynb) | 60,483 × 10 | **28.29 s** | 29.59 s |
+| 分析 / 教程 | 输入：特征 × 样本 | 中位耗时 | 首次调用 | 与 IOBRpy 一致性 |
+| --- | --- | ---: | ---: | --- |
+| [基因注释与重复条目处理](tutorials/01_gene_annotation.ipynb) | 60,483 × 10 | **16.7 ms** | 36.0 ms | 逐位一致 |
+| [Count 转 TPM](tutorials/02_counts_to_tpm.ipynb) | 60,483 × 10 | **67.5 ms** | 111.6 ms | 逐位一致 |
+| [PCA 基因签名评分](tutorials/03_signature_pca.ipynb) | 872 × 348 | **244.1 ms** | 600.4 ms | 逐位一致 |
+| [zscore 方法基因签名评分](tutorials/04_signature_zscore.ipynb) | 872 × 348 | **78.6 ms** | 487.8 ms | 逐位一致 |
+| [ssGSEA 基因集富集](tutorials/05_signature_ssgsea.ipynb) | 872 × 348 | **86.7 ms** | 495.9 ms | 逐位一致 |
+| [PCA、zscore 与 ssGSEA 联合评分](tutorials/06_signature_integration.ipynb) | 872 × 348 | **336.0 ms** | 817.9 ms | 逐位一致 |
+| [CIBERSORT 免疫细胞组成](tutorials/07_cibersort.ipynb) | 48,058 × 10 | **26.37 s** | 26.99 s | 除 P-value 外逐位一致 |
+| [EPIC 细胞比例与 mRNA 比例](tutorials/08_epic.ipynb) | 48,058 × 10 | **6.8 ms** | 301.9 ms | 逐位一致 |
+| [quanTIseq 免疫细胞反卷积](tutorials/09_quantiseq.ipynb) | 48,058 × 10 | **40.9 ms** | 475.2 ms | 逐位一致 |
+| [MCP-counter 细胞群丰度评分](tutorials/10_mcpcounter.ipynb) | 48,058 × 10 | **1.1 ms** | 10.0 ms | 逐位一致 |
+| [ESTIMATE 基质与免疫评分](tutorials/11_estimate.ipynb) | 48,058 × 10 | **15.8 ms** | 31.0 ms | 逐位一致 |
+| [完整的 TME 分析工作流](tutorials/12_complete_workflow.ipynb) | 60,483 × 10 | **28.29 s** | 29.59 s | 按所含环节，同上各行 |
 <!-- BENCHMARK_TABLE_END -->
 
 CIBERSORT 使用 **100 次置换、`QN=False`**，输入为完整 STAD TPM 矩阵。
 四个独立签名教程使用 872 × 348 的 IMvigor210 限定基因面板；完整工作流则在
 STAD 全转录组上进行签名评分，因此不能把各行时间直接相加。硬件、样本量、
 基因覆盖率和置换次数都会影响速度。
+
+**“与 IOBRpy 一致性”一列不是计时**，而是官方一致性门
+（[`tests/test_parity_official.py`](tests/test_parity_official.py)）在同一批
+数据上对该分析的断言：索引、标签与列名完全一致，且每个数值单元精确相等
+（`max_abs_diff == 0.0`），对照对象是同环境内运行的 IOBRpy 原版实现
+（[验证记录](tutorials/results/validation.json)）。唯一例外是 CIBERSORT 的
+P-value：原版用操作系统熵做置换种子，连它自己都无法逐次复现；iobrx 的
+P-value 采用固定种子，跨运行、跨线程数稳定，公式与 `1/perm` 粒度与原版
+相同。全部 11 项检查由 CI 在每次推送和 PR 上用
+[已验证的依赖约束](tests/constraints-validated.txt) 复跑；同一契约在历史
+224 线程 Xeon 服务器上也成立（[BENCHMARKS.md](BENCHMARKS.md)）。逐位一致
+是上述环境中的实测结果，不是跨平台浮点保证（详见
+[兼容性与精度说明](docs/PORTABILITY.md)）。
 
 [原始重复测量与环境](tutorials/results/benchmark.json) ·
 [测量方法](tutorials/BENCHMARKS.md) · [历史服务器基准](BENCHMARKS.md)
@@ -108,6 +121,8 @@ IOBRpy；原生 CIBERSORT 所需 BLAS 不兼容时也会回退。可通过
 11 项官方数据一致性检查比较的是同一环境内的 IOBRpy 与 iobrx。
 CIBERSORT 权重、Correlation 和 RMSE 精确一致；原生实现使用固定种子的置换，
 上游 Python 使用未固定种子的置换，因此 P-value 不作为逐值相等的检查对象。
+这些检查已纳入 CI：每次推送与 PR 都会在 GitHub 托管 runner 上按
+[已验证的依赖约束](tests/constraints-validated.txt) 复跑全部 11 项。
 跨 CPU、BLAS 或依赖版本的逐位相同不在保证范围内。
 
 ```bash
