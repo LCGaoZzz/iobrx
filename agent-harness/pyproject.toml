@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iobrx-harness"
+version = "0.1.0"
+description = "JSON CLI and Omicos Agent/Skill harness for iobrx"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = ["iobrx>=0.2.0,<0.3", "jsonschema>=4.23,<5"]
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.28,<2"]
+test = ["pytest>=8", "PyYAML>=6"]
+
+[project.scripts]
+iobrx-agent = "iobrx_harness.cli:main"
+iobrx-agent-mcp = "iobrx_harness.mcp_server:main"
+
+[project.urls]
+Repository = "https://github.com/LCGaoZzz/iobrx"
+
+[tool.setuptools.packages.find]
+where = ["omicos/skills/iobrx/scripts"]
+include = ["iobrx_harness*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

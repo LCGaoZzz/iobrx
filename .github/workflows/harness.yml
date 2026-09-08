@@ -1,0 +1,35 @@
+name: Agent harness
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  installed-harness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+      - name: Install validated iobrx and test dependencies
+        run: |
+          python -m pip install -c tests/constraints-validated.txt .
+          python -m pip install build pytest PyYAML 'mcp>=1.28,<2' 'jsonschema>=4.23,<5'
+      - name: Build companion wheel and source distribution
+        run: python -m build agent-harness
+      - name: Install the built wheel
+        run: |
+          python -m pip install --no-deps agent-harness/dist/*.whl
+          python -m pip check
+          iobrx-agent doctor
+      - name: All analyses, CLI errors, relocated Skill and MCP stdio
+        run: python -m pytest -q agent-harness/tests
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iobrx-harness-distributions
+          path: agent-harness/dist/*

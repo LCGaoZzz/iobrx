@@ -47,6 +47,25 @@ scores = iobrx.calculate_sig_score(
 初次使用建议打开[完整工作流](tutorials/12_complete_workflow.ipynb)，先理解不同方法
 需要的输入尺度，再替换成自己的数据。
 
+## 在 Omicos／Agent 中使用
+
+[agent-harness](https://github.com/LCGaoZzz/iobrx/tree/main/agent-harness) 为 11 项分析提供统一的 JSON CLI、
+可选的 stdio MCP 服务，以及可随 Omicos catalog 分发的 Agent／Skill。
+运行前检查矩阵方向、声明的数据尺度和基因 ID；运行后保存参数、输入／输出
+哈希、环境版本、实际后端和耗时。分析继续调用 iobrx 原有 API。
+
+安装 iobrx 后，在仓库根目录运行：
+
+```bash
+python -m pip install ./agent-harness
+iobrx-agent doctor
+iobrx-agent run --request agent-harness/examples/signature_pca.json
+```
+
+详见 [Omicos 接入说明](https://github.com/LCGaoZzz/iobrx/blob/main/agent-harness/omicos/README.md)和
+[实测记录](https://github.com/LCGaoZzz/iobrx/blob/main/agent-harness/VALIDATION.md)。配套 harness 目前从本仓库安装；
+它尚未作为独立包发布到 PyPI。Omicos 共享 catalog 上线需要另走 admin 仓库的 PR／发布流程。
+
 ## 每项分析大约需要多久？
 
 以下为 **i9-13900KF、WSL2 Ubuntu、Omicos Python 3.11、请求 8 线程**的实测值。
