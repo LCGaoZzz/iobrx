@@ -1,5 +1,6 @@
 # iobrx
 
+[![CI](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml/badge.svg)](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml)
 [![version](https://img.shields.io/badge/version-0.1.0-blue)](./CHANGELOG.md)
 [![build](https://img.shields.io/badge/build-maturin-orange)](./rust/Cargo.toml)
 [![tests](https://img.shields.io/badge/tests-13%2F13%20smoke%20%2B%2011%2F11%20full-brightgreen)](./tests)

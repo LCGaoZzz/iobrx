@@ -45,7 +45,11 @@ dependencies = [
 test = ["pytest>=7.0"]
 
 [project.urls]
-Homepage = "https://github.com/iobrx/iobrx"
+Homepage = "https://github.com/LCGaoZzz/iobrx"
+Repository = "https://github.com/LCGaoZzz/iobrx"
+Issues = "https://github.com/LCGaoZzz/iobrx/issues"
+Changelog = "https://github.com/LCGaoZzz/iobrx/blob/main/CHANGELOG.md"
+Benchmarks = "https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md"
 
 # Hybrid Python + Rust build.
 # - The Rust cdylib installs as the extension submodule `iobrx._rust`
