@@ -18,7 +18,8 @@ In the verified PyPI account, add a pending GitHub Trusted Publisher at
 | Workflow filename | `release.yml` |
 | Environment | `pypi` |
 
-Create the GitHub environment `pypi`. Only tag events publish: the workflow
+Create the GitHub environment `pypi` and restrict its deployment policy to
+selected **tags** matching `v*` (not branches). Only tag push events publish: the workflow
 checks that the tag matches the Python/Rust version and that the commit is
 already on `main`. Pull requests and manual runs build and test without
 publishing. PyPI uses short-lived OIDC credentials; no PyPI API token belongs
@@ -52,7 +53,9 @@ New GHCR packages are private by default, even for a public source repository.
    synchronize independently, and their end-to-end delay is not guaranteed.
 
 Do not reuse a published version for different files. If a publication job
-fails, inspect which services already accepted assets before retrying. Fix
+fails, inspect which services already accepted assets before retrying; rerun
+only failed jobs when earlier publishing jobs succeeded. The container job
+refuses to overwrite a version tag that already exists. Fix
 code or dependency issues in a new version. A fixed container tag is a
 convenience; the release's `container-digest.txt` identifies the immutable image.
 

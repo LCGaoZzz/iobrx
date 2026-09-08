@@ -94,25 +94,29 @@ jobs:
         run: |
           docker run --rm --user 0 -e IOBRX_TESTDATA=/repo/tutorials/data -e OMP_NUM_THREADS=2 -e OPENBLAS_NUM_THREADS=2 -v "$PWD:/repo:ro" -w /repo iobrx:verify sh -ec 'python -m pip install --only-binary=:all: pytest==9.1.1; python -m pytest -q -m "" -p no:cacheprovider'
       - name: Publish the tested container
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           image="ghcr.io/${GITHUB_REPOSITORY,,}"
           version="${GITHUB_REF_NAME#v}"
           printf '%s' "$GH_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          if docker manifest inspect "$image:$version" >/dev/null 2>&1; then
+            echo "Refusing to overwrite an existing version tag: $image:$version"
+            exit 1
+          fi
           docker tag iobrx:verify "$image:$version"
           docker push "$image:$version"
           docker inspect --format='{{index .RepoDigests 0}}' "$image:$version" > container-digest.txt
           docker logout ghcr.io
       - uses: actions/upload-artifact@v4
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         with:
           name: container-digest
           path: container-digest.txt
 
   pypi:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     needs: [distributions, container]
     runs-on: ubuntu-24.04
     environment:
@@ -131,7 +135,7 @@ jobs:
           packages-dir: dist
 
   github-release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     needs: [pypi, container]
     runs-on: ubuntu-24.04
     permissions:
