@@ -28,6 +28,8 @@ def check_archives(directory: pathlib.Path) -> None:
         names = archive.namelist()
         assert any(n.startswith("iobrx/_rust") and n.endswith(".so") for n in names)
         assert "iobrx/__init__.py" in names
+        for notice in ["LICENSE", "THIRD_PARTY_NOTICES.md", "LICENSE.libsvm", "LICENSE.scikit-learn", "LICENSE.x86-simd-sort"]:
+            assert any(".dist-info/licenses/" in n and n.endswith("/" + notice) for n in names), notice
         metadata = email.message_from_bytes(archive.read(next(n for n in names if n.endswith(".dist-info/METADATA"))))
         assert metadata["Name"] == "iobrx"
         assert metadata["Version"] == check_source(pathlib.Path(__file__).resolve().parents[1])

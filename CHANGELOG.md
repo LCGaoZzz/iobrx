@@ -46,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and a tested versioned GHCR container with hash-locked dependencies.
 - Binary-only installation checks in a clean environment, source-archive
   rebuild checks, and all parity/portability gates inside the container.
+- Third-party attribution and full vendored license texts are included in
+  both binary wheels and source archives and checked before publication.
 - PyPI and Tsinghua installation instructions. Core numerical dependencies
   now select the exact validated versions during an ordinary pip install.
 - Twelve executed notebooks: eleven individual analyses and a complete TME
