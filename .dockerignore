@@ -1,0 +1,10 @@
+*
+!Dockerfile
+!requirements-container.lock
+!dist/
+!dist/*.whl
+!tutorials/
+!tutorials/**
+!LICENSE
+**/__pycache__
+**/.ipynb_checkpoints

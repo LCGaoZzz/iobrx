@@ -16,19 +16,46 @@ iobrx 提供 pandas DataFrame 接口，通过 Rust、并行计算和 NumPy/panda
 
 ## 安装与运行
 
-已验证的环境为 **Linux x86-64 / WSL2、Python 3.11**。从源码安装需要 Rust
-和支持 C++17 的编译器。iobrx 尚未发布到 PyPI，请从仓库安装：
+已验证的环境为 **Linux x86-64 / WSL2、Python 3.11**。0.2.0 提供预编译
+wheel，普通用户无需安装 Rust 或 C++ 编译器：
 
 ```bash
-git clone https://github.com/LCGaoZzz/iobrx.git
-cd iobrx
-python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
+python -m pip install --only-binary=:all: iobrx==0.2.0
 python -c "import iobrx; print(iobrx.backend_info())"
+```
+
+国内用户可在清华镜像同步后使用：
+
+```bash
+python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.2.0
+```
+
+镜像尚未同步新版本时，请在第一条命令后添加 `--index-url https://pypi.org/simple`。
+`--only-binary=:all:` 会在环境不支持时明确报错，避免意外触发源码编译。
+数值依赖固定为已经验证的版本；已有环境存在版本冲突时，建议新建 Python 3.11 环境。
+
+运行完整教程时，再获取对应版本的仓库与公开数据：
+
+```bash
+git clone --branch v0.2.0 https://github.com/LCGaoZzz/iobrx.git
+cd iobrx
+python -m pip install --only-binary=:all: "iobrx[tutorials,test]==0.2.0"
 python -m jupyterlab tutorials
 ```
 
 在 Omicos 环境中使用时，将上面的 `python` 换成该环境的 Python，并在
 Jupyter 中选择同一环境的内核。仓库已附公开示例矩阵，安装依赖后可以离线运行教程。
+
+也可直接使用固定版本容器：
+
+```bash
+docker run --rm ghcr.io/lcgaozzz/iobrx:0.2.0
+docker run --rm -v "$PWD:/work" -w /work ghcr.io/lcgaozzz/iobrx:0.2.0 python analysis.py
+```
+
+容器内教程和数据位于 `/opt/iobrx/tutorials`，依赖已锁定，不会自动启动 Jupyter。
+[GitHub Release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.2.0) 附 wheel、
+源码包、SHA-256 校验值和用于严格复现的容器 digest。
 
 ```python
 import numpy as np

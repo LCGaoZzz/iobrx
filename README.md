@@ -23,19 +23,51 @@ original workflow semantics. Inputs and outputs are ordinary DataFrames.
 ## Install
 
 **Validated: Python 3.11, Linux x86-64 / WSL2, including an AVX2-only desktop CPU.**
-Build from source with a Rust toolchain and a C++17 compiler. The project is
-not yet published on PyPI; `pip install iobrx` is not the installation route.
+The 0.2.0 release provides a precompiled wheel. In a Python 3.11 environment:
 
 ```bash
-git clone https://github.com/LCGaoZzz/iobrx.git
-cd iobrx
-python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
+python -m pip install --only-binary=:all: iobrx==0.2.0
 python -c "import iobrx; print(iobrx.backend_info())"
 ```
 
+No Rust or C++ compiler is needed. Numerical dependencies are pinned to the
+validated versions so a normal install does not silently change the reference
+algorithms. For the Tsinghua mirror, after it has synchronized from PyPI:
+
+```bash
+python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.2.0
+```
+
+If a new release has not reached the mirror yet, use the first command with
+`--index-url https://pypi.org/simple`. `--only-binary=:all:` makes unsupported
+environments fail clearly instead of starting a source compilation.
+
+To work through the notebooks, get the matching public data and tutorials:
+
+```bash
+git clone --branch v0.2.0 https://github.com/LCGaoZzz/iobrx.git
+cd iobrx
+python -m pip install --only-binary=:all: "iobrx[tutorials,test]==0.2.0"
+python -m jupyterlab tutorials
+```
+
 For an existing Omicos environment, use its Python executable for the commands
-above and select that same environment as the Jupyter kernel. A source build
-still needs Cargo/C++ even when you intend to use the Python runtime fallback.
+above and select that same environment as the Jupyter kernel. Prefer a separate
+environment if its existing numerical dependencies need different versions.
+Developers can still build with `python -m pip install ".[tutorials,test]"`,
+which requires Cargo and a C++17 compiler.
+
+A versioned container supplies the analysis environment and example data:
+
+```bash
+docker run --rm ghcr.io/lcgaozzz/iobrx:0.2.0
+docker run --rm -v "$PWD:/work" -w /work ghcr.io/lcgaozzz/iobrx:0.2.0 python analysis.py
+```
+
+The tutorials are in `/opt/iobrx/tutorials` inside the container. GitHub
+[Release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.2.0) supplies the
+wheel, source archive, checksums and immutable container digest. The container
+uses locked dependencies and does not start a Jupyter server.
 
 **CPU compatibility and operating-system packaging are separate.** Upstream
 IOBRpy's binary distribution limits straightforward installation on other

@@ -41,6 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Release workflow for a CPython 3.11 manylinux2014 x86-64 wheel and source
+  distribution, PyPI Trusted Publishing, GitHub Release assets/checksums,
+  and a tested versioned GHCR container with hash-locked dependencies.
+- Binary-only installation checks in a clean environment, source-archive
+  rebuild checks, and all parity/portability gates inside the container.
+- PyPI and Tsinghua installation instructions. Core numerical dependencies
+  now select the exact validated versions during an ordinary pip install.
 - Twelve executed notebooks: eleven individual analyses and a complete TME
   workflow, public fixtures with provenance/checksums, compact result tables,
   36 figure exports, and a documented two-round visual review.
