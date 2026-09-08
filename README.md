@@ -44,8 +44,13 @@ build needs a Rust toolchain (`cargo` ≥ 1.7x) and a C++17 compiler:
 pip install .          # compiles the Rust extension (see BENCHMARKS.md §6 for build times)
 ```
 
-- **Python ≥ 3.11** on Linux x86-64 (iobrpy itself ships cp311 wheels; the
-  bit-exactness contract is validated on AVX-512 hardware, see Caveats).
+- **Python ≥ 3.11** on Linux x86-64 with an **AVX-512-capable CPU** (iobrpy
+  itself ships cp311 wheels). The extension unconditionally compiles its
+  argsort path for the AVX-512 kernel numpy dispatches on such hardware —
+  that tie-ordering is part of the bit-exactness contract — so on CPUs
+  without AVX-512 the first accelerated call dies with SIGILL (Illegal
+  instruction). CI therefore gates the smoke tests on the runner's CPU
+  flags; the parity line was validated on Intel Xeon Platinum 8480C.
 - `iobrpy >= 0.2.0` is installed automatically from PyPI and used for
   resources and fallback paths.
 - **Version pins: `numpy<2.3` and `scikit-learn<1.8`** — these keep both

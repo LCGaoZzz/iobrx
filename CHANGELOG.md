@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- CI: smoke tests are gated on the runner CPU exposing `avx512f` — the
+  extension's argsort path is deliberately compiled for the AVX-512 kernel
+  numpy dispatches (bit-exactness contract), which SIGILLs on CPUs without
+  AVX-512; build + install remain verified on every runner, tests run
+  whenever the ISA is present, and a `::warning::` is logged on skip.
+- README "Install" now states the AVX-512 CPU as a hard requirement instead
+  of only "validated on AVX-512 hardware".
+
 ## [0.1.0] - 2026-09-08
 
 ### Fixed
