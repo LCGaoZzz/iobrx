@@ -9,9 +9,13 @@
 
 English · [中文说明](https://github.com/LCGaoZzz/iobrx/blob/main/README.zh-CN.md) · [Tutorial gallery](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md) · [CPU compatibility](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md)
 
-`iobrx` accelerates [IOBRpy](https://pypi.org/project/iobrpy/) with Rust,
-parallel execution and vectorized Python. It reuses IOBRpy's references and
-original workflow semantics. Inputs and outputs are ordinary DataFrames.
+**iobrx is an independently maintained acceleration and integration layer built
+on the original [IOBRpy](https://github.com/IOBR/IOBRpy) toolkit.** It depends on
+IOBRpy and reuses its reference resources, gene signatures and analysis semantics.
+iobrx adds Rust kernels, parallel/vectorized execution, a pandas API, tested
+tutorials and Omicos agent interfaces.
+
+[Original IOBRpy repository](https://github.com/IOBR/IOBRpy) · [Official IOBRpy documentation](https://iobr.github.io/IOBRpy/)
 
 - **A complete analysis toolkit:** annotation, counts → TPM, four signature-scoring modes, CIBERSORT, EPIC, quanTIseq, MCP-counter and ESTIMATE.
 - **Runs on ordinary CPUs:** no mandatory AVX-512; NumPy selects the sorting implementation for the current CPU. Optional native acceleration has a Python fallback.
@@ -252,9 +256,17 @@ regression test for changed numerical behavior. Files in `bench/` are frozen
 historical artifacts. Report package versions, backend information, input
 shape and expression scale when reporting a problem.
 
-## Attribution and license
+## Upstream credit, citation and license
 
-Cite IOBR/IOBRpy and the original methods used in your analysis. iobrx provides
+We thank the [IOBRpy developers](https://github.com/IOBR/IOBRpy), the
+[IOBR team](https://github.com/IOBR/IOBR), and the original method authors for
+the workflows and reference resources on which this package builds.
+
+When publishing results, cite IOBR/IOBRpy and the original methods actually used.
+See the [IOBRpy preprint linked by upstream](https://doi.org/10.64898/2026.07.17.739055)
+and the [upstream citation guide](https://iobr.github.io/IOBRpy/Citation.html).
+
+iobrx provides
 acceleration and tutorials; it does not replace those methods or validate
 clinical conclusions from an unlabeled example dataset.
 

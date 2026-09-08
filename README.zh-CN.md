@@ -4,8 +4,12 @@
 
 [English](https://github.com/LCGaoZzz/iobrx/blob/main/README.md) · [教程与图集](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md) · [兼容性说明](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md)
 
-iobrx 提供 pandas DataFrame 接口，通过 Rust、并行计算和 NumPy/pandas
-向量化加速 IOBRpy。参考矩阵和基因签名继续使用 IOBRpy 的资源。
+**iobrx 是基于原版 [IOBRpy](https://github.com/IOBR/IOBRpy) 构建、独立维护的加速与集成层。**
+它在运行时依赖 IOBRpy，沿用上游的参考资源、基因签名和分析语义。
+iobrx 的新增工作主要是 Rust 内核、并行与向量化加速、pandas 接口、
+经过验证的教程，以及 Omicos Agent 接入。
+
+[原版 IOBRpy 仓库](https://github.com/IOBR/IOBRpy) · [IOBRpy 官方文档](https://iobr.github.io/IOBRpy/)
 
 - 覆盖基因注释、Count 转 TPM、PCA/zscore/ssGSEA/联合签名评分，以及 CIBERSORT、EPIC、quanTIseq、MCP-counter、ESTIMATE。
 - **不再强制要求 AVX-512**。已在没有 AVX-512 的 i9-13900KF 上实际运行；排序交给本机 NumPy 选择兼容实现。
@@ -179,5 +183,14 @@ python scripts/benchmark_tutorials.py
 python scripts/validate_tutorials.py
 ```
 
+## 致谢、引用与许可
+
+感谢 [IOBRpy 开发者](https://github.com/IOBR/IOBRpy)、
+[IOBR 团队](https://github.com/IOBR/IOBR)及各分析方法的原作者，
+为本项目提供上游分析流程和参考资源。
+
+发表分析时，请引用 IOBR/IOBRpy 及实际使用的方法论文；参见
+[上游列出的 IOBRpy 预印本](https://doi.org/10.64898/2026.07.17.739055)和
+[官方引用指南](https://iobr.github.io/IOBRpy/Citation.html)。
+
 iobrx 代码使用 [MIT](https://github.com/LCGaoZzz/iobrx/blob/main/LICENSE)；示例数据保留[上游来源及 GPL-3 条款](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/data/README.md)。
-发表分析时请引用 IOBR/IOBRpy 及实际使用的方法论文。
