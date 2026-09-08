@@ -182,6 +182,12 @@ def test_workspace_boundary(fixtures, tmp_path):
     request["input"]["path"] = "outside/signature.parquet"
     process, data = cli("run", "--request", "-", "--workspace", tmp_path, request=request)
     assert process.returncode == 2 and not (tmp_path / "run").exists()
+    foreign = fixtures / "external-manifest.json"
+    runtime.write_json(foreign, {"schema_version": "1.0", "skill_id": "iobrx", "status": "completed", "artifacts": []})
+    (tmp_path / "run").mkdir()
+    (tmp_path / "run/results_manifest.json").symlink_to(foreign)
+    process, data = cli("status", "run", "--workspace", tmp_path)
+    assert process.returncode == 2 and "outside" in data["error"]["message"]
 
 
 def test_catalog_bundle_relocation_and_installer(fixtures, tmp_path):
@@ -201,6 +207,8 @@ def test_catalog_bundle_relocation_and_installer(fixtures, tmp_path):
     assert agent["skills"] == ["iobrx"]
     with pytest.raises(FileExistsError):
         installer.install(destination)
+    with pytest.raises(ValueError, match="inside its own"):
+        installer.install(ROOT / "agent-harness/omicos/skills/iobrx/nested-destination", dry_run=True)
     request = request_for("count2tpm", fixtures, tmp_path / "result")
     process = subprocess.run([sys.executable, str(skill / front["runtime_entrypoint"]), "run", "--request", "-"],
         input=json.dumps(request), cwd=tmp_path, capture_output=True, text=True, timeout=60)

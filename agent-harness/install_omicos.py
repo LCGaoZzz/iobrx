@@ -13,7 +13,9 @@ def install(destination, layout="workspace", dry_run=False):
     root = destination / "domains" / "biology" if layout == "catalog" else destination
     pairs = [(source / "agents" / "iobrx_analyst.md", root / "agents" / "iobrx_analyst.md"),
              (source / "skills" / "iobrx", root / "skills" / "iobrx")]
-    for _, target in pairs:
+    for src, target in pairs:
+        if src.is_dir() and target.is_relative_to(src.resolve()):
+            raise ValueError("Destination cannot place the Skill inside its own source tree")
         if target.exists() or target.is_symlink():
             raise FileExistsError(f"Refusing to replace existing content: {target}")
     if not dry_run:
@@ -35,7 +37,7 @@ def main():
     args = parser.parse_args()
     try:
         print(json.dumps(install(args.destination, args.layout, args.dry_run)))
-    except OSError as exc:
+    except (OSError, ValueError) as exc:
         parser.exit(2, f"{exc}\n")
 
 

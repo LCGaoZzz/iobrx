@@ -314,7 +314,7 @@ def run(request, base, workspace=None):
 def status(path, base, workspace=None):
     path = resolve_path(path, base, workspace)
     if path.is_dir():
-        path /= "results_manifest.json"
+        path = resolve_path("results_manifest.json", path, workspace)
     manifest = read_json(path)
     if manifest.get("skill_id") != SKILL_ID or manifest.get("schema_version") != "1.0":
         reject("Not an iobrx harness v1 manifest")
