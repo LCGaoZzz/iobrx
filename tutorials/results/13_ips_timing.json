@@ -1,0 +1,11 @@
+{
+  "analysis": "13_ips",
+  "input_shape": [
+    48058,
+    4
+  ],
+  "seconds": 0.01595456898212433,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Public STAD TPM, first four samples. IPS is a score, not a cell fraction."
+}

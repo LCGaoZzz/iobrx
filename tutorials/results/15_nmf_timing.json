@@ -1,0 +1,11 @@
+{
+  "analysis": "15_nmf",
+  "input_shape": [
+    10,
+    22
+  ],
+  "seconds": 0.4645259100070689,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "The committed CIBERSORT tutorial output provides 10 samples \u00d7 22 LM22 features. Factor selection is exploratory at this sample size."
+}

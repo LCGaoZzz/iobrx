@@ -55,11 +55,12 @@ jobs:
       - name: Numerical parity and CPU portability of installed wheel
         env:
           IOBRX_TESTDATA: ${{ github.workspace }}/tutorials/data
+          IOBRX_TME_PROFILE_SEQ: "1"
           OMP_NUM_THREADS: "2"
           OPENBLAS_NUM_THREADS: "2"
         run: |
           /tmp/iobrx-release/bin/python -m pytest -q -m ''
-          IOBRX_DISABLE_RUST=1 /tmp/iobrx-release/bin/python -m pytest -q tests/test_api_smoke.py
+          IOBRX_DISABLE_RUST=1 /tmp/iobrx-release/bin/python -m pytest -q tests/test_api_smoke.py tests/test_workflow_reliability.py
           NPY_DISABLE_CPU_FEATURES=AVX2,FMA3,AVX512F,AVX512CD,AVX512_SKX,AVX512_CLX,AVX512_CNL,AVX512_ICL /tmp/iobrx-release/bin/python -m pytest -q tests/test_portability.py -k 'quantile or argsort'
       - name: Rebuild from the source archive
         run: |
@@ -155,4 +156,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           (cd dist && sha256sum *.whl *.tar.gz container-digest.txt > SHA256SUMS)
-          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --title "iobrx $GITHUB_REF_NAME" --notes-file docs/releases/0.2.0.md
+          notes="docs/releases/${GITHUB_REF_NAME#v}.md"
+          test -s "$notes"
+          gh release create "$GITHUB_REF_NAME" dist/* --verify-tag --title "iobrx $GITHUB_REF_NAME" --notes-file "$notes"

@@ -1,3 +1,35 @@
+# Harness ergonomics update — 2026-09-09
+
+The installed companion wheel passed **57 tests in 31.16 s** on WSL2,
+Python 3.11.15, with the validated iobrx 0.3.0 numerical environment.
+The wheel and source archive built successfully; `pip check` and the Omicos
+Skill validator passed (0 errors, 0 warnings).
+
+Tests cover all original numerical adapters, the additional workflow adapters,
+direct MCP execution without prerequisite validation, single-analysis discovery,
+metadata-only execution with hashing disabled by test doubles, explicit SHA-256
+audits, later file edits, missing files, protected output collisions, existing
+directory reuse, and portable Skill relocation. Original matrix results still
+match the public API exactly; the existing NMF rounding tolerance remains.
+External tools use contract stubs, not new biological alignment evidence.
+
+Agent/Skill guidance now uses on-demand references and permits public API,
+CLI or MCP use within the user's scope. No live LLM task-completion benchmark
+is claimed. This update changes harness ergonomics; the scientific kernels
+and `runall` checkpoint implementation are unchanged.
+
+# Earlier 0.3 extension audit
+
+The current harness is 0.2.0 and requires iobrx 0.3.x. It exposes 27 typed
+analysis identifiers. The combined default suite passed 246 tests, and the
+16 new-adapter tests also passed against installed main/companion wheels.
+The Omicos catalog validator reported zero errors or warnings. See
+[current evidence and limits](../docs/VALIDATION_0.3.md) for exact scope.
+
+The original 0.2 integration record below is historical. New HLA and
+custom-reference BayesPrism adapters are not claimed, and the external-tool
+tests in this audit use stubs.
+
 # Harness validation record
 
 Validated on **2026-09-08**, WSL2 Ubuntu / Linux x86-64, Intel Core i9-13900KF

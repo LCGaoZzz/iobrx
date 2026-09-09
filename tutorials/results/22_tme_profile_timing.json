@@ -1,0 +1,11 @@
+{
+  "analysis": "22_tme_profile",
+  "input_shape": [
+    48058,
+    2
+  ],
+  "seconds": 4.827911074011354,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Public STAD TPM, first two samples; signature_tme panel, RNA-seq settings, no CIBERSORT permutation inference. The original CIBERSORT solver is used. This is a small tutorial workload, not the campaign benchmark."
+}

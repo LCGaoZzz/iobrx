@@ -1,0 +1,11 @@
+{
+  "analysis": "17_log2_eset",
+  "input_shape": [
+    48058,
+    4
+  ],
+  "seconds": 0.23538151298998855,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Public STAD TPM, first four samples. The upstream function decides whether to transform; inspect the before/after range rather than assuming a transform occurred."
+}

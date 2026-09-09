@@ -20,7 +20,7 @@ Input schema validation does not prove correct assay normalization or adequate
 signature coverage. Do not infer a treatment response or a clinical decision
 from a deconvolution fraction alone.
 
-The 12 executed tutorials (11 analyses and the complete workflow) are at:
+The 23 executed tutorials, including the complete workflow, are at:
 https://github.com/LCGaoZzz/iobrx/tree/main/tutorials
 
 They include public data, timings, explanatory code and PNG/PDF/SVG figures

@@ -17,11 +17,11 @@ def create_server(workspace):
     workspace = Path(workspace).resolve(strict=True)
     if not workspace.is_dir():
         raise ValueError("workspace must be a directory")
-    server = FastMCP("iobrx", instructions="Use capabilities and validate before run. Paths are confined to the configured workspace.")
+    server = FastMCP("iobrx", instructions="Run known requests directly. Use discovery, validation and diagnostics as needed. Paths are confined to the configured workspace.")
     read_only = ToolAnnotations(readOnlyHint=True, destructiveHint=False, openWorldHint=False)
     writes = ToolAnnotations(readOnlyHint=False, destructiveHint=False, idempotentHint=False, openWorldHint=False)
 
-    async def invoke(command, request=None, path=None):
+    async def invoke(command, request=None, path=None, verify_hashes=False, analysis=None):
         # Script-relative launch also works from a materialized Omicos Skill,
         # without installing the companion wheel or depending on the cwd.
         worker = Path(__file__).resolve().with_name("worker.py")
@@ -30,6 +30,10 @@ def create_server(workspace):
             args += ["--request", "-", "--workspace", str(workspace)]
         if path is not None:
             args += [path, "--workspace", str(workspace)]
+        if verify_hashes:
+            args.append("--verify-hashes")
+        if analysis is not None:
+            args += ["--analysis", analysis]
         process = await asyncio.create_subprocess_exec(
             *args, cwd=workspace, stdin=asyncio.subprocess.PIPE,
             stdout=asyncio.subprocess.PIPE, stderr=None,
@@ -59,9 +63,9 @@ def create_server(workspace):
         return result
 
     @server.tool(annotations=read_only)
-    async def iobrx_capabilities() -> dict:
-        """List 11 analyses, supported input scales/IDs and strict JSON request schemas."""
-        return await invoke("capabilities")
+    async def iobrx_capabilities(analysis: str | None = None) -> dict:
+        """Discover analyses or fetch just one named analysis and its input/parameter schema."""
+        return await invoke("capabilities", analysis=analysis)
 
     @server.tool(annotations=read_only)
     async def iobrx_doctor() -> dict:
@@ -70,18 +74,18 @@ def create_server(workspace):
 
     @server.tool(annotations=read_only)
     async def iobrx_validate(request: dict) -> dict:
-        """Validate a request and input matrix without running an analysis or writing outputs."""
+        """Validate typed inputs and tool availability without analysis or output writes."""
         return await invoke("validate", request=request)
 
     @server.tool(annotations=writes)
     async def iobrx_run(request: dict) -> dict:
-        """Run one iobrx analysis in a new output directory, returning its timed result manifest."""
+        """Run an analysis directly and return results/timings. Existing run files are protected; metadata provenance is the default."""
         return await invoke("run", request=request)
 
     @server.tool(annotations=read_only)
-    async def iobrx_status(path: str) -> dict:
-        """Read a run manifest and verify output hashes. Running does not prove a process is still alive."""
-        return await invoke("status", path=path)
+    async def iobrx_status(path: str, verify_hashes: bool = False) -> dict:
+        """Read recorded execution state and artifact availability. Optional hash audit needs recorded hashes; neither checks process liveness."""
+        return await invoke("status", path=path, verify_hashes=verify_hashes)
 
     return server
 

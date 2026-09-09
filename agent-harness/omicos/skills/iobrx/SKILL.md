@@ -1,7 +1,7 @@
 ---
 id: iobrx
 name: iobrx
-description: Run iobrx bulk-expression annotation, counts-to-TPM, PCA/zscore/ssGSEA/integrated signature scoring, CIBERSORT, EPIC, quanTIseq, MCP-counter or ESTIMATE with explicit input scale and JSON result manifests; inspect existing results without rerunning.
+description: Run or interpret iobrx bulk expression, tumor microenvironment and prepared FASTQ analyses in Omicos; use the public Python API or portable JSON adapters and reuse existing results.
 tier: community
 category: general_omics_analysis
 summary: iobrx bulk tumor microenvironment analysis with portable execution and traceable results.
@@ -11,74 +11,41 @@ runtime_entrypoint: scripts/run_iobrx.py
 
 # iobrx analysis
 
-Use this Skill for the named bulk-expression analyses or an explicit iobrx
-request. It uses the public iobrx API, its acceleration/fallback behavior and
-the reference resources installed with IOBRpy. It does not provide FASTQ
-alignment, HLA/TCR reconstruction, single-cell reference deconvolution,
-differential-expression testing or ligand–receptor analysis.
+Use the existing iobrx/Omicos Python environment and available results.
+The public Python API supports exploratory and custom calls; the portable
+CLI/MCP adapters provide 27 typed analyses with consistent files and timings.
+Choose either interface, consult its API when needed, and complete authorized
+preparation, execution and debugging using the host's existing tools.
 
-## Resolve and prepare
+Preserve user-fixed samples, methods, seeds, sources and permission boundaries.
+Establish expression scale, orientation, species and IDs from data provenance;
+a filename or successful schema check cannot establish those semantics.
+Record meaningful transformations. Ordinary implementation choices and small
+checks within the task do not need another approval.
 
-Resolve `scripts/run_iobrx.py` using `skill_resource` with
-`include_runtime_path: true`. Invoke that canonical script with the Python
-interpreter in the user's prepared iobrx/Omicos environment. Its `SKILL_ID` is
-`iobrx`; its sibling `scripts/iobrx_harness` contains the same runtime as the
-installable CLI. Keep the delivered directory intact. No guessed cache path,
-repository checkout, shell working directory or per-skill environment variable
-is required. Install dependencies outside the materialized Skill directory.
+## Portable entrypoint
 
-```text
-<python> <resolved scripts/run_iobrx.py> doctor
-<python> <resolved scripts/run_iobrx.py> capabilities
-```
-
-`doctor` checks imports and bundled reference files; it is not a numerical
-parity test. A missing native extension can still allow the documented Python
-fallback. An explicit `backend=rust` request must fail if native execution is
-unavailable. See `references/runtime.md` for installation and compatibility.
-
-## Execute the user's analysis
-
-Read `references/request-and-results.md` when creating the request. Determine
-the file, matrix orientation, scale, gene-ID type and species from the user's
-data/provenance. Resolve missing material information with the user; do not
-ask again for choices already supplied. Do not infer TPM from a filename or
-automatically transform a matrix to make a solver accept it.
-
-Use `capabilities` for supported parameters. Write the request JSON in the
-user's workspace, with a new output directory and the needed thread/backend
-settings. Relative paths resolve beside the request file. Then:
+For the bundled CLI, resolve `scripts/run_iobrx.py` with `skill_resource`,
+`include_runtime_path: true`, and keep its sibling runtime directory intact.
+Use the prepared interpreter; no repository checkout or guessed cache path is needed.
 
 ```text
-<python> <resolved scripts/run_iobrx.py> validate --request <request.json>
 <python> <resolved scripts/run_iobrx.py> run --request <request.json>
-<python> <resolved scripts/run_iobrx.py> status <run-directory>
 ```
 
-Validation reads the matrix without analysis or output writes. It checks
-supported scale/ID/species declarations, uniqueness and finite numeric values;
-it cannot establish that the declared biological scale is true. Inspect the
-result and error before making any corrective change. A failed analysis is
-not permission to silently switch methods, change normalization or replace
-existing outputs. Once the request is valid and within the user's authorized
-task, proceed without an extra approval ceremony.
+Known requests can run directly. Use `capabilities --analysis <name>` for an unfamiliar adapter,
+`validate` for a useful preflight, `doctor` for environment diagnosis, and
+`status` to inspect saved results. These are independent tools, not mandatory
+stages. Default provenance records metadata without full file hashing; explicit
+SHA-256 auditing is available when the task calls for it.
 
-## Read and explain results
+Judge completion from actual outputs, warnings and scientific diagnostics.
+Reuse tables and figures when suitable; a manifest alone is not evidence of
+biological correctness. Use Omicos's job/session tools for long runs and recovery.
 
-Require process exit code zero and manifest `status=completed` before reporting
-success. Inspect warnings and artifact integrity. `running` is a recorded
-state, not proof that a live worker exists. The manifest contains effective
-parameters, input SHA-256, versions, requested threads, selected backend,
-analysis time, total time, artifact shapes/dtypes and hashes. `status` checks
-output hashes without rerunning analysis; it does not revalidate the source
-matrix or recreate a killed worker.
+## References on demand
 
-Read `references/interpretation.md` for method-specific meaning. Report
-outputs and timings with input size and settings. Use the Parquet artifacts
-for subsequent numerical work and the CSV files for inspection. Describe
-MCP-counter/ESTIMATE/signature outputs as scores, not fractions. CIBERSORT's
-stochastic P-values are excluded from the package's bit-exact parity claim.
-
-For figures, start from the repository's existing analysis notebooks rather
-than inventing another numerical pipeline. Their URLs and figure conventions
-are in `references/interpretation.md`.
+- [Request and results](references/request-and-results.md): JSON fields, paths, outputs and optional auditing.
+- [Additional workflows](references/extended-workflows.md): feature tables, FASTQ/tools, custom-reference and file-only API details.
+- [Runtime](references/runtime.md): installation, environment failures and backend compatibility.
+- [Interpretation and figures](references/interpretation.md): score/fraction meaning, uncertainty and existing notebooks.

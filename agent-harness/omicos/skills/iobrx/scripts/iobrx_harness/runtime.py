@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import SKILL_ID, __version__
-from .catalog import CATALOG, request_schema
+from .catalog import CATALOG, LEGACY_ANALYSES, request_schema
 
 
 class HarnessError(Exception):
@@ -42,6 +42,14 @@ def reject(message):
 def sha256(path):
     with Path(path).open("rb") as handle:
         return hashlib.file_digest(handle, "sha256").hexdigest()
+
+
+def file_metadata(path, provenance="metadata"):
+    stat = Path(path).stat()
+    info = {"size_bytes": stat.st_size, "mtime_ns": stat.st_mtime_ns}
+    if provenance == "sha256":
+        info["sha256"] = sha256(path)
+    return info
 
 
 def utcnow():
@@ -78,8 +86,12 @@ def normalize_request(request, base, workspace=None):
         if name not in params and "default" in field:
             params[name] = deepcopy(field["default"])
     result.setdefault("threads", min(8, os.cpu_count() or 1))
+    result.setdefault("provenance", "metadata")
     result["input"]["path"] = str(resolve_path(result["input"]["path"], base, workspace))
     result["output_dir"] = str(resolve_path(result["output_dir"], base, workspace))
+    if result["analysis"] not in LEGACY_ANALYSES:
+        from .extended_runtime import normalize
+        return normalize(result, base, workspace)
     if result["input"]["gene_id"] == "mgi" and result["input"]["organism"] != "mmus":
         reject("mgi identifiers require organism=mmus")
     if result["analysis"] == "anno_eset":
@@ -89,14 +101,14 @@ def normalize_request(request, base, workspace=None):
     return result
 
 
-def load_matrix(spec):
+def load_matrix(spec, provenance="metadata"):
     import numpy as np
     import pandas as pd
 
     path = Path(spec["path"])
     if not path.is_file():
         reject(f"Input file does not exist: {path}")
-    digest = sha256(path)
+    source = file_metadata(path, provenance)
     if path.suffix.lower() in {".csv", ".tsv"}:
         delimiter = "\t" if path.suffix.lower() == ".tsv" else ","
         with path.open(encoding="utf-8-sig", newline="") as handle:
@@ -144,23 +156,35 @@ def load_matrix(spec):
             reject("Preprocessed expression has an all-zero sample")
     elif (values < 0).any() or (values.sum(axis=0) <= 0).any():
         reject("Expression must be nonnegative and each sample must have a positive total")
-    if sha256(path) != digest:
+    if provenance == "sha256" and sha256(path) != source["sha256"]:
         reject("Input changed while it was being loaded")
-    info = {**spec, "sha256": digest, "size_bytes": path.stat().st_size,
+    info = {**spec, **source,
             "features": int(matrix.shape[0]), "samples": int(matrix.shape[1]),
             "loaded_orientation": "genes_by_samples", "minimum": float(values.min()),
             "maximum": float(values.max())}
     return matrix, info
 
 
-def doctor():
+def environment_info():
     import iobrx
-    from importlib.resources import files
 
     versions = {name: importlib.metadata.version(name) for name in
                 ("iobrpy", "numpy", "pandas", "scipy", "scikit-learn", "gseapy", "pyarrow")}
     if not callable(getattr(iobrx, "backend_info", None)):
         raise HarnessError("This interpreter does not import a complete iobrx installation", "environment_error", 3)
+    return {"harness_version": __version__, "iobrx_version": iobrx.__version__,
+            "iobrx_path": str(Path(iobrx.__file__).resolve()),
+            "python": sys.version.split()[0], "executable": sys.executable,
+            "platform": platform.platform(), "machine": platform.machine(), "versions": versions,
+            "backend": iobrx.backend_info()}
+
+
+def doctor():
+    """Optional installation diagnostics; normal runs inspect only their inputs/tools."""
+    import shutil
+    from importlib.resources import files
+
+    environment = environment_info()
     resources = files("iobrpy.resources")
     for filename in ("lm22.txt", "calculate_data.pkl", "epic_TRef_BRef.pkl", "quantiseq_data.pkl",
                      "mcp_data.pkl", "estimate_data.pkl", "anno_eset.pkl", "count2tpm_data.pkl"):
@@ -171,25 +195,34 @@ def doctor():
     for path in sorted(source.glob("*.py")):
         source_hash.update(path.name.encode())
         source_hash.update(path.read_bytes())
-    return {"schema_version": "1.0", "skill_id": SKILL_ID, "status": "completed",
-            "harness_version": __version__, "harness_source_sha256": source_hash.hexdigest(),
-            "iobrx_version": iobrx.__version__, "iobrx_path": str(Path(iobrx.__file__).resolve()),
-            "python": sys.version.split()[0], "executable": sys.executable,
-            "platform": platform.platform(), "machine": platform.machine(), "versions": versions,
-            "backend": iobrx.backend_info(), "checks": "imports and bundled resources; not a numerical parity test"}
+    return {**environment, "schema_version": "1.0", "skill_id": SKILL_ID, "status": "completed",
+            "harness_source_sha256": source_hash.hexdigest(),
+            "external_tools": {tool: shutil.which(tool) for tool in ("fastp", "multiqc", "salmon", "STAR", "run-trust4")},
+            "checks": "imports and bundled resources; external tools are optional until requested; not a numerical parity test"}
 
 
 def validate(request, base, workspace=None):
     normalized = normalize_request(request, base, workspace)
-    _, info = load_matrix(normalized["input"])
+    _, info = prepare_input(normalized)
     return {"schema_version": "1.0", "skill_id": SKILL_ID, "status": "validated",
             "request": normalized, "input": info,
-            "output_available": not Path(normalized["output_dir"]).exists(),
-            "checks": "schema, declared scale/IDs/species, numeric matrix; no biological scale inference or solver run"}
+            "output_available": not output_conflicts(Path(normalized["output_dir"])),
+            "checks": "schema, input contracts and tool availability; no biological scale inference or solver run"}
+
+
+def prepare_input(request):
+    if request["analysis"] in LEGACY_ANALYSES:
+        return load_matrix(request["input"], request["provenance"])
+    from .extended_runtime import prepare
+    return prepare(request)
 
 
 def dispatch(request, matrix):
     import iobrx
+
+    if request["analysis"] not in LEGACY_ANALYSES:
+        from .extended_runtime import dispatch as extended_dispatch
+        return extended_dispatch(request, matrix)
 
     name = request["analysis"]
     params = deepcopy(request["parameters"])
@@ -241,20 +274,26 @@ def dispatch(request, matrix):
     return result, backend, notes
 
 
-def save_results(result, output, analysis):
+def save_results(result, output, analysis, provenance="metadata"):
     import numpy as np
     import pandas as pd
 
     tables = result if isinstance(result, dict) else {"result": result}
+    # Check every export before writing any; existing user tables remain intact.
+    for name in tables:
+        if not name.replace("_", "").isalnum():
+            raise HarnessError("Unsafe output table name", "invalid_result", 3)
+        for extension in ("parquet", "csv"):
+            if (output / f"{name}.{extension}").exists() or (output / f"{name}.{extension}").is_symlink():
+                raise HarnessError(f"Output already exists: {name}.{extension}", "output_exists", 4)
     artifacts, notes = [], []
     for name, frame in tables.items():
         if not isinstance(frame, pd.DataFrame) or frame.empty:
             raise HarnessError(f"{name}: analysis returned an empty or non-tabular result", "invalid_result", 3)
-        if not name.replace("_", "").isalnum():
-            raise HarnessError("Unsafe output table name", "invalid_result", 3)
         numeric = frame.select_dtypes(include="number")
         finite_count = int(np.isfinite(numeric.to_numpy()).sum())
-        if numeric.empty or finite_count == 0:
+        text_table = analysis == "nmf" and name == "top_features"
+        if not text_table and (numeric.empty or finite_count == 0):
             raise HarnessError(f"{name}: no finite numerical results; check gene overlap and scale", "invalid_result", 3)
         nonfinite = int(numeric.size - finite_count)
         if nonfinite:
@@ -265,32 +304,47 @@ def save_results(result, output, analysis):
         # Parquet retains dtypes/index and avoids CSV round-trip precision loss.
         for extension in ("parquet", "csv"):
             path = output / f"{name}.{extension}"
-            if extension == "parquet":
-                frame.to_parquet(path)
-            else:
-                frame.to_csv(path)
+            with path.open("xb") as handle:
+                if extension == "parquet":
+                    frame.to_parquet(handle)
+                else:
+                    frame.to_csv(handle)
             artifacts.append({**metadata, "path": path.name, "format": extension,
-                              "sha256": sha256(path), "size_bytes": path.stat().st_size})
+                              **file_metadata(path, provenance)})
     return artifacts, notes
+
+
+def output_conflicts(output):
+    if output.exists() and not output.is_dir():
+        return [str(output)]
+    return [name for name in ("request.json", "request.json.tmp", "results_manifest.json",
+                              "results_manifest.json.tmp", "analysis")
+            if (output / name).exists() or (output / name).is_symlink()]
 
 
 def run(request, base, workspace=None):
     started = time.perf_counter()
     normalized = normalize_request(request, base, workspace)
     output = Path(normalized["output_dir"])
-    try:
-        output.mkdir(parents=True, exist_ok=False)
-    except FileExistsError as exc:
-        raise HarnessError("output_dir already exists; choose a new run directory", "output_exists", 4) from exc
+    conflicts = output_conflicts(output)
+    if conflicts:
+        raise HarnessError("Existing run files: " + ", ".join(conflicts), "output_exists", 4)
+    output.mkdir(parents=True, exist_ok=True)
     manifest_path = output / "results_manifest.json"
+    try:
+        # Claim this run atomically, including when an empty directory already exists.
+        with manifest_path.open("x", encoding="utf-8"):
+            pass
+    except FileExistsError as exc:
+        raise HarnessError("A run already owns this output directory", "output_exists", 4) from exc
     manifest = {"schema_version": "1.0", "skill_id": SKILL_ID, "status": "running",
                 "started_at": utcnow(), "request": normalized, "artifacts": [], "warnings": [],
                 "manifest_path": str(manifest_path)}
     write_json(manifest_path, manifest)
     write_json(output / "request.json", normalized)
     try:
-        environment = doctor()
-        matrix, info = load_matrix(normalized["input"])
+        environment = environment_info()
+        matrix, info = prepare_input(normalized)
         manifest.update(environment=environment, input=info)
         write_json(manifest_path, manifest)
         execution_start = time.perf_counter()
@@ -299,9 +353,17 @@ def run(request, base, workspace=None):
             result, backend, notes = dispatch(normalized, matrix)
         notes.extend(dict.fromkeys(f"{item.category.__name__}: {item.message}" for item in captured))
         manifest["analysis_seconds"] = time.perf_counter() - execution_start
-        artifacts, result_notes = save_results(result, output, normalized["analysis"])
+        if normalized["provenance"] == "sha256":
+            from .extended_runtime import verify_inputs
+            verify_inputs(normalized, info)
+        artifacts, result_notes = save_results(result, output, normalized["analysis"], normalized["provenance"]) if result is not None else ([], [])
+        if normalized["analysis"] not in LEGACY_ANALYSES:
+            from .extended_runtime import artifacts as native_artifacts
+            artifacts.extend(native_artifacts(output, normalized["provenance"]))
+        if not artifacts:
+            raise HarnessError("Analysis produced no artifacts", "invalid_result", 3)
         manifest.update(status="completed", backend_used=backend, artifacts=artifacts, warnings=notes + result_notes)
-    except (Exception, KeyboardInterrupt) as exc:
+    except (Exception, KeyboardInterrupt, SystemExit) as exc:
         manifest.update(failure(exc))
         if isinstance(exc, KeyboardInterrupt):
             manifest["status"] = "interrupted"
@@ -311,21 +373,27 @@ def run(request, base, workspace=None):
     return manifest
 
 
-def status(path, base, workspace=None):
+def status(path, base, workspace=None, verify_hashes=False):
     path = resolve_path(path, base, workspace)
     if path.is_dir():
         path = resolve_path("results_manifest.json", path, workspace)
     manifest = read_json(path)
     if manifest.get("skill_id") != SKILL_ID or manifest.get("schema_version") != "1.0":
         reject("Not an iobrx harness v1 manifest")
-    mismatches = []
+    missing, mismatches, unhashed = [], [], []
     for artifact in manifest.get("artifacts", []):
         target = resolve_path(artifact["path"], path.parent, path.parent)
-        if not target.is_file() or sha256(target) != artifact["sha256"]:
+        if not target.is_file():
+            missing.append(artifact["path"])
+        elif verify_hashes and "sha256" not in artifact:
+            unhashed.append(artifact["path"])
+        elif verify_hashes and sha256(target) != artifact["sha256"]:
             mismatches.append(artifact["path"])
-    manifest["integrity"] = {"checked": len(manifest.get("artifacts", [])), "mismatches": mismatches}
-    if mismatches:
-        manifest["recorded_status"] = manifest["status"]
-        manifest["status"] = "failed"
-        manifest["error"] = {"code": "artifact_changed", "message": "Result artifacts no longer match the recorded hashes"}
+    manifest["integrity"] = {"mode": "sha256" if verify_hashes else "existence",
+        "checked": len(manifest.get("artifacts", [])), "missing": missing,
+        "mismatches": mismatches, "unhashed": unhashed, "ok": not (missing or mismatches or unhashed)}
+    if missing or mismatches or unhashed:
+        # File inspection is separate from the historical execution result.
+        manifest["exit_code"] = manifest.get("exit_code") or 3
+        manifest["inspection_error"] = "Artifacts are missing, differ from recorded hashes, or have no hash for the requested audit."
     return manifest

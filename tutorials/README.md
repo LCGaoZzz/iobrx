@@ -96,3 +96,27 @@ White backgrounds, muted colors, thin axes and editable vector typography. Heatm
 [Open notebook](12_complete_workflow.ipynb)
 
 ![A complete, inspectable TME workflow](figures/12_complete_workflow.png)
+
+## 0.3 workflow additions
+
+23 executed notebooks are now included: the original 12 plus these 11.
+Run `python scripts/generate_extension_tutorials.py --revision 2` from the
+repository root to regenerate the additions in the prepared environment.
+`nbformat`, `nbclient` and `ipykernel` are required. Run output files go to
+`extension-work/` (ignored by Git); final figures and timing JSON are committed.
+
+| Tutorial | Input shape | API call time |
+| --- | --- | --- |
+| [13_ips](13_ips.ipynb) | 48058 × 4 | 0.016 s |
+| [14_lr_cal](14_lr_cal.ipynb) | 48058 × 4 | 0.143 s |
+| [15_nmf](15_nmf.ipynb) | 10 × 22 | 0.465 s |
+| [16_tme_cluster](16_tme_cluster.ipynb) | 10 × 22 | 0.044 s |
+| [17_log2_eset](17_log2_eset.ipynb) | 48058 × 4 | 0.235 s |
+| [18_mouse2human](18_mouse2human.ipynb) | 4 × 3 | 0.020 s |
+| [19_merge_salmon](19_merge_salmon.ipynb) | 3 × 3 | 0.076 s |
+| [20_prepare_salmon](20_prepare_salmon.ipynb) | 3 × 4 | 0.014 s |
+| [21_merge_star_count](21_merge_star_count.ipynb) | 3 × 3 | 0.073 s |
+| [22_tme_profile](22_tme_profile.ipynb) | 48058 × 2 | 4.828 s |
+| [23_bayesprism](23_bayesprism.ipynb) | 128 × 3 | 0.351 s |
+
+FASTQ alignment/reconstruction/HLA notebooks with real tools and references remain outstanding; the examples above do not substitute for those runs.

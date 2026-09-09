@@ -1,0 +1,11 @@
+{
+  "analysis": "18_mouse2human",
+  "input_shape": [
+    4,
+    3
+  ],
+  "seconds": 0.020162464992608875,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Small synthetic matrix with common mouse symbols. Values are illustrative; mapping uses the bundled upstream resource and can drop unmapped genes."
+}

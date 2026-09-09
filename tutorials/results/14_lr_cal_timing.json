@@ -1,0 +1,11 @@
+{
+  "analysis": "14_lr_cal",
+  "input_shape": [
+    48058,
+    4
+  ],
+  "seconds": 0.14339405001373962,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Public STAD TPM, first four samples; pancan network, gene symbols. Bulk scores do not demonstrate cell-to-cell communication."
+}

@@ -1,0 +1,11 @@
+{
+  "analysis": "23_bayesprism",
+  "input_shape": [
+    128,
+    3
+  ],
+  "seconds": 0.3513125269964803,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Semi-synthetic counts derived from 128 genes in the bundled single-cell reference. The short Gibbs chain (24 iterations, burn-in 12) is an execution demonstration, NOT a converged biological estimate. Production analyses need adequate chains, convergence assessment and a relevant reference."
+}
