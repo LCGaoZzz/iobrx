@@ -79,6 +79,11 @@ remain. Never treat that state as successful completion.
 
 ## Analysis coverage
 
+The original 11 matrix-analysis identifiers below retain their request contracts.
+Harness 0.2.0 adds 16 identifiers, for 27 in total; see the
+[extended workflow contracts](omicos/skills/iobrx/references/extended-workflows.md)
+for their inputs, parameters and output artifacts.
+
 | Analysis name | Input scale | Gene IDs | Output meaning |
 | --- | --- | --- | --- |
 | `anno_eset` | counts / TPM / linear / log2(x+1) | Ensembl or platform probes | Symbol-indexed expression, input scale preserved |
@@ -97,10 +102,12 @@ remain. Never treat that state as successful completion.
 signature scoring, as in the bundled IMvigor210 panel. It does not assert that
 the values are TPM or log2(x+1), or automatically reconstruct their original scale.
 
-Only count-to-TPM accepts mouse data in this first harness. Advanced custom
-reference DataFrames remain available through the Python API. FASTQ alignment,
-HLA/TCR reconstruction, BayesPrism and ligand–receptor analysis are outside
-iobrx's accelerated API and are not advertised as harness capabilities.
+Mouse data is supported by `count2tpm` and the explicit `mouse2human` adapter.
+The extended adapters include FASTQ QC, Salmon/STAR orchestration, TRUST4,
+BayesPrism with its bundled reference, and ligand–receptor analysis. These
+adapters do not install external tools; prepare the required environment first.
+HLA/SpecHLA and advanced custom-reference analyses, including custom-reference
+BayesPrism, remain direct Python API capabilities outside this harness.
 
 Defaults follow iobrx except that **CIBERSORT QN defaults to false** for the
 illustrated RNA-seq use case and ESTIMATE defaults to `rnaseq`. Explicitly

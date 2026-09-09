@@ -115,9 +115,14 @@ separate steps. See [release notes](docs/releases/0.3.0.md) and
 
 | Pin | Reason |
 | --- | --- |
-| `iobrpy>=0.2.0` | Provides the bundled reference data (LM22, EPIC TRef, quanTIseq TIL10, TRUST4/SpecHLA assets) and the original-workflow fallback lane. All parity contracts are verified against iobrpy 0.2.0 (PyPI 0.2.1 is numerically identical on every ported path). |
-| `numpy>=1.22,<2.3` | numpy 2.4 changed reduction rounding by 1 ulp (a signature-wide `X.mean()`), which flips NuSVR support sets in CIBERSORT (nSV 417 vs 420) — bit-parity would break *from the original's side*. |
-| `scikit-learn>=1.2,<1.8` | The Rust core vendors scikit-learn 1.7.2's `svm.cpp` byte-identical. sklearn 1.9.0 moved the ORIGINAL's NuSVR numerics (up to 5.7e-3 on 5/10 official samples), so a ≥1.8 original no longer matches its own frozen references. |
+| `iobrpy==0.2.1` | Supplies reference resources and the original-workflow fallback. Current package and parity tests use this exact PyPI version; the earlier campaign also compared with 0.2.0. |
+| `numpy==2.2.6` | Uses the validated reduction and sorting implementation. The campaign observed different rounding and CIBERSORT support sets with newer NumPy; broader version ranges are not promised. |
+| `scikit-learn==1.7.2` | Matches the vendored `svm.cpp` and the tested reference solver. Newer sklearn versions require separate numerical validation. |
+| `scipy==1.16.3`, `gseapy==1.3.1` | Keeps optimization and enrichment calculations on the validated implementations. |
+
+These are the exact requirements in [package metadata](pyproject.toml), not
+minimum versions. Remaining dependency bounds and the complete test environment
+are recorded in [the validation constraints](tests/constraints-validated.txt).
 
 **CPU compatibility and operating-system packaging are separate.** Upstream
 IOBRpy's binary distribution limits straightforward installation on other
@@ -158,8 +163,17 @@ iobrx.tme_profile(input="TPM.csv", output="tme_out", threads=16)
 
 # FASTQ → TME orchestration (external tools must be on PATH — see below)
 iobrx.runall(mode="salmon", outdir="run_out", fastq="raw_fastq_dir",
-             threads=16, resume=True)
+             threads=16, resume=True,
+             unknown=["--index", "references/salmon"])
 ```
+
+`runall(resume=True)` reuses a table only after its producing step succeeded
+and its recorded output hash matches. A failed or interrupted table write is
+retried; successful upstream steps can still be reused. State schema 2 adds
+these per-step records: older run directories require a new `outdir`. Changed
+inputs, parameters, references or output files also require a new directory.
+An uncatchable process kill may leave unverified files; the whole-tree guard
+rejects that changed directory rather than treating it as completed work.
 
 Open [the complete workflow notebook](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/12_complete_workflow.ipynb)
 for input checks, interpretation, plots, and per-stage timers on the public

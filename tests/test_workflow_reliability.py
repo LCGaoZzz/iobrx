@@ -56,7 +56,7 @@ def test_runall_changed_inputs_refuse_resume(tmp_path, monkeypatch):
     out = tmp_path / "run"
     args = ["--mode", "salmon", "--outdir", str(out), "--fastq", str(reads), "--index", str(index)]
     calls = []
-    def fake_pipeline(argv):
+    def fake_pipeline(argv, **kwargs):
         calls.append(argv)
         (out / "result.csv").write_text("ID,value\nsample,1\n")
         return 0
@@ -90,3 +90,137 @@ def test_reference_directory_links_are_hashed_without_cycles(tmp_path):
     assert any(row["path"].endswith("index.dat") for row in before[0]["files"])
     (parts / "index.dat").write_text("B")
     assert inventory([reference]) != before
+
+
+def stub_pipeline(tmp_path, monkeypatch, mode="salmon"):
+    """Exercise the real scheduler with controllable table-writer failures."""
+    from collections import Counter
+    from iobrx._fast import runall_fast as ra
+
+    reads, index, _ = inputs(tmp_path, monkeypatch)
+    out = tmp_path / "run"
+    args = ["--mode", mode, "--outdir", str(out), "--fastq", str(reads),
+            "--index", str(index), "--threads", "1"]
+    calls = Counter()
+    failure = {"step": None, "remaining": 0, "kind": "exit"}
+
+    def fake_step(cmd, cwd=None, dry=False):
+        assert not dry
+        step = cmd[1]
+        calls[step] += 1
+        if step == "merge_salmon":
+            (out / "02-salmon/runall_salmon_tpm.tsv").write_text("ID\tsample\nG1\t1\n")
+        if step == "merge_star_count":
+            import gzip
+            with gzip.open(out / "02-star/runall.STAR.count.tsv.gz", "wt") as handle:
+                handle.write("ID\tsample\nG1\t1\n")
+        output = None
+        for flag in ("--output", "-o"):
+            if flag in cmd and step != "trust4":
+                output = Path(cmd[cmd.index(flag) + 1])
+                break
+        if step == failure["step"] and failure["remaining"]:
+            failure["remaining"] -= 1
+            if failure["kind"] == "missing":
+                return 0
+            output.write_text("ID,unfinished_score\nsample,")
+            if failure["kind"] == "exception":
+                raise OSError("simulated interrupted write")
+            return 7
+        if output is not None:
+            output.write_text(f"ID,{step}\nsample,1\n")
+        return 0
+
+    monkeypatch.setattr(ra, "_run", fake_step)
+    return ra, args, out, calls, failure
+
+
+@pytest.mark.parametrize("mode,step", [
+    ("salmon", "prepare_salmon"), ("salmon", "log2_eset"),
+    ("salmon", "calculate_sig_score"), ("salmon", "cibersort"),
+    ("salmon", "IPS"), ("salmon", "estimate"), ("salmon", "mcpcounter"),
+    ("salmon", "quantiseq"), ("salmon", "epic"), ("salmon", "LR_cal"),
+    ("star", "count2tpm"), ("star", "log2_eset"),
+])
+def test_runall_retries_partial_tables_and_reuses_successes(tmp_path, monkeypatch, mode, step):
+    ra, args, out, calls, failure = stub_pipeline(tmp_path, monkeypatch, mode)
+    failure.update(step=step, remaining=2)
+    for attempt in (1, 2):
+        assert ra.runall_argv(args + (["--resume"] if attempt == 2 else [])) == 7
+        state = json.loads((out / ".iobrx-run-state.json").read_text())
+        assert state["status"] == "failed"
+        assert step not in state["completed_steps"]
+        assert calls[step] == attempt
+    assert ra.runall_argv(args + ["--resume"]) == 0
+    state = json.loads((out / ".iobrx-run-state.json").read_text())
+    assert state["status"] == "completed"
+    assert step in state["completed_steps"]
+    assert calls[step] == 3
+    assert all(count == 1 for name, count in calls.items() if name != step)
+    assert not any("unfinished_score" in p.read_text() for p in out.rglob("*.csv"))
+    before = calls.copy()
+    assert ra.runall_argv(args + ["--resume"]) == 0
+    assert calls == before
+
+
+@pytest.mark.parametrize("kind,error", [("exception", OSError), ("missing", RuntimeError)])
+def test_runall_failed_or_missing_table_is_not_checkpointed(tmp_path, monkeypatch, kind, error):
+    ra, args, out, calls, failure = stub_pipeline(tmp_path, monkeypatch)
+    failure.update(step="calculate_sig_score", remaining=1, kind=kind)
+    with pytest.raises(error):
+        ra.runall_argv(args)
+    state = json.loads((out / ".iobrx-run-state.json").read_text())
+    assert state["status"] == "failed"
+    assert "calculate_sig_score" not in state["completed_steps"]
+    assert ra.runall_argv(args + ["--resume"]) == 0
+    assert calls["calculate_sig_score"] == 2
+    assert calls["prepare_salmon"] == 1
+
+
+def test_runall_retries_partial_deconvolution_merge(tmp_path, monkeypatch):
+    ra, args, out, calls, _ = stub_pipeline(tmp_path, monkeypatch)
+    original = ra.pd.DataFrame.to_csv
+    attempts = []
+
+    def interrupted_merge(frame, path, *args, **kwargs):
+        if Path(path).name == "deconvo_merged.csv":
+            attempts.append(path)
+            if len(attempts) == 1:
+                Path(path).write_text("ID,unfinished_score\nsample,")
+                raise OSError("simulated interrupted merge")
+        return original(frame, path, *args, **kwargs)
+
+    monkeypatch.setattr(ra.pd.DataFrame, "to_csv", interrupted_merge)
+    with pytest.raises(OSError):
+        ra.runall_argv(args)
+    assert ra.runall_argv(args + ["--resume"]) == 0
+    assert len(attempts) == 2
+    assert all(count == 1 for count in calls.values())
+    merged = ra.pd.read_csv(out / "05-tme/deconvo_merged.csv")
+    assert len(merged) == 1 and "unfinished_score" not in merged.columns
+
+
+def test_runall_fresh_attempt_invalidates_old_successes(tmp_path, monkeypatch):
+    ra, args, out, calls, failure = stub_pipeline(tmp_path, monkeypatch)
+    assert ra.runall_argv(args) == 0
+    failure.update(step="calculate_sig_score", remaining=1)
+    assert ra.runall_argv(args) == 7
+    state = json.loads((out / ".iobrx-run-state.json").read_text())
+    assert "cibersort" not in state["completed_steps"]
+    assert ra.runall_argv(args + ["--resume"]) == 0
+    assert calls["cibersort"] == 2
+    assert calls["fastq_qc"] == 2
+
+
+def test_runall_rejects_legacy_state_without_step_records(tmp_path, monkeypatch):
+    ra, args, out, calls, _ = stub_pipeline(tmp_path, monkeypatch)
+    assert ra.runall_argv(args) == 0
+    path = out / ".iobrx-run-state.json"
+    state = json.loads(path.read_text())
+    del state["schema_version"]
+    del state["completed_steps"]
+    path.write_text(json.dumps(state))
+    before = calls.copy()
+    with pytest.raises(ValueError, match="per-step completion records"):
+        ra.runall_argv(args + ["--resume"])
+    assert calls == before

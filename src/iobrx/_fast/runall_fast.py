@@ -24,7 +24,7 @@ import traceback
 import threading
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-from iobrx._run_state import file_hash, signature, write_json
+from iobrx._run_state import artifact_records, file_hash, signature, write_json
 
 _RUN_LOCK = threading.RLock()
 
@@ -868,19 +868,43 @@ def _autobucket(tokens: List[str], mode: str) -> Dict[str, List[str]]:
 
 # --------------------- Main pipeline ---------------------
 
-def _main_impl(argv: Optional[List[str]] = None) -> int:
-    """The upstream ``runall.main`` body, verbatim, with ``sys.exit(X)``
-    translated to ``return X`` (the library-API convention; ``main()`` below
-    restores the upstream exit behaviour)."""
+def _main_impl(argv: Optional[List[str]] = None, *, completed_steps=None) -> int:
+    """Route upstream commands, recording successful table-producing steps.
+
+    File presence and an unchanged hash do not prove that the writer succeeded.
+    Resume requires a completion record from a zero-exit invocation as well.
+    """
     parser = argparse.ArgumentParser(prog="iobrpy runall", description="End-to-end orchestrator (salmon/star) with auto routing.")
     parser.add_argument("--mode", choices=["salmon", "star"], required=True)
     parser.add_argument("--outdir", required=True)
     parser.add_argument("--fastq", required=True, help="Path to raw FASTQ directory (used as fastq_qc --path1_fastq)")
     parser.add_argument("--threads", type=int, default=None, help="Unified concurrency for multiple steps")
     parser.add_argument("--batch_size", type=int, default=None, help="Unified batch size for fastq_qc/salmon/star")
-    parser.add_argument("--resume", action="store_true", help="Skip steps if outputs already exist")
+    parser.add_argument("--resume", action="store_true", help="Reuse verified successful steps")
     parser.add_argument("--dry_run", action="store_true", help="Print commands without executing")
     ns, unknown = parser.parse_known_args(argv)
+
+    completed_steps = {} if completed_steps is None else completed_steps
+
+    def reusable(step, output):
+        if not ns.resume:
+            return False
+        try:
+            return completed_steps.get(step) == artifact_records([output])
+        except (OSError, RuntimeError):
+            return False
+
+    def record_completed(step, output):
+        if not ns.dry_run:
+            completed_steps[step] = artifact_records([output])
+
+    def run_table(cmd, output):
+        if not ns.dry_run:
+            completed_steps.pop(cmd[1], None)
+        rc = _run(cmd, dry=ns.dry_run)
+        if rc == 0:
+            record_completed(cmd[1], output)
+        return rc
 
     outdir = Path(ns.outdir).resolve()
 
@@ -1015,12 +1039,12 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         prep_csv   = d_tpm / "prepare_salmon.csv"
         tpm_matrix = d_tpm / "tpm_matrix.csv"
 
-        if ns.resume and _nonempty(tpm_matrix):
+        if reusable("prepare_salmon", prep_csv) and reusable("log2_eset", tpm_matrix):
             # If final log2'ed matrix exists, skip both steps.
             print("[resume] prepare_salmon + log2_eset skipped.")
         else:
             # Run prepare_salmon only if the intermediate is missing (resume-friendly).
-            if not (ns.resume and _nonempty(prep_csv)):
+            if not reusable("prepare_salmon", prep_csv):
                 cmd = ["iobrpy", "prepare_salmon",
                        "--input", str(merged_salmon_tpm),
                        "--output", str(prep_csv)]
@@ -1032,7 +1056,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 # Default: invoke --remove_version unless user already set it
                 if not any(a.startswith("--remove_version") for a in ps_args):
                     cmd.append("--remove_version")
-                rc = _run(cmd, dry=ns.dry_run)
+                rc = run_table(cmd, prep_csv)
                 if rc != 0:
                     return rc
 
@@ -1040,7 +1064,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             cmd = ["iobrpy", "log2_eset",
                    "-i", str(prep_csv),
                    "-o", str(tpm_matrix)]
-            rc = _run(cmd, dry=ns.dry_run)
+            rc = run_table(cmd, tpm_matrix)
             if rc != 0:
                 return rc
 
@@ -1094,11 +1118,11 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         prep_csv   = d_tpm / "count2tpm.csv"
         tpm_matrix = d_tpm / "tpm_matrix.csv"
 
-        if ns.resume and _nonempty(tpm_matrix):
+        if reusable("count2tpm", prep_csv) and reusable("log2_eset", tpm_matrix):
             print("[resume] count2tpm + log2_eset skipped.")
         else:
             # Run count2tpm only if the intermediate is missing (resume-friendly).
-            if not (ns.resume and _nonempty(prep_csv)):
+            if not reusable("count2tpm", prep_csv):
                 cmd = ["iobrpy", "count2tpm",
                        "--input", str(merged_star_counts),
                        "--output", str(prep_csv),
@@ -1110,7 +1134,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                 if not any(a.startswith("--remove_version") for a in c2_args):
                     cmd.append("--remove_version")
                 _append_passthrough(cmd, blocks, "count2tpm")
-                rc = _run(cmd, dry=ns.dry_run)
+                rc = run_table(cmd, prep_csv)
                 if rc != 0:
                     return rc
 
@@ -1118,13 +1142,13 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             cmd = ["iobrpy", "log2_eset",
                    "-i", str(prep_csv),
                    "-o", str(tpm_matrix)]
-            rc = _run(cmd, dry=ns.dry_run)
+            rc = run_table(cmd, tpm_matrix)
             if rc != 0:
                 return rc
 
     # 5) calculate_sig_score -> 04-signatures/
     sig_out = d_sigscore / "calculate_sig_score.csv"
-    if ns.resume and _nonempty(sig_out):
+    if reusable("calculate_sig_score", sig_out):
         print("[resume] calculate_sig_score skipped.")
     else:
         cmd = ["iobrpy", "calculate_sig_score",
@@ -1142,7 +1166,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         if not any(a.startswith("--adjust_eset") for a in cs_args):
             cmd += ["--adjust_eset"]
         _append_passthrough(cmd, blocks, "calculate_sig_score", "sig_score")
-        rc = _run(cmd, dry=ns.dry_run)
+        rc = run_table(cmd, sig_out)
         if rc != 0:
             return rc
 
@@ -1154,7 +1178,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     produced: List[Path] = []
     for m in ["cibersort", "IPS", "estimate", "mcpcounter", "quantiseq", "epic"]:
         out_file = d_deconv / f"{m}_results.csv"
-        if ns.resume and _nonempty(out_file):
+        if reusable(m, out_file):
             print(f"[resume] {m} skipped.")
             produced.append(out_file)
             continue
@@ -1182,7 +1206,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             cmd = ["iobrpy", "epic", "--input", str(tpm_matrix), "--reference", "TRef", "--output", str(out_file)]
 
         _append_passthrough(cmd, blocks, m)
-        rc = _run(cmd, dry=ns.dry_run)
+        rc = run_table(cmd, out_file)
         if rc != 0:
             return rc
         produced.append(out_file)
@@ -1192,12 +1216,13 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
 
     if ns.dry_run:
         print(f"[dry-run] merge deconvolution -> {merged_wide_path}")
-    elif ns.resume and _nonempty(merged_wide_path):
+    elif reusable("merge_deconvolution", merged_wide_path):
         print("[resume] merge deconvolution skipped.")
     else:
         if pd is None:
             print("[WARN] pandas is not available; skip merged deconvolution table.")
         else:
+            completed_steps.pop("merge_deconvolution", None)
             def _read_csv_any(p: Path):
                 """Read a CSV with a safe fallback parser."""
                 try:
@@ -1249,11 +1274,12 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             # Sort by ID and write the final wide table
             wide = wide.sort_values("ID").reset_index(drop=True)
             wide.to_csv(merged_wide_path, index=False)
+            record_completed("merge_deconvolution", merged_wide_path)
             print(f"[ok] merged deconvolution -> {merged_wide_path}")
 
     # 8) LR_cal -> 06-LR_cal/
     lr_out = d_lrcal / "lr_cal.csv"
-    if ns.resume and _nonempty(lr_out):
+    if reusable("LR_cal", lr_out):
         print("[resume] LR_cal skipped.")
     else:
         cmd = ["iobrpy", "LR_cal",
@@ -1264,7 +1290,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
                "--cancer_type", "pancan",
                "--verbose"]
         _append_passthrough(cmd, blocks, "LR_cal")
-        rc = _run(cmd, dry=ns.dry_run)
+        rc = run_table(cmd, lr_out)
         if rc != 0:
             return rc
     # 9) TRUST4 TCR/BCR repertoire -> 07-TCRBCR/
@@ -1325,19 +1351,25 @@ def _guarded_runall(argv):
     import shutil
     tools = [x for x in ("fastp", "multiqc", "salmon", "STAR", "run-trust4", "samtools") if shutil.which(x)]
     current = signature(sorted(inputs), {"argv": [a for a in args if a != "--resume"]}, tools)
+    completed_steps = {}
     if root.exists() and any(root.iterdir()):
         try:
             previous = json.loads(state_path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             raise ValueError("Existing run has no verifiable state; choose a new outdir") from None
+        if previous.get("schema_version") != 2 or not isinstance(previous.get("completed_steps"), dict):
+            raise ValueError("Existing run has no per-step completion records; choose a new outdir")
         if previous.get("signature") != current or previous.get("outputs") != _pipeline_products(root):
             raise ValueError("Run inputs, references, parameters or outputs changed; choose a new outdir")
+        if "--resume" in args:
+            completed_steps = previous["completed_steps"]
     root.mkdir(parents=True, exist_ok=True)
-    state = {"signature": current, "status": "running", "outputs": _pipeline_products(root)}
+    state = {"schema_version": 2, "signature": current, "status": "running",
+             "outputs": _pipeline_products(root), "completed_steps": completed_steps}
     write_json(state_path, state)
     rc = 1
     try:
-        rc = _main_impl(args)
+        rc = _main_impl(args, completed_steps=completed_steps)
         return rc
     finally:
         state.update(status="completed" if rc == 0 else "failed", exit_code=rc,

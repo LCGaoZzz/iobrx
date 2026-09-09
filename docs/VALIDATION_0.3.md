@@ -5,7 +5,40 @@ Machine-readable results and sanitized JUnit records are in
 [validation/0.3.0](validation/0.3.0/summary.json). They include a digest of the
 Python package/harness sources, versions and observed suite durations.
 
-## Reproduced checks
+## Follow-up: partial-output resume repair
+
+The final audit of `9b63dac` found that a failed signature writer could leave
+a nonempty CSV, which a later resume skipped and reported as successful.
+The installed-wheel reproducer returned 7 on its first attempt and incorrectly
+returned 0 on retry. This was a gap in the initial hardening tests below.
+
+Run-state schema 2 now records each successful table-producing step with its
+output hash. Failed steps have no completion record and are retried; successful
+upstream steps remain reusable. A new run without `resume` discards previous
+table checkpoints. Legacy state without these records requires a new output
+directory. An uncatchable process kill can leave unverified files; the existing
+whole-tree guard rejects such a changed tree instead of assuming completion.
+
+The repaired, rebuilt and installed wheel keeps returning 7 while the simulated
+writer fails, records `failed`, and re-executes that writer. Regression tests
+also demonstrate successful recovery once the failure clears.
+
+| Follow-up check | Result |
+| --- | --- |
+| New failure/retry scenarios | 17 cases: both pipeline modes, all table steps, repeated failure, exceptions, missing outputs, interrupted merge, fresh attempts and legacy state |
+| Focused scheduler/reliability suite | 41 passed; 1 full test deselected |
+| Default package and harness | 263 passed; 15 full tests deselected |
+| Full runall numerical comparison | 1 passed; 18 default tests deselected |
+| Rebuilt installed wheel, Rust disabled | 36 passed |
+| Release metadata and tutorial integrity | Passed; 23 notebooks, 69 figures, 4 data checksums |
+
+[Follow-up source digest, wheel hash and JUnit records](validation/0.3.0/resume-fix/summary.json)
+identify this repair separately from the initial evidence. Scientific kernels
+are unchanged; external-tool tests still use stubs. Documentation now agrees
+with the actual 27 harness identifiers, exact dependency pins and unpublished
+release status.
+
+## Initial reproduced checks at `9b63dac`
 
 | Check | Result | Scope |
 | --- | --- | --- |
@@ -45,6 +78,7 @@ running harness tests. `--installed` requires a wheel import, not `PYTHONPATH=sr
 - Dry runs print a complete plan and do not write results, directories or flags.
 - QC, Salmon and STAR resume only after matching SHA-256 records for inputs, reference indices, tool binaries and products. STAR needs both BAM and GeneCounts. Linked reference directories are included, with cycle protection.
 - `runall` binds the whole output tree to its input/configuration. Old trees without state, changed inputs/references, or edited/deleted outputs require a fresh output directory. Whole-file hashing adds I/O cost for large data; this is intentionally conservative.
+- Table reuse also requires a successful per-step completion record. Nonempty partial outputs from failed steps and interrupted merges are retried; pre-schema-2 state cannot authorize reuse.
 - `runall` uses the original file-based CIBERSORT solver, matching the conservative tme_profile default. The reported campaign corner case is not reclassified as solved in the Rust kernel.
 - NMF saves feature rankings even when its output directory did not previously exist.
 - `backend="python"` remains the untouched upstream escape hatch for orchestration. It does not inherit the hardened auto-path behavior; the harness uses the hardened path.

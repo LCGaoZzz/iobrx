@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Reliability and Omicos hardening
 
 - Propagate QC/MultiQC failures, make dry runs write-free, and bind resume decisions to input/reference/tool and artifact hashes.
+- Require successful per-step records before reusing tables. Retry partial writes and failed merges, invalidate earlier checkpoints for a fresh attempt, and reject legacy run state without these records.
 - Require STAR BAM and GeneCounts together; respect `IOBRX_DISABLE_RUST` in Salmon parsing.
 - Use the original file-based CIBERSORT solver inside `runall`; retain NMF feature rankings in fresh output directories.
 - Add 16 typed Omicos adapters (27 identifiers total), input/output isolation and truthful failed manifests.

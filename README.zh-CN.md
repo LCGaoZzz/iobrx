@@ -98,9 +98,13 @@ Jupyter 内核应使用同一个解释器。已有 Omicos 环境若存在数值�
 
 | 钉版 | 原因 |
 | --- | --- |
-| `iobrpy>=0.2.0` | 提供捆绑参考数据（LM22、EPIC TRef、quanTIseq TIL10、TRUST4/SpecHLA 资产）与原版工作流回退路线。全部 parity 合同以 iobrpy 0.2.0 为金标准验证（PyPI 0.2.1 在所有已移植路径上数值相同）。 |
-| `numpy>=1.22,<2.3` | numpy 2.4 改变了归约舍入（整签名 `X.mean()` 差 1 ulp），会翻转 CIBERSORT NuSVR 的支持向量集（nSV 417 vs 420）——逐位一致会**从原版一侧**被破坏。 |
-| `scikit-learn>=1.2,<1.8` | Rust 核逐字节内置 scikit-learn 1.7.2 的 `svm.cpp`。sklearn 1.9.0 使**原版** NuSVR 数值漂移（10 个官方样本中 5 个最多差 5.7e-3），≥1.8 的原版连自己的冻结参考都无法复现。 |
+| `iobrpy==0.2.1` | 提供参考资源与原版工作流回退路线。当前安装和数值对照使用这个精确的 PyPI 版本；此前科学智能体的报告还比较了 0.2.0。 |
+| `numpy==2.2.6` | 使用已验证的归约与排序实现。此前报告在新版 NumPy 中观察到不同舍入和 CIBERSORT 支持向量集，不能承诺更宽版本范围的结果一致性。 |
+| `scikit-learn==1.7.2` | 与内置 `svm.cpp` 及测试中的参考求解器保持一致。新版 sklearn 需要单独进行数值验证。 |
+| `scipy==1.16.3`、`gseapy==1.3.1` | 将优化与富集计算固定到已验证的实现。 |
+
+以上是[包元数据](pyproject.toml)中的精确依赖，不是最低版本要求。
+其他依赖范围和完整测试环境见[验证约束](tests/constraints-validated.txt)。
 
 **CPU 指令集兼容不等于所有平台都已验证。** IOBRpy 的发行包仍限制了部分
 系统和 Python 版本的便捷安装。Windows 推荐 WSL2；macOS、ARM 和原生
@@ -139,8 +143,15 @@ iobrx.tme_profile(input="TPM.csv", output="tme_out", threads=16)
 
 # FASTQ → TME 编排（外部工具需在 PATH 上，见下文）
 iobrx.runall(mode="salmon", outdir="run_out", fastq="raw_fastq_dir",
-             threads=16, resume=True)
+             threads=16, resume=True,
+             unknown=["--index", "references/salmon"])
 ```
+
+`runall(resume=True)` 只有在产出表格的步骤成功完成、输出哈希匹配时才会复用结果。
+失败或写入中断留下的半成品会重新执行；已成功的上游步骤仍可复用。
+运行状态格式 2 增加了逐步骤记录，旧运行目录需要换用新的 `outdir`。
+输入、参数、参考文件或输出文件被修改后，也需要使用新目录。
+进程被强制终止时可能留下未验证文件；整目录检查会拒绝复用发生变化的目录。
 
 初次使用建议打开[完整工作流 Notebook](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/12_complete_workflow.ipynb)
 （仓库自带公开示例数据，安装后无需下载），先理解不同方法需要的输入尺度，
