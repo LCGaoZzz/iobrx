@@ -17,7 +17,7 @@ iobrx 的新增工作主要是 Rust 内核、并行与向量化加速、pandas �
 - **23 本已执行的 Notebook**：原有 12 本，加上 11 本新增矩阵分析与文件处理教程，均含教程代码、结果和内嵌图；同时提供 PNG、PDF、SVG。
 - 每张分析图经历初稿、第一轮版式调整、第二轮精修，采用白底、低饱和配色、细轴线和可编辑矢量文字。参见[逐图修改记录](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/FIGURE_REVIEW.md)。
 
-**28 个公共 API** —— 26 个工作流函数（另含 `deconvolute_quantiseq` 别名与
+**29 个公共 API** —— 27 个工作流函数（另含 `deconvolute_quantiseq` 别名与
 `load_official` 数据助手），覆盖以下 IOBRpy 工作流类别：免疫反卷积
 （CIBERSORT、BayesPrism、EPIC、quanTIseq、MCP-counter、ESTIMATE）、签名评分
 （PCA / zscore / ssGSEA / integration）、TPM 转换与基因注释、免疫表型评分
@@ -35,6 +35,8 @@ FASTQ→TME 编排阶段（fastp / salmon / STAR / TRUST4 / SpecHLA）。
   `lr_cal`、`tme_cluster`、`bayesprism`、`tme_profile`、`fastq_qc`、
   `batch_salmon`、`batch_star_count`、`trust4`、`runall`、`spechla`、
   `hla_typing`，外加 `calculate_sig_score` 内部胶水的 30.3× 优化。
+- **补齐独立 HLA reads 提取接口**：`extract_hla_read` 只从单个 BAM/CRAM
+  提取 reads，默认使用已准备好的工具环境，不自动安装依赖。
 - **4 个新 Rust 内核**：`lr_gene_valid_mask`（LR_cal 基因过滤）、
   `tme_kmeans`（k-means + KL 指数）、`merge_salmon_parse`（quant.sf 解析）、
   `bp_gibbs`（BayesPrism Gibbs 采样器，逐位复现 numpy 完整 RNG 链）。
@@ -149,16 +151,17 @@ iobrx.runall(mode="salmon", outdir="run_out", fastq="raw_fastq_dir",
 
 `runall(resume=True)` 只有在产出表格的步骤成功完成、输出哈希匹配时才会复用结果。
 失败或写入中断留下的半成品会重新执行；已成功的上游步骤仍可复用。
-运行状态格式 2 增加了逐步骤记录，旧运行目录需要换用新的 `outdir`。
-输入、参数、参考文件或输出文件被修改后，也需要使用新目录。
-进程被强制终止时可能留下未验证文件；整目录检查会拒绝复用发生变化的目录。
+运行状态格式 2 增加了逐步骤记录；更早、没有这些记录的目录需要新建 `outdir`，
+已有格式 2 状态可以继续使用。输入、参数、参考文件或记录的计算产物被修改后，
+需要使用新目录；增删改笔记和图表不会阻断恢复。
+进程被强制终止留下的未验证计算产物不会直接当作成功结果复用。
 
 初次使用建议打开[完整工作流 Notebook](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/12_complete_workflow.ipynb)
 （仓库自带公开示例数据，安装后无需下载），先理解不同方法需要的输入尺度，
 再替换成自己的数据。四个独立签名教程使用公开的 IMvigor210 演示面板
 （872 特征 × 348 样本）。
 
-## 28 个 API 一览
+## 29 个 API 一览
 
 | API | 一句话说明 |
 | --- | --- |
@@ -187,6 +190,7 @@ iobrx.runall(mode="salmon", outdir="run_out", fastq="raw_fastq_dir",
 | `batch_star_count` | 批量 STAR 两遍比对 + GeneCounts |
 | `trust4` | TRUST4 TCR/BCR 重建 + 加速的免疫后处理 |
 | `spechla` | SpecHLA 单样本全分辨率 HLA 分型 |
+| `extract_hla_read` | 从单个 BAM/CRAM 提取 HLA 相关 FASTQ，不执行分型 |
 | `hla_typing` | 从 BAM 目录批量 HLA 分型 |
 | `runall` | FASTQ → TME 端到端编排器（salmon / star 两条链） |
 | `load_official` | 解析 / 下载 IOBR 公开示例数据 |
@@ -224,6 +228,7 @@ Python 快路径**、或做 **Rust 内核**。最终选择 = 在通过 bit-exact
 | runall | iobrpy CLI | **python（选）** | 无 | **python** | **1.02×**（R5 真实数据） | bit-exact，已归档的工具抖动类除外 |
 | spechla | iobrpy CLI | **python（选）** | 无 | **python** | **1.01×**（R5 真实数据） | bit-exact，samtools @PG 随机 ID 抖动除外 |
 | hla_typing | iobrpy CLI | **python（选）** | 无 | **python** | **1.05×**（R5 真实数据） | bit-exact，同上 |
+| extract_hla_read | iobrpy CLI | 复用现有提取函数 | 无 | **python** | 未测性能倍率 | 已用模拟脚本对照命令与输出契约 |
 
 ## 为什么各模块加速不同：一个地板模型
 
@@ -314,11 +319,21 @@ iobrx 只调度重型二进制，不捆绑它们。请自行安装并放入 `PAT
 | `batch_star_count` | STAR（+ samtools） |
 | `trust4` | TRUST4（`run-trust4`） |
 | `spechla` / `hla_typing` | SpecHLA 工具链：samtools、bwa/bowtie2、bcftools、freebayes、vcflib、blastn、bamUtil（`bam`） |
+| `extract_hla_read` | SpecHLA 提取资源、samtools、bamUtil（`bam`）；输入需排序并建立索引 |
 | `runall` | 所选 salmon/star 链的全部工具 |
 
 所有纯计算 API（反卷积、签名评分、TPM、注释、IPS、LR_cal、NMF/TME 聚类、
 合并类）**不需要任何外部工具**——只需 iobrpy（参考数据 + 回退）与钉版的
 科学计算栈。
+
+已有 BAM/CRAM 时，可以只提取 HLA reads：
+
+```python
+iobrx.extract_hla_read("sample1", "sample1.bam", "hg38", "hla_reads")
+```
+
+这个新接口在两个后端中均默认 `auto_install=False`；任务确实需要安装工具时，
+才显式传入 `auto_install=True`。它目前通过 Python API 使用。
 
 ## 在 Omicos／Agent 中使用
 

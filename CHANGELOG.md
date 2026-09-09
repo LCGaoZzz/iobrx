@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Reliability and Omicos hardening
 
+- Scope `runall` output checks to calculation products and completion records. Notes and figures no longer block resume; existing schema 2 state is compatible, and partial-output protection remains.
+- Add the standalone `extract_hla_read` public API (29 public APIs / 27 workflow functions total), reusing existing extraction helpers. Prepared tools are the default; dependency auto-installation is explicit. Update API docs to reflect current dry-run, resume and NMF output behavior.
 - Simplify the Agent/Skill entrypoints: autonomous API/CLI/MCP use and on-demand references, with no mandatory doctor/validate/run/status sequence. Harness provenance defaults to metadata; SHA-256 auditing is opt-in. Allow existing output directories without run-file collisions, and separate artifact inspection from historical execution status.
 - Propagate QC/MultiQC failures, make dry runs write-free, and bind resume decisions to input/reference/tool and artifact hashes.
 - Require successful per-step records before reusing tables. Retry partial writes and failed merges, invalidate earlier checkpoints for a fresh attempt, and reject legacy run state without these records.

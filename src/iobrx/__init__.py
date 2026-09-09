@@ -67,6 +67,7 @@ __all__ = [
     "batch_star_count",
     "trust4",
     "spechla",
+    "extract_hla_read",
     "hla_typing",
     "runall",
     "load_official",
@@ -978,12 +979,10 @@ def nmf(
     outdir : path-like or None, default None
         When given, write ``clusters.csv`` and
         ``top_features_per_cluster.csv`` (plus ``pca_plot.png`` when
-        ``plot=True``) byte-identically to the CLI. BUG-COMPAT: as
-        upstream, the top-features file is written *before* the directory
-        is created and the failure is swallowed — with a non-existent
-        ``outdir`` it is silently missing while the other files are
-        written. ``None`` keeps everything in memory (the returned frames
-        are complete regardless).
+        ``plot=True``). The default implementation creates the directory
+        before writing, so feature rankings are retained for a new outdir.
+        ``None`` keeps everything in memory. The explicit upstream backend
+        retains its original directory/write behavior.
     verbose : bool, default False
         Reproduce the CLI's stdout (per-k silhouette/rec_err, warnings,
         banner). The CLI always prints.
@@ -2255,51 +2254,20 @@ def runall(
     backend: str = "auto",
     verbose: bool = True,
 ):
-    """End-to-end FASTQ -> TME orchestrator (salmon/star), in-process port.
+    """Run the Salmon or STAR FASTQ-to-TME workflow in one Python process.
 
-    Drop-in for ``iobrpy.workflow.runall`` (CLI ``python -m iobrpy.main
-    runall``). The whole orchestration layer is VERBATIM upstream code: the
-    ``salmon``/``star`` branching, the step order (fastq_qc ->
-    batch_salmon/batch_star_count -> merge_salmon/merge_star_count ->
-    prepare_salmon/count2tpm -> log2_eset -> calculate_sig_score ->
-    cibersort/IPS/estimate/mcpcounter/quantiseq/epic -> deconvo merge ->
-    LR_cal -> trust4), the numbered output layout (``01-qc`` ...
-    ``07-TCRBCR``), the legacy sectioned passthrough parser and the
-    long-flag auto-router (mode-aware ``--index``/``--project``/
-    ``--remove_version``/``--suffix1`` routing, ``--method`` value
-    disambiguation, legacy ``--num_threads``/``--parallel_size``/
-    ``--num_processes`` absorption), every per-step default injection
-    (``--project runall``, ``--return_feature symbol``,
-    ``--remove_version``, ``--signature all --method integration
-    --mini_gene_count 2 --adjust_eset``, ``--platform affymetrix``,
-    ``--features HUGO_symbols``, ``--arrays --tumor --scale_mrna``,
-    ``--reference TRef``, ``--data_type tpm --id_type symbol
-    --cancer_type pancan --verbose``), the ``--resume`` done-flag checks,
-    the ``--dry_run`` protocol, the inline pandas deconvolution merge and
-    all ``[run]/[ok]/[ERROR]/[resume]/[done]`` console lines. Console
-    parity is byte-identical to the original under ``--dry_run`` on both
-    modes across default/rich-flag/legacy/sectioned/resume/error argv
-    (13/13 gates, tests/test_parity_runall.py).
+    The default backend preserves upstream command routing, assay defaults
+    and numerical transformations while adding reliable failure handling.
+    QC/tool failures propagate; dry runs only print a plan. Resume requires
+    matching inputs, references, parameters and calculation products, plus
+    a successful producing-step record for each reused table. Notes and
+    figures outside the calculation product set do not block resume.
 
-    THE ACCELERATION: upstream executes each step as ``subprocess.run(
-    ["iobrpy", <step>, ...])`` — 9-10 child processes, each paying the
-    ~1.4-2.2 s ``iobrpy.main`` full-import cold-start floor. This port
-    keeps the constructed command lists byte-for-byte (so ``dry_run``
-    output and the ``[run]`` headers are identical), parses each with a
-    MIRROR of the exact ``iobrpy.main`` subparser for that step (pinning
-    the CLI-level defaults — e.g. LR_cal ``data_type='tpm'`` where the
-    plain function default is ``'count'``, epic ``solver='trust-constr'``,
-    cibersort ``QN=True``), and dispatches to the already-ported ``iobrx``
-    substep functions plus the ``iobrpy.main`` dispatch-layer I/O
-    transformations (input-parse rules, ``_CIBERSORT``/``_estimate``/
-    ``_MCPcounter``/``_quantiseq``/``_EPIC`` suffixes, transposes,
-    ``index_label='ID'``, ``float_format='%.7f'``, separator-by-extension
-    writes, banners) reproduced verbatim. External tools (fastp/multiqc/
-    salmon/STAR/run-trust4) are still scheduled by the ported substeps
-    exactly as upstream, so every substep's own parity contract carries
-    over to the whole chain; what disappears is only the per-step Python
-    cold start (speedup ceiling ~1 on tool-dominated runs — the value is
-    the identical API plus in-process composition).
+    CIBERSORT uses the original file-based solver at this pipeline boundary.
+    External tools still perform alignment and reconstruction; the wrapper
+    removes repeated Python CLI imports rather than accelerating those tools.
+    ``backend="python"`` invokes the untouched upstream CLI implementation
+    and retains its original error, dry-run and resume behavior.
 
     Parameters
     ----------
@@ -2322,12 +2290,15 @@ def runall(
         Unified batch size (upstream ``--batch_size``): ``None`` -> legacy
         flag in *unknown* -> 1.
     resume : bool, default False
-        Skip steps whose done-flags/outputs already exist (upstream
-        ``--resume``).
+        Reuse successful steps only when their recorded calculation products
+        and the run's inputs/configuration still match. A failed partial table
+        is rerun. Edited or missing recorded products require a new outdir;
+        adding or editing unrelated notes/figures is allowed. Schema 2 state
+        from earlier iobrx versions remains readable.
     dry_run : bool, default False
-        Print the step commands without executing them (upstream
-        ``--dry_run``; BUG-COMPATIBLE: done-flag files and the
-        deconvolution merge table are still written, as upstream).
+        Print the step commands without executing or writing files under
+        the default backend. The explicit upstream backend retains its
+        original dry-run side effects.
     unknown : sequence of str, optional
         Extra CLI tokens after the mirrored flags — the upstream
         ``parse_known_args`` remainder: either the legacy "sectioned"
@@ -2385,6 +2356,92 @@ def runall(
     if backend == "python":
         return {"rc": runall_original(tokens)}
     return {"rc": runall_argv(tokens, verbose=verbose)}
+
+
+# ---------------------------------------------------------------------------
+# Standalone HLA read extraction (does not run HLA typing)
+# ---------------------------------------------------------------------------
+def extract_hla_read(
+    sample_id=None,
+    bam_path=None,
+    ref=None,
+    outdir=None,
+    *,
+    auto_install: bool = False,
+    spec_hla_root: str | None = None,
+    backend: str = "auto",
+):
+    """Extract HLA-related reads from one sorted/indexed BAM or CRAM.
+
+    Public counterpart of ``iobrpy extract_hla_read``. Runs the same
+    ``ExtractHLAread.sh`` with the same ``-s/-b/-r/-o`` arguments and output
+    layout, reusing iobrx's existing extraction helpers. It does not invoke
+    SpecHLA typing or require a batch of samples.
+
+    Parameters
+    ----------
+    sample_id : str
+        Sample name passed to the extraction script.
+    bam_path : path-like
+        Sorted and indexed BAM or CRAM input, matching the reference.
+    ref : {'hg19', 'hg38'}
+        Reference assembly used by the original extraction script.
+    outdir : path-like
+        Destination for the extracted FASTQ files.
+    auto_install : bool, default False
+        Use prepared tools by default. True enables the original dependency
+        install behavior; False corresponds to upstream ``--no-auto-install``.
+        This setting applies to both backends.
+    spec_hla_root : path-like, optional
+        SpecHLA assets for the default backend; otherwise resolve SPECHLA_ROOT
+        or the installed IOBRpy assets. The upstream backend ignores this override.
+    backend : {'auto', 'python'}, default 'auto'
+        Auto reuses local extraction/dependency helpers. Python invokes the
+        original entrypoint. Rust raises a clear error: extraction is external.
+
+    Returns
+    -------
+    dict
+        ``{'rc': 0}`` on success, 2 for invalid arguments or missing dependencies,
+        or the failing script's nonzero exit code. Missing assets and OS errors
+        raise their normal exceptions. No biological typing is performed here.
+    """
+    import subprocess
+    from pathlib import Path
+
+    if backend not in {"auto", "python", "rust"}:
+        raise ValueError("backend must be 'auto', 'rust', or 'python'")
+    if backend == "rust":
+        raise RuntimeError("extract_hla_read has no Rust kernel; use backend='auto' or backend='python'")
+
+    from iobrpy.SpecHLA import extract_hla_read as upstream
+
+    argv = []
+    for flag, value in (("-s", sample_id), ("-b", bam_path), ("-r", ref), ("-o", outdir)):
+        if value is not None:
+            argv += [flag, str(value)]
+    if not auto_install:
+        argv.append("--no-auto-install")
+    try:
+        if backend == "python":
+            upstream.main(argv)
+        else:
+            from iobrx._fast.hla_typing_fast import ensure_dependencies, run_extraction
+
+            parser = upstream.build_arg_parser()
+            args = parser.parse_args(argv)
+            try:
+                ensure_dependencies(auto_install=not args.no_auto_install)
+            except RuntimeError as exc:
+                parser.error(str(exc))
+            run_extraction(args.sample_id, Path(args.bam_path).expanduser().resolve(),
+                           args.ref, Path(args.outdir).expanduser().resolve(),
+                           spec_hla_root=spec_hla_root)
+    except SystemExit as exc:
+        return {"rc": exc.code if isinstance(exc.code, int) else (0 if exc.code is None else 1)}
+    except subprocess.CalledProcessError as exc:
+        return {"rc": exc.returncode}
+    return {"rc": 0}
 
 
 # ---------------------------------------------------------------------------

@@ -6,8 +6,8 @@ parameter defaults. CIBERSORT uses the original file-based solver, as in
 
 Reliability changes deliberately differ from upstream: QC errors propagate;
 dry runs only print a plan; content hashes bind resumes to their inputs,
-references, tool binaries, parameters and products. Legacy or changed output
-trees require a fresh directory. Runtime sidecars are additional outputs.
+references, tool binaries, parameters and calculation products. Unrelated
+notes and figures do not affect resume. Runtime sidecars are additional outputs.
 
 External programs still perform alignment/reconstruction. The Python wrapper
 removes repeated CLI imports; it does not promise to accelerate those tools.
@@ -16,6 +16,7 @@ does not inherit these orchestration reliability changes.
 """
 
 import argparse
+import fnmatch
 import json
 import os
 import shlex
@@ -1320,9 +1321,60 @@ def _main_impl(argv: Optional[List[str]] = None, *, completed_steps=None) -> int
     return 0
 
 
-def _pipeline_products(root):
-    return {str(p.relative_to(root)): file_hash(p) for p in sorted(root.rglob("*"))
-            if p.is_file() and p.name != ".iobrx-run-state.json"}
+# External products consumed by later stages or used to establish completion.
+# Table outputs are taken from completed_steps, not guessed by extension.
+_EXTERNAL_PRODUCTS = {
+    "01-qc": (".fastq_qc.done", "*.task.complete", "task.complete", "*.iobrx.json",
+              "*.fastq", "*.fastq.gz", "*.fq", "*.fq.gz", "*_fastp.json"),
+    "02-salmon": (".batch_salmon.done", ".merge_salmon.done", "task.complete", "*.iobrx.json",
+                  "quant.sf", "*_salmon_tpm.tsv", "*_salmon_tpm.tsv.gz",
+                  "*_salmon_count.tsv", "*_salmon_count.tsv.gz"),
+    "02-star": (".batch_star_count.done", ".merge_star_count.done", "*.task.complete", "*.iobrx.json",
+                "*.bam", "*.bai", "*ReadsPerGene.out.tab", "*_star_ReadsPerGene.tsv",
+                "*_star_ReadsPerGene.tsv.gz", "*.STAR.count*.gz"),
+    "07-TCRBCR": (".trust4.done", "*.TRUST4.done", "*_report.tsv", "*_annot.fa", "*_cdr3.out",
+                  "trust4_immdata.csv", "trust4_immune_indices.csv"),
+}
+
+
+def _external_product(relative):
+    path = Path(relative)
+    return len(path.parts) > 1 and any(
+        fnmatch.fnmatchcase(path.name, pattern)
+        for pattern in _EXTERNAL_PRODUCTS.get(path.parts[0], ()))
+
+
+def _pipeline_product_paths(root, completed_steps):
+    """Known calculation products, including custom filenames in stage records."""
+    paths = set()
+
+    def include(records):
+        for record in records:
+            path = Path(record["path"])
+            # Stage sidecars use absolute paths. Do not inventory other runs.
+            if path.is_relative_to(root):
+                paths.add(str(path.relative_to(root)))
+
+    for records in completed_steps.values():
+        include(records)
+    for path in root.rglob("*"):
+        relative = str(path.relative_to(root))
+        if not _external_product(relative):
+            continue
+        paths.add(relative)
+        if path.name.endswith(".iobrx.json") and path.is_file():
+            try:
+                include(json.loads(path.read_text())["outputs"])
+            except (OSError, ValueError, KeyError, TypeError):
+                # The sidecar itself remains checked; malformed state cannot
+                # authorize a skip in the per-sample execution helpers.
+                pass
+    return paths
+
+
+def _pipeline_products(root, paths):
+    return {relative: file_hash(root / relative) for relative in sorted(paths)
+            if (root / relative).is_file()}
 
 
 def _guarded_runall(argv):
@@ -1359,13 +1411,19 @@ def _guarded_runall(argv):
             raise ValueError("Existing run has no verifiable state; choose a new outdir") from None
         if previous.get("schema_version") != 2 or not isinstance(previous.get("completed_steps"), dict):
             raise ValueError("Existing run has no per-step completion records; choose a new outdir")
-        if previous.get("signature") != current or previous.get("outputs") != _pipeline_products(root):
+        # Schema 2 formerly recorded the entire tree. Project those records
+        # onto calculation products so existing runs need no forced migration.
+        paths = _pipeline_product_paths(root, previous["completed_steps"])
+        expected = {path: digest for path, digest in previous.get("outputs", {}).items()
+                    if path in paths or _external_product(path)}
+        if previous.get("signature") != current or expected != _pipeline_products(root, paths):
             raise ValueError("Run inputs, references, parameters or outputs changed; choose a new outdir")
         if "--resume" in args:
             completed_steps = previous["completed_steps"]
     root.mkdir(parents=True, exist_ok=True)
     state = {"schema_version": 2, "signature": current, "status": "running",
-             "outputs": _pipeline_products(root), "completed_steps": completed_steps}
+             "outputs": _pipeline_products(root, _pipeline_product_paths(root, completed_steps)),
+             "completed_steps": completed_steps}
     write_json(state_path, state)
     rc = 1
     try:
@@ -1373,7 +1431,7 @@ def _guarded_runall(argv):
         return rc
     finally:
         state.update(status="completed" if rc == 0 else "failed", exit_code=rc,
-                     outputs=_pipeline_products(root))
+                     outputs=_pipeline_products(root, _pipeline_product_paths(root, completed_steps)))
         write_json(state_path, state)
 
 

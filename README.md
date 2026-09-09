@@ -20,7 +20,7 @@ input. See the explicit exceptions and [validation scope](docs/VALIDATION_0.3.md
 
 [Original IOBRpy repository](https://github.com/IOBR/IOBRpy) · [Official IOBRpy documentation](https://iobr.github.io/IOBRpy/)
 
-**28 public APIs** — 26 workflow functions (plus the `deconvolute_quantiseq`
+**29 public APIs** — 27 workflow functions (plus the `deconvolute_quantiseq`
 alias and the `load_official` data helper) covering the following IOBRpy workflow families:
 immune deconvolution (CIBERSORT, BayesPrism, EPIC, quanTIseq, MCP-counter,
 ESTIMATE), signature scoring (PCA / z-score / ssGSEA / integration), TPM
@@ -40,6 +40,8 @@ FASTQ→TME orchestration stages (fastp / salmon / STAR / TRUST4 / SpecHLA).
   `fastq_qc`, `batch_salmon`, `batch_star_count`, `trust4`, `runall`,
   `spechla`, `hla_typing`, plus a 30.3× glue optimization inside
   `calculate_sig_score`.
+- **Standalone HLA read extraction**: `extract_hla_read` extracts reads from
+  one BAM/CRAM using prepared tools, with dependency auto-installation off by default.
 - **4 new Rust kernels**: `lr_gene_valid_mask` (LR_cal gene filter),
   `tme_kmeans` (k-means + KL index), `merge_salmon_parse` (quant.sf reader),
   `bp_gibbs` (BayesPrism Gibbs sampler reproducing numpy's full RNG chain
@@ -170,10 +172,12 @@ iobrx.runall(mode="salmon", outdir="run_out", fastq="raw_fastq_dir",
 `runall(resume=True)` reuses a table only after its producing step succeeded
 and its recorded output hash matches. A failed or interrupted table write is
 retried; successful upstream steps can still be reused. State schema 2 adds
-these per-step records: older run directories require a new `outdir`. Changed
-inputs, parameters, references or output files also require a new directory.
-An uncatchable process kill may leave unverified files; the whole-tree guard
-rejects that changed directory rather than treating it as completed work.
+these per-step records: pre-schema-2 run directories require a new `outdir`.
+Existing schema 2 records remain compatible. Changed inputs, parameters,
+references or recorded calculation products require a new directory; unrelated
+notes and figures can be added, edited or removed without blocking resume.
+An uncatchable kill can leave unverified calculation products, which are not
+treated as completed work.
 
 Open [the complete workflow notebook](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/12_complete_workflow.ipynb)
 for input checks, interpretation, plots, and per-stage timers on the public
@@ -181,7 +185,7 @@ example data (no download needed after installation). The four standalone
 signature tutorials use the public IMvigor210 demonstration panel:
 872 features × 348 samples.
 
-## The 28 APIs at a glance
+## The 29 APIs at a glance
 
 | API | One-liner |
 | --- | --- |
@@ -210,6 +214,7 @@ signature tutorials use the public IMvigor210 demonstration panel:
 | `batch_star_count` | Batch STAR two-pass alignment + GeneCounts |
 | `trust4` | TRUST4 TCR/BCR reconstruction + accelerated immune post-processing |
 | `spechla` | SpecHLA full-resolution HLA typing for one sample |
+| `extract_hla_read` | Extract HLA-related FASTQs from one BAM/CRAM without running typing |
 | `hla_typing` | Batch HLA typing from a directory of BAM files |
 | `runall` | End-to-end FASTQ → TME orchestrator (salmon / star chains) |
 | `load_official` | Resolve / download the public IOBR example data |
@@ -249,6 +254,7 @@ official-gate numbers ([Part I](https://github.com/LCGaoZzz/iobrx/blob/main/BENC
 | runall | iobrpy CLI | **python (chosen)** | none | **python** | **1.02×** real data (R5) | bit-exact except documented tool jitter classes |
 | spechla | iobrpy CLI | **python (chosen)** | none | **python** | **1.01×** real data (R5) | bit-exact except samtools @PG random-ID jitter |
 | hla_typing | iobrpy CLI | **python (chosen)** | none | **python** | **1.05×** real data (R5) | bit-exact except samtools @PG random-ID jitter |
+| extract_hla_read | iobrpy CLI | existing extraction helpers | none | **python** | Not benchmarked | command/output contracts tested with stub scripts |
 
 ## Why the speedups differ: one floor model
 
@@ -356,11 +362,22 @@ same binary and inputs the products are byte-identical to the original's.
 | `batch_star_count` | STAR (+ samtools) |
 | `trust4` | TRUST4 (`run-trust4`) |
 | `spechla` / `hla_typing` | SpecHLA toolchain: samtools, bwa/bowtie2, bcftools, freebayes, vcflib, blastn, bamUtil (`bam`) |
+| `extract_hla_read` | SpecHLA extraction assets, samtools and bamUtil (`bam`); sorted/indexed BAM or CRAM |
 | `runall` | everything in the chosen salmon/star chain |
 
 All pure-compute APIs (deconvolution, signature scores, TPM, annotation,
 IPS, LR_cal, NMF/TME clustering, merges) need **no external tools** — only
 iobrpy (references + fallback) and the pinned scientific stack.
+
+For extraction without typing, use the prepared environment:
+
+```python
+iobrx.extract_hla_read("sample1", "sample1.bam", "hg38", "hla_reads")
+```
+
+This new API defaults to `auto_install=False` for both backends; explicitly
+enable `auto_install=True` only when installing tools is part of the task.
+It is currently a direct Python API, not a typed harness adapter.
 
 ## Omicos and agent workflows
 

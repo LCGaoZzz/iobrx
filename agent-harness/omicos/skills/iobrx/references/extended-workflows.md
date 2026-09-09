@@ -3,7 +3,7 @@
 The original 11 requests retain schema version `1.0`. Sixteen new identifiers
 use the same direct `run` interface, with optional validation and result inspection.
 `capabilities` describes the JSON adapter's
-for parameter names, defaults and allowed fields; arbitrary CLI tokens and
+parameter names, defaults and allowed fields; arbitrary CLI tokens and
 executable overrides are not accepted.
 
 | Input | Analyses | Contract |
@@ -55,8 +55,10 @@ NMF may differ at floating-point roundoff after memory-layout conversion;
 the adapter test uses `rtol=1e-12, atol=1e-14` and exact feature rankings.
 `backend_used: iobrx-api` deliberately does not claim every kernel used Rust.
 
-HLA/SpecHLA and custom-reference BayesPrism are not yet harness adapters.
-The HLA wrappers retain upstream environment auto-install behavior. Prepare
-and isolate that environment before using their direct Python APIs.
+HLA/SpecHLA and custom-reference BayesPrism are direct Python API capabilities.
+`iobrx.extract_hla_read(sample_id, bam_path, ref, outdir)` performs standalone
+extraction without typing and defaults to `auto_install=False`. The existing
+`spechla` and `hla_typing` wrappers retain upstream auto-install behavior;
+use a prepared isolated environment for those calls.
 External-tool contract tests use stubs; they do not validate biological
 alignment, reconstruction or HLA typing accuracy.

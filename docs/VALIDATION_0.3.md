@@ -5,7 +5,58 @@ Machine-readable results and sanitized JUnit records are in
 [validation/0.3.0](validation/0.3.0/summary.json). They include a digest of the
 Python package/harness sources, versions and observed suite durations.
 
-## Follow-up: partial-output resume repair
+## Follow-up: scoped resume and standalone extraction
+
+The final review of `27df5c1` found that unrelated notes and figures in a
+`runall` output directory still blocked resume. The output inventory now
+checks calculation products and completion records: successful table outputs,
+cleaned reads, quantification/count files, BAMs and TCR/BCR results. Output
+paths in tool sidecars cover custom read suffixes. Unrelated files are not
+hashed. Existing schema 2 records are projected onto this scope when read,
+so they do not force a new run merely because the inventory changed.
+
+Regression tests cover additions/edits/deletions of notes and figures,
+backward reading of whole-tree schema 2 state, changed/deleted calculation
+products, an added quantification sample, and custom-named reads. The earlier
+partial-write and retry tests remain enabled.
+
+`extract_hla_read` now provides the missing standalone Python API, reusing the
+existing extraction helpers. Both backends default to `auto_install=False`.
+Tests compare hg19/hg38 command arguments and output bytes against the original
+entrypoint using stub scripts, and cover dependency, argument and exit-code
+failures. This is interface validation, not a new real HLA dataset benchmark.
+
+The public `runall` and NMF docstrings now describe the corrected default
+behavior, including dry runs without writes and feature output in fresh
+directories. The untouched upstream backend remains explicitly distinguished.
+
+Validation on WSL2 / Python 3.11.15, using an isolated environment with the
+validated numerical stack (the shared Omicos environment was not modified):
+
+| Check | Result |
+| --- | --- |
+| Focused resume/HLA contracts | 102 passed; 1 full test deselected; 2.26 s |
+| Rebuilt, installed wheel: default package + harness | 302 passed; 15 full tests deselected; 56.34 s |
+| Installed wheel: full runall numerical comparator | 1 passed; 18 default tests deselected; 22.17 s |
+| Installed wheel: API/reliability/extraction with Rust disabled | 70 passed; 9.08 s |
+| Packaging and metadata | Local Linux x86-64 CPython 3.11 wheel built/installed; both changed modules match the source; `pip check` and release source/installed checks passed |
+| Omicos Skill validator | 1 Skill, 0 errors, 0 warnings |
+
+Commands from the checkout after installing the wheel and companion package:
+
+```bash
+python -m pytest -q tests agent-harness/tests
+IOBRX_TESTDATA="$PWD/tutorials/data" python -m pytest -q -m full tests/test_parity_runall.py
+IOBRX_DISABLE_RUST=1 python -m pytest -q tests/test_api_smoke.py tests/test_workflow_reliability.py tests/test_extract_hla_read.py
+python -m pip check
+python scripts/check_release.py --source --installed
+```
+
+These checks do not rebuild a portable release image or repeat every historical
+benchmark locally. GitHub's CI, harness and release workflows all passed at
+the preceding head `27df5c1`; the new commit's checks are separate evidence.
+
+## Earlier follow-up: partial-output resume repair
 
 The final audit of `9b63dac` found that a failed signature writer could leave
 a nonempty CSV, which a later resume skipped and reported as successful.
@@ -16,8 +67,9 @@ Run-state schema 2 now records each successful table-producing step with its
 output hash. Failed steps have no completion record and are retried; successful
 upstream steps remain reusable. A new run without `resume` discards previous
 table checkpoints. Legacy state without these records requires a new output
-directory. An uncatchable process kill can leave unverified files; the existing
-whole-tree guard rejects such a changed tree instead of assuming completion.
+directory. At this repair, an uncatchable process kill left unverified files
+that the whole-tree guard rejected. The follow-up above scopes that guard to
+calculation products; it still cannot authorize reuse of unrecorded tables.
 
 The repaired, rebuilt and installed wheel keeps returning 7 while the simulated
 writer fails, records `failed`, and re-executes that writer. Regression tests
@@ -77,7 +129,7 @@ running harness tests. `--installed` requires a wheel import, not `PYTHONPATH=sr
 - QC and MultiQC failures return nonzero status; runall does not write a completion marker after them.
 - Dry runs print a complete plan and do not write results, directories or flags.
 - QC, Salmon and STAR resume only after matching SHA-256 records for inputs, reference indices, tool binaries and products. STAR needs both BAM and GeneCounts. Linked reference directories are included, with cycle protection.
-- `runall` binds the whole output tree to its input/configuration. Old trees without state, changed inputs/references, or edited/deleted outputs require a fresh output directory. Whole-file hashing adds I/O cost for large data; this is intentionally conservative.
+- `runall` binds calculation products and completion records to its input/configuration. Unrelated notes and figures may be added, edited or deleted. Schema 2 state remains readable; older trees without per-step records, changed inputs/references, or modified calculation products require a fresh output directory. Hashing the actual calculation files still adds I/O cost for large data.
 - Table reuse also requires a successful per-step completion record. Nonempty partial outputs from failed steps and interrupted merges are retried; pre-schema-2 state cannot authorize reuse.
 - `runall` uses the original file-based CIBERSORT solver, matching the conservative tme_profile default. The reported campaign corner case is not reclassified as solved in the Rust kernel.
 - NMF saves feature rankings even when its output directory did not previously exist.
@@ -106,9 +158,10 @@ the BayesPrism tutorial uses a shortened chain for execution demonstration,
 not a converged scientific estimate.
 
 The harness exposes 27 identifiers. HLA/SpecHLA and custom-reference
-BayesPrism remain direct Python API capabilities. HLA wrappers retain upstream
-auto-install behavior; they need a prepared isolated environment before an
-automatic Omicos adapter can be added responsibly.
+BayesPrism remain direct Python API capabilities. Existing typing wrappers
+retain upstream auto-install behavior. The new standalone `extract_hla_read`
+uses prepared dependencies by default (`auto_install=False`); no automatic
+HLA adapter is added by this repair.
 
 At the audit date, PyPI's iobrx JSON endpoint returned 404; GitHub's latest
 release was v0.1.0 with no binary attachments. The wheel/PyPI/container

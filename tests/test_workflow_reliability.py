@@ -108,6 +108,19 @@ def stub_pipeline(tmp_path, monkeypatch, mode="salmon"):
         assert not dry
         step = cmd[1]
         calls[step] += 1
+        if step == "fastq_qc":
+            for mate in (1, 2):
+                (out / f"01-qc/sample_{mate}.fastq.gz").write_bytes(b"cleaned reads")
+        if step == "batch_salmon":
+            sample = out / "02-salmon/sample"
+            sample.mkdir(exist_ok=True)
+            (sample / "quant.sf").write_text("quantification fixture")
+        if step == "batch_star_count":
+            (out / "02-star/sample.bam").write_bytes(b"alignment fixture")
+            (out / "02-star/sample_ReadsPerGene.out.tab").write_text("G1\t1\t1\t1\n")
+        if step == "trust4":
+            (out / "07-TCRBCR/sample_report.tsv").write_text("repertoire fixture")
+            (out / "07-TCRBCR/trust4_immdata.csv").write_text("ID,value\nsample,1\n")
         if step == "merge_salmon":
             (out / "02-salmon/runall_salmon_tpm.tsv").write_text("ID\tsample\nG1\t1\n")
         if step == "merge_star_count":
@@ -224,3 +237,96 @@ def test_runall_rejects_legacy_state_without_step_records(tmp_path, monkeypatch)
     with pytest.raises(ValueError, match="per-step completion records"):
         ra.runall_argv(args + ["--resume"])
     assert calls == before
+
+
+@pytest.mark.parametrize("mode", ["salmon", "star"])
+def test_runall_notes_and_figures_do_not_affect_resume(tmp_path, monkeypatch, mode):
+    ra, args, out, calls, _ = stub_pipeline(tmp_path, monkeypatch, mode)
+    assert ra.runall_argv(args) == 0
+    before = calls.copy()
+    extras = [out / "notes.md", out / "05-tme/heatmap.svg", out / "04-signatures/plot-data.csv"]
+    original_hash = ra.file_hash
+    def checked_hash(path):
+        assert Path(path) not in extras, "Unrelated artifacts must not be hashed"
+        return original_hash(path)
+    monkeypatch.setattr(ra, "file_hash", checked_hash)
+    for contents in ("first analysis notes", "updated interpretation"):
+        for path in extras:
+            path.write_text(contents)
+        assert ra.runall_argv(args + ["--resume"]) == 0
+        assert calls == before
+    for path in extras:
+        path.unlink()
+    assert ra.runall_argv(args + ["--resume"]) == 0
+    assert calls == before
+
+
+def test_runall_reads_old_schema2_without_tracking_old_notes(tmp_path, monkeypatch):
+    ra, args, out, calls, _ = stub_pipeline(tmp_path, monkeypatch)
+    assert ra.runall_argv(args) == 0
+    notes = out / "notes.md"
+    notes.write_text("old notes")
+    path = out / ".iobrx-run-state.json"
+    state = json.loads(path.read_text())
+    state["outputs"]["notes.md"] = ra.file_hash(notes)  # Previous whole-tree format.
+    path.write_text(json.dumps(state))
+    notes.write_text("new notes")
+    before = calls.copy()
+    assert ra.runall_argv(args + ["--resume"]) == 0
+    assert calls == before
+    assert "notes.md" not in json.loads(path.read_text())["outputs"]
+
+
+@pytest.mark.parametrize("mode,relative", [
+    ("salmon", "01-qc/sample_1.fastq.gz"),
+    ("salmon", "02-salmon/sample/quant.sf"),
+    ("salmon", "04-signatures/calculate_sig_score.csv"),
+    ("salmon", "05-tme/deconvo_merged.csv"),
+    ("salmon", "07-TCRBCR/trust4_immdata.csv"),
+    ("salmon", "01-qc/.fastq_qc.done"),
+    ("star", "02-star/sample.bam"),
+    ("star", "02-star/sample_ReadsPerGene.out.tab"),
+])
+@pytest.mark.parametrize("change", ["edit", "delete"])
+def test_runall_still_protects_recorded_products(tmp_path, monkeypatch, mode, relative, change):
+    ra, args, out, calls, _ = stub_pipeline(tmp_path, monkeypatch, mode)
+    assert ra.runall_argv(args) == 0
+    product = out / relative
+    if change == "edit":
+        product.write_text("altered calculation product")
+    else:
+        product.unlink()
+    before = calls.copy()
+    with pytest.raises(ValueError, match="outputs changed"):
+        ra.runall_argv(args + ["--resume"])
+    assert calls == before
+
+
+def test_runall_additional_quantification_cannot_change_sample_set(tmp_path, monkeypatch):
+    ra, args, out, calls, _ = stub_pipeline(tmp_path, monkeypatch)
+    assert ra.runall_argv(args) == 0
+    extra = out / "02-salmon/unrequested-sample"
+    extra.mkdir()
+    (extra / "quant.sf").write_text("new sample")
+    before = calls.copy()
+    with pytest.raises(ValueError, match="outputs changed"):
+        ra.runall_argv(args + ["--resume"])
+    assert calls == before
+
+
+def test_runall_tracks_custom_read_names_from_tool_records(tmp_path, monkeypatch):
+    ra, args, out, calls, _ = stub_pipeline(tmp_path, monkeypatch)
+    original = ra._run
+    def with_custom_output(cmd, **kwargs):
+        rc = original(cmd, **kwargs)
+        if cmd[1] == "fastq_qc":
+            custom = out / "01-qc/sample.custom"
+            custom.write_bytes(b"custom-suffix reads")
+            record = out / "01-qc/sample.task.complete.iobrx.json"
+            record.write_text(json.dumps({"outputs": [{"path": str(custom), "sha256": ra.file_hash(custom)}]}))
+        return rc
+    monkeypatch.setattr(ra, "_run", with_custom_output)
+    assert ra.runall_argv(args) == 0
+    (out / "01-qc/sample.custom").unlink()
+    with pytest.raises(ValueError, match="outputs changed"):
+        ra.runall_argv(args + ["--resume"])
