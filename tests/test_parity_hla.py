@@ -773,6 +773,10 @@ def test_run_extraction_command_parity(tmp_path, monkeypatch):
 # ---------------------------------------------------------------------------
 def test_spechla_failure_paths_parity(tmp_path, monkeypatch, capsys):
     sp, orig = _sp(), _orig_spec()
+    # GitHub runner images ship a working conda in /usr/bin, which would let
+    # both arms auto-install tools instead of exercising the failure gates.
+    monkeypatch.setattr(sp, "detect_conda_exe", lambda: None)
+    monkeypatch.setattr(orig, "detect_conda_exe", lambda: None)
     argv = ["-n", "S", "-1", "r1", "-2", "r2", "-o",
             str(tmp_path / "o"), "-j", "2", "-u", "1"]
 
