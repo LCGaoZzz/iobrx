@@ -1,0 +1,23 @@
+[
+  {
+    "name": "NA06985_1.filter.fastq.gz",
+    "url": "https://raw.githubusercontent.com/deepomicslab/SpecHLA/c965423bb263eb4ead599d7cca8d103e616cf1c5/example/exon/NA06985_1.filter.fastq.gz",
+    "bytes": 4689248,
+    "sha256": "00318a0e08d22d4c845afa8c1e8fbfc550e44b385934c732de2f192f200460c5",
+    "download_seconds": 2.255
+  },
+  {
+    "name": "NA06985_2.filter.fastq.gz",
+    "url": "https://raw.githubusercontent.com/deepomicslab/SpecHLA/c965423bb263eb4ead599d7cca8d103e616cf1c5/example/exon/NA06985_2.filter.fastq.gz",
+    "bytes": 4676409,
+    "sha256": "dd2de221c4a65d78465e159a49c0c78a311c48d5bddae170ee8f6430bf3a18c0",
+    "download_seconds": 2.449
+  },
+  {
+    "name": "GRCh38.chr6.fa.gz",
+    "url": "https://ftp.ensembl.org/pub/release-110/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.6.fa.gz",
+    "bytes": 51500559,
+    "sha256": "f686625e68fed0c94eb30cfdd55f12e21430116fe05e8b9705437715b90b12f7",
+    "download_seconds": 10.93
+  }
+]

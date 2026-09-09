@@ -1,0 +1,9 @@
+{
+  "function": "fastq_qc",
+  "parameters": {
+    "path1_fastq": "<WORK>/data/geuvadis",
+    "path2_fastp": "<WORK>/runs-001/fastq_qc/active",
+    "num_threads": 4,
+    "batch_size": 1
+  }
+}

@@ -137,7 +137,9 @@ jobs:
 
   github-release:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    needs: [pypi, container]
+    # Tested wheel/container delivery does not depend on PyPI account/service
+    # availability. A failed PyPI job can be retried without republishing them.
+    needs: [distributions, container]
     runs-on: ubuntu-24.04
     permissions:
       contents: write

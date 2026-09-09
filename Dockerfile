@@ -22,6 +22,7 @@ RUN python -m pip install --no-cache-dir --only-binary=:all: --require-hashes -r
     && mkdir /work && chown iobrx:iobrx /work
 
 COPY tutorials /opt/iobrx/tutorials
+COPY benchmarks/real_tools /opt/iobrx/benchmarks/real_tools
 COPY LICENSE /opt/iobrx/LICENSE
 USER iobrx
 WORKDIR /work

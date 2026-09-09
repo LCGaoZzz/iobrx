@@ -1,0 +1,318 @@
+[SpecHLA_RNAseq] Found SpecHap and ExtractHAIRs in <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin
+[SpecHLA_RNAseq] Delegating to SpecHLA.sh (using caller-provided -u)
+[SpecHLA_RNAseq] SpecHLA.sh: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/SpecHLA.sh
+[SpecHLA_RNAseq] SpecHLA root: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA
+Start profiling HLA for NA06985.
+use 4 threads.
+map the reads to database to assign reads to corresponding genes.
+Can't detect novoalign license, use bowtie2.
+52771 reads; of these:
+  52771 (100.00%) were paired; of these:
+    27282 (51.70%) aligned concordantly 0 times
+    2563 (4.86%) aligned concordantly exactly 1 time
+    22926 (43.44%) aligned concordantly >1 times
+    ----
+    27282 pairs aligned concordantly 0 times; of these:
+      14 (0.05%) aligned discordantly 1 time
+    ----
+    27268 pairs aligned 0 times concordantly or discordantly; of these:
+      54536 mates make up the pairs; of these:
+        53910 (98.85%) aligned 0 times
+        21 (0.04%) aligned exactly 1 time
+        605 (1.11%) aligned >1 times
+48.92% overall alignment rate
+start assigning reads...
+read bam cost 3.2819485664367676
+read no. for A is 1054.
+read no. for B is 802.
+read no. for C is 1081.
+read no. for DPA1 is 618.
+read no. for DPB1 is 2393.
+read no. for DQA1 is 1276.
+read no. for DQB1 is 834.
+read no. for DRB1 is 1193.
+read assigment cost 4.797324180603027
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 105542 sequences (9494975 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 12450, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (121, 144, 178)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (7, 292)
+[M::mem_pestat] mean and std.dev: (150.15, 42.25)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 349)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 105542 reads in 2.133 CPU sec, 2.091 real sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2108 sequences (198595 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1022, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (125, 150, 185)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (5, 305)
+[M::mem_pestat] mean and std.dev: (156.61, 42.93)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 365)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2108 reads in 0.028 CPU sec, 0.010 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_A/HLA_A.fa <WORK>/runs-hla-002/spechla/active/NA06985/A.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/A.R2.fq.gz
+[main] Real time: 0.018 sec; CPU: 0.031 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 1604 sequences (152029 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 798, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (124, 150, 180)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (12, 292)
+[M::mem_pestat] mean and std.dev: (154.54, 39.93)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 348)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 1604 reads in 0.017 CPU sec, 0.005 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_B/HLA_B.fa <WORK>/runs-hla-002/spechla/active/NA06985/B.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/B.R2.fq.gz
+[main] Real time: 0.011 sec; CPU: 0.020 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2162 sequences (207653 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1070, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (128, 149, 182)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (20, 290)
+[M::mem_pestat] mean and std.dev: (155.95, 40.26)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 344)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2162 reads in 0.033 CPU sec, 0.011 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_C/HLA_C.fa <WORK>/runs-hla-002/spechla/active/NA06985/C.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/C.R2.fq.gz
+[main] Real time: 0.018 sec; CPU: 0.036 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 1236 sequences (119293 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 618, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (126, 150, 183)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (12, 297)
+[M::mem_pestat] mean and std.dev: (155.54, 42.07)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 354)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 1236 reads in 0.005 CPU sec, 0.003 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DPA1/HLA_DPA1.fa <WORK>/runs-hla-002/spechla/active/NA06985/DPA1.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/DPA1.R2.fq.gz
+[main] Real time: 0.008 sec; CPU: 0.007 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 4786 sequences (465517 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1940, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (123, 146, 180)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (9, 294)
+[M::mem_pestat] mean and std.dev: (152.83, 42.16)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 351)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 4786 reads in 0.115 CPU sec, 0.029 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DPB1/HLA_DPB1.fa <WORK>/runs-hla-002/spechla/active/NA06985/DPB1.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/DPB1.R2.fq.gz
+[main] Real time: 0.048 sec; CPU: 0.121 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2552 sequences (247535 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1276, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (131, 154, 190)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (13, 308)
+[M::mem_pestat] mean and std.dev: (161.30, 42.31)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 367)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2552 reads in 0.025 CPU sec, 0.008 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DQA1/HLA_DQA1.fa <WORK>/runs-hla-002/spechla/active/NA06985/DQA1.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/DQA1.R2.fq.gz
+[main] Real time: 0.017 sec; CPU: 0.028 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 1668 sequences (160844 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 724, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (125, 149, 178)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (19, 284)
+[M::mem_pestat] mean and std.dev: (153.48, 38.44)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 337)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 1668 reads in 0.042 CPU sec, 0.011 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DQB1/HLA_DQB1.fa <WORK>/runs-hla-002/spechla/active/NA06985/DQB1.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/DQB1.R2.fq.gz
+[main] Real time: 0.017 sec; CPU: 0.045 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2386 sequences (228235 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1174, 1, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (124, 146, 176)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (20, 280)
+[M::mem_pestat] mean and std.dev: (151.71, 40.31)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 332)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2386 reads in 0.055 CPU sec, 0.015 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DRB1/HLA_DRB1.fa <WORK>/runs-hla-002/spechla/active/NA06985/DRB1.R1.fq.gz <WORK>/runs-hla-002/spechla/active/NA06985/DRB1.R2.fq.gz
+[main] Real time: 0.024 sec; CPU: 0.059 sec
+start realignment...
+
+Attention: please ensure the platform can run gzip -l automatically, otherwise, it may not continue.
+BAM and VCF are ready.
+Mean depth {'HLA_A': 56, 'HLA_B': 37, 'HLA_C': 48, 'HLA_DPA1': 12, 'HLA_DPB1': 39, 'HLA_DQA1': 38, 'HLA_DQB1': 21, 'HLA_DRB1': 20}
+Minimum Minor Allele Frequency is 0.1.
+parameter:	sample:NA06985	dir:<WORK>/runs-hla-002/spechla/active/NA06985	pop:Unknown	gene:HLA_A	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_A.0	100
+HLA_A.1	99.2588932806324
+HLA_A.2	49.407114624506
+HLA_A.3	98.7154150197628
+Select_id	HLA_A.0
+Num of hete small variant is 30 in HLA_A.
+3 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 4.
+Selected combination is  0
+Small variant-phasing of HLA_A is done! Haplotype ratio is 0.527:0.473
+Phasing of HLA_A is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/runs-hla-002/spechla/active/NA06985	pop:Unknown	gene:HLA_B	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_B.0	99.2094861660079
+HLA_B.1	98.5665583717448
+HLA_B.2	49.0108803165183
+HLA_B.3	98.7154150197628
+Select_id	HLA_B.0
+Num of hete small variant is 26 in HLA_B.
+3 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 4.
+Selected combination is  0
+Small variant-phasing of HLA_B is done! Haplotype ratio is 0.54:0.46
+Phasing of HLA_B is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/runs-hla-002/spechla/active/NA06985	pop:Unknown	gene:HLA_C	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_C.0	97.7339901477833
+HLA_C.1	97.6847290640395
+HLA_C.2	98.0295566502463
+HLA_C.3	97.9802955665025
+HLA_C.4	48.5714285714285
+HLA_C.5	48.5714285714285
+HLA_C.6	97.3891625615763
+HLA_C.7	97.1428571428571
+Select_id	HLA_C.2
+Num of hete small variant is 27 in HLA_C.
+4 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 8.
+Selected combination is  2
+Small variant-phasing of HLA_C is done! Haplotype ratio is 0.481:0.519
+Phasing of HLA_C is done!
+
+
+Num of hete small variant is 0 in HLA_DPA1.
+No heterozygous locus, no need to phase.
+Phasing of HLA_DPA1 is done!
+
+
+Num of hete small variant is 0 in HLA_DPB1.
+No heterozygous locus, no need to phase.
+Phasing of HLA_DPB1 is done!
+
+
+Num of hete small variant is 0 in HLA_DQA1.
+No heterozygous locus, no need to phase.
+Phasing of HLA_DQA1 is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/runs-hla-002/spechla/active/NA06985	pop:Unknown	gene:HLA_DQB1	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_DQB1.0	99.8704663212436
+Select_id	HLA_DQB1.0
+Num of hete small variant is 2 in HLA_DQB1.
+1 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 1.
+Selected combination is  0
+Small variant-phasing of HLA_DQB1 is done! Haplotype ratio is 0.331:0.669
+Phasing of HLA_DQB1 is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/runs-hla-002/spechla/active/NA06985	pop:Unknown	gene:HLA_DRB1	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_DRB1.0	2.80260521042084
+Select_id	HLA_DRB1.0
+Num of hete small variant is 4 in HLA_DRB1.
+1 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 1.
+Selected combination is  0
+Small variant-phasing of HLA_DRB1 is done! Haplotype ratio is 0.208:0.792
+Phasing of HLA_DRB1 is done!
+
+
+start annotation...
+parameter:	sample:NA06985	dir:<WORK>/runs-hla-002/spechla/active/NA06985	pop:Unknown	wxs:exon	G_nom:0
+Start G group resolution annotation...
+The region with low read depth is masked by N. The cutoff is specified by -k.
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_A.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_A.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_B.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_B.fasta
+The ratio of N (masked) is 0.02 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_C.fasta
+The ratio of N (masked) is 0.02 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_C.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_DPA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_DPA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_DPB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_DPB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_DQA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_DQA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_DQB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_DQB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.1.HLA_DRB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/runs-hla-002/spechla/active/NA06985/hla.allele.2.HLA_DRB1.fasta
+Clean output dir.
+# version: IPD-IMGT/HLA 3.38.0
+Sample	HLA_A_1	HLA_A_2	HLA_B_1	HLA_B_2	HLA_C_1	HLA_C_2	HLA_DPA1_1	HLA_DPA1_2	HLA_DPB1_1	HLA_DPB1_2	HLA_DQA1_1	HLA_DQA1_2	HLA_DQB1_1	HLA_DQB1_2	HLA_DRB1_1	HLA_DRB1_2
+NA06985	A*03:01:01:01	A*02:01:01:01	B*07:02:01:01	B*57:01:01:01	C*06:02:23	C*07:02:25	DPA1*01:03:01:01	DPA1*01:03:01:01	DPB1*04:01:01:01	DPB1*04:01:01:01	DQA1*01:02:01:01	DQA1*01:02:01:01	DQB1*06:02:01:01	DQB1*06:02:01:01	DRB1*15:01:01:01	DRB1*15:01:01:01
+NA06985 is done.
+[SpecHLA] Using SpecHLA root: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA
+[SpecHLA] Python module 'pysam' is available.
+[SpecHLA] Python module 'Bio' is available.
+[SpecHLA] Prepending '<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin' to PATH
+[SpecHLA] Prepending '<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/fermikit/fermi.kit' to PATH
+[SpecHLA] Prepending '<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin' to LD_LIBRARY_PATH for libwfa2.so.0
+[SpecHLA] Found samtools: <TOOLCHAIN>/bin/samtools
+[SpecHLA] Found bwa: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/fermikit/fermi.kit/bwa
+[SpecHLA] Found bowtie2: <TOOLCHAIN>/bin/bowtie2
+[SpecHLA] Found freebayes: <TOOLCHAIN>/bin/freebayes
+[SpecHLA] Found bgzip: <TOOLCHAIN>/bin/bgzip
+[SpecHLA] Found tabix: <TOOLCHAIN>/bin/tabix
+[SpecHLA] Forcing '<TOOLCHAIN>/bin' to the front of PATH
+[SpecHLA] Found conda bcftools 1.21; reuse without reinstall: <TOOLCHAIN>/bin/bcftools
+[SpecHLA] Using bundled blastn at <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/blastn.
+[SpecHLA] vcflib is available with required version 1.0.10.
+[SpecHLA] Found SpecHap and ExtractHAIRs build directories:
+          <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/build
+          <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/build
+[SpecHLA] Detected existing Bowtie2 index for DRB reference, skip building.
+[SpecHLA] Running command: bash <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/SpecHLA_RNAseq.sh -n NA06985 -1 <WORK>/data/NA06985_1.filter.fastq.gz -2 <WORK>/data/NA06985_2.filter.fastq.gz -o <WORK>/runs-hla-002/spechla/active -j 4 -u 1
+[SpecHLA] Wrote merged HLA typing table with 2 row(s) to: <WORK>/runs-hla-002/spechla/active/hla_result_merged.txt
+   
+#########################################################
+ IOBRpy: Immuno-Oncology Biological Research using Python 
+ If you encounter any issues, please report them at 
+ https://github.com/IOBR/IOBRpy/issues 
+#########################################################
+ Author: Haonan Huang, Dongqiang Zeng
+ Email: interlaken@smu.edu.cn 
+#########################################################
+   
+{"api_seconds": 86.27604085100029, "return_code": 0, "iobrx": "0.3.0", "backend": {"native_available": true, "native_reason": null, "sorting": "numpy CPU dispatch", "requires_avx512": false, "bundled_openblas_found": true}}

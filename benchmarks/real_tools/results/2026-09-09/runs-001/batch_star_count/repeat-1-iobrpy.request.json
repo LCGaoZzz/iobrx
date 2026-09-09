@@ -1,0 +1,10 @@
+{
+  "function": "batch_star_count",
+  "parameters": {
+    "path_fq": "<WORK>/data/yeast/reads",
+    "path_out": "<WORK>/runs-001/batch_star_count/active",
+    "num_threads": 4,
+    "batch_size": 1,
+    "index": "<WORK>/data/yeast/index"
+  }
+}

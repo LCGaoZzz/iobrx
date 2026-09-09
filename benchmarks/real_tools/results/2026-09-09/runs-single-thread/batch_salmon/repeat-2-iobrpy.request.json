@@ -1,0 +1,10 @@
+{
+  "function": "batch_salmon",
+  "parameters": {
+    "path_fq": "<WORK>/data/geuvadis",
+    "path_out": "<WORK>/runs-single-thread/batch_salmon/active",
+    "num_threads": 1,
+    "batch_size": 1,
+    "index": "<WORK>/data/gencode-v44-salmon"
+  }
+}

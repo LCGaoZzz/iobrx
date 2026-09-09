@@ -99,7 +99,7 @@ White backgrounds, muted colors, thin axes and editable vector typography. Heatm
 
 ## 0.3 workflow additions
 
-23 executed notebooks are now included: the original 12 plus these 11.
+The first 23 executed notebooks comprise the original 12 plus these 11.
 Run `python scripts/generate_extension_tutorials.py --revision 2` from the
 repository root to regenerate the additions in the prepared environment.
 `nbformat`, `nbclient` and `ipykernel` are required. Run output files go to
@@ -120,3 +120,16 @@ repository root to regenerate the additions in the prepared environment.
 | [23_bayesprism](23_bayesprism.ipynb) | 128 × 3 | 0.351 s |
 
 FASTQ alignment/reconstruction/HLA notebooks with real tools and references remain outstanding; the examples above do not substitute for those runs.
+
+
+## Real sequencing workflows (24–28)
+
+These executed notebooks require the [prepared external-tool environment and public fixtures](../benchmarks/real_tools/README.md). Each runs iobrx again and displays the separate three-repeat benchmark. They bring the collection to 28 notebooks.
+
+| Notebook | Scope |
+| --- | --- |
+| [24_real_fastq_qc](24_real_fastq_qc.ipynb) | GEUVADIS fastp/MultiQC and retained reads |
+| [25_real_salmon](25_real_salmon.ipynb) | Full GENCODE v44 transcriptome quantification and observed variability |
+| [26_real_star_bam](26_real_star_bam.ipynb) | Actual yeast BAM/count outputs |
+| [27_real_hla_extraction](27_real_hla_extraction.ipynb) | NA06985 reads extracted from a prepared chr6 BAM |
+| [28_real_spechla](28_real_spechla.ipynb) | Eight HLA loci, sixteen allele calls/sequences; no independent truth panel |

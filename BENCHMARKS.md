@@ -664,3 +664,8 @@ verbatim `speedup` fields of the cited JSON (or the ratio of the two cited
 median cells, marked where the source table already recorded the ratio).
 The repo's own re-verifiable evidence for the parity contracts is the test
 suite (`tests/test_parity_*.py`, 188 passed / 15 deselected at 0.3.0).
+
+
+## Reproducible real-tool follow-up (2026-09-09)
+
+The [real FASTQ/BAM/HLA recipe](benchmarks/real_tools/README.md) supplies 36 fresh-process runs, public input accessions, explicit tool environments, raw logs and per-product checks. Four workflow families match on the declared products; Salmon varies within the original and across wrappers at both 4 and 1 thread. HLA extraction was slower for iobrx on this fixture. These new observations do not turn the historical R3–R6 reports above into independently reproduced results.

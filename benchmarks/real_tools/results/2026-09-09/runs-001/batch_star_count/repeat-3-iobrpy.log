@@ -1,0 +1,47 @@
+	STAR --genomeDir <WORK>/data/yeast/index --readFilesIn <WORK>/data/yeast/reads/sampleA_1.fastq.gz <WORK>/data/yeast/reads/sampleA_2.fastq.gz --outFileNamePrefix <WORK>/runs-001/batch_star_count/active/sampleA_ --twopassMode Basic --runThreadN 4 --outBAMsortingThreadN 4 --outTmpDir <WORK>/runs-001/batch_star_count/active/sampleA_STARtmp --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --limitBAMsortRAM 137438953472
+	STAR version: 2.7.11b   compiled: 2024-01-25T16:12:02-05:00 :/home/dobin/data/STAR/STARcode/STAR.master/source
+Sep 09 16:21:25 ..... started STAR run
+Sep 09 16:21:25 ..... loading genome
+Sep 09 16:21:25 ..... started 1st pass mapping
+Sep 09 16:21:27 ..... finished 1st pass mapping
+Sep 09 16:21:27 ..... inserting junctions into the genome indices
+Sep 09 16:21:28 ..... started mapping
+Sep 09 16:21:30 ..... finished mapping
+Sep 09 16:21:30 ..... started sorting BAM
+Sep 09 16:21:30 ..... finished successfully
+	STAR --genomeDir <WORK>/data/yeast/index --readFilesIn <WORK>/data/yeast/reads/sampleB_1.fastq.gz <WORK>/data/yeast/reads/sampleB_2.fastq.gz --outFileNamePrefix <WORK>/runs-001/batch_star_count/active/sampleB_ --twopassMode Basic --runThreadN 4 --outBAMsortingThreadN 4 --outTmpDir <WORK>/runs-001/batch_star_count/active/sampleB_STARtmp --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts --limitBAMsortRAM 137438953472
+	STAR version: 2.7.11b   compiled: 2024-01-25T16:12:02-05:00 :/home/dobin/data/STAR/STARcode/STAR.master/source
+Sep 09 16:21:30 ..... started STAR run
+Sep 09 16:21:30 ..... loading genome
+Sep 09 16:21:30 ..... started 1st pass mapping
+Sep 09 16:21:31 ..... finished 1st pass mapping
+Sep 09 16:21:31 ..... inserting junctions into the genome indices
+Sep 09 16:21:31 ..... started mapping
+Sep 09 16:21:33 ..... finished mapping
+Sep 09 16:21:33 ..... started sorting BAM
+Sep 09 16:21:33 ..... finished successfully
+[Plan] Processing 2 samples (Order: RANDOM SHUFFLED).
+       Batch size: 1
+       Threads per job: 4
+[Start] sampleA is running...
+[Done] sampleA finished successfully.
+[Start] sampleB is running...
+[Done] sampleB finished successfully.
+
+===== Output files summary =====
+sampleA
+  BAM:        <WORK>/runs-001/batch_star_count/active/sampleA_Aligned.sortedByCoord.out.bam [OK]
+  GeneCounts: <WORK>/runs-001/batch_star_count/active/sampleA_ReadsPerGene.out.tab [OK]
+sampleB
+  BAM:        <WORK>/runs-001/batch_star_count/active/sampleB_Aligned.sortedByCoord.out.bam [OK]
+  GeneCounts: <WORK>/runs-001/batch_star_count/active/sampleB_ReadsPerGene.out.tab [OK]
+   
+#########################################################
+ IOBRpy: Immuno-Oncology Biological Research using Python 
+ If you encounter any issues, please report them at 
+ https://github.com/IOBR/IOBRpy/issues 
+#########################################################
+ Author: Haonan Huang, Dongqiang Zeng
+ Email: interlaken@smu.edu.cn 
+#########################################################
+   

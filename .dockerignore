@@ -5,6 +5,9 @@
 !dist/*.whl
 !tutorials/
 !tutorials/**
+!benchmarks/
+!benchmarks/real_tools/
+!benchmarks/real_tools/**
 !LICENSE
 **/__pycache__
 **/.ipynb_checkpoints

@@ -1,0 +1,1265 @@
+{
+  "interpretation": "Observed differences; no post-hoc pass tolerance. Multithreaded within-arm variability is measured separately.",
+  "comparisons": [
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrx",
+        1
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 20264,
+          "max_absolute_difference": 561.4970000000003,
+          "mean_absolute_difference": 0.099665011609216,
+          "l1_difference": 25111.098000000016,
+          "pearson_r": 0.9999993961733437
+        },
+        "TPM": {
+          "different_values": 10954,
+          "max_absolute_difference": 372.713078,
+          "mean_absolute_difference": 0.02459105683554603,
+          "l1_difference": 6195.839725000001,
+          "pearson_r": 0.9997915797547822
+        },
+        "NumReads": {
+          "different_values": 1029,
+          "max_absolute_difference": 18.242999999999995,
+          "mean_absolute_difference": 0.001182119822984263,
+          "l1_difference": 297.84099999999995,
+          "pearson_r": 0.9995882805058229
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrx",
+        1
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 178665,
+          "max_absolute_difference": 331.6819999999998,
+          "mean_absolute_difference": 0.7390728344347206,
+          "l1_difference": 186213.09600000002,
+          "pearson_r": 0.9999997006929089
+        },
+        "TPM": {
+          "different_values": 11150,
+          "max_absolute_difference": 529.6705460000003,
+          "mean_absolute_difference": 0.021701285856601374,
+          "l1_difference": 5467.747477999999,
+          "pearson_r": 0.9998964778324386
+        },
+        "NumReads": {
+          "different_values": 1333,
+          "max_absolute_difference": 26.914,
+          "mean_absolute_difference": 0.0008744180508424116,
+          "l1_difference": 220.31399999999982,
+          "pearson_r": 0.9994952752068549
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrx",
+        2
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 40982,
+          "max_absolute_difference": 688.223,
+          "mean_absolute_difference": 0.20535769085749458,
+          "l1_difference": 51740.89700000005,
+          "pearson_r": 0.9999987580847157
+        },
+        "TPM": {
+          "different_values": 10953,
+          "max_absolute_difference": 549.154598,
+          "mean_absolute_difference": 0.02836604648052233,
+          "l1_difference": 7146.967241000003,
+          "pearson_r": 0.9996829785953052
+        },
+        "NumReads": {
+          "different_values": 1498,
+          "max_absolute_difference": 54.872,
+          "mean_absolute_difference": 0.0014368994463297019,
+          "l1_difference": 362.03400000000005,
+          "pearson_r": 0.9987679551574385
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrx",
+        2
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 209627,
+          "max_absolute_difference": 345.238,
+          "mean_absolute_difference": 0.8280077394772877,
+          "l1_difference": 208620.69,
+          "pearson_r": 0.9999996710941443
+        },
+        "TPM": {
+          "different_values": 11151,
+          "max_absolute_difference": 348.385196,
+          "mean_absolute_difference": 0.015579107928003,
+          "l1_difference": 3925.234137999996,
+          "pearson_r": 0.9999561791715385
+        },
+        "NumReads": {
+          "different_values": 1465,
+          "max_absolute_difference": 27.77,
+          "mean_absolute_difference": 0.0006914806215395604,
+          "l1_difference": 174.22199999999995,
+          "pearson_r": 0.9996093932061108
+        }
+      }
+    },
+    {
+      "group": "within_iobrpy",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        2
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 16250,
+          "max_absolute_difference": 792.2389999999996,
+          "mean_absolute_difference": 0.09049525510507825,
+          "l1_difference": 22800.73199999999,
+          "pearson_r": 0.9999988028162435
+        },
+        "TPM": {
+          "different_values": 10954,
+          "max_absolute_difference": 868.724089,
+          "mean_absolute_difference": 0.025472815661526847,
+          "l1_difference": 6418.0032699999965,
+          "pearson_r": 0.9995166572450845
+        },
+        "NumReads": {
+          "different_values": 774,
+          "max_absolute_difference": 72.971,
+          "mean_absolute_difference": 0.001395189617193546,
+          "l1_difference": 351.5249999999999,
+          "pearson_r": 0.9979875882810884
+        }
+      }
+    },
+    {
+      "group": "within_iobrpy",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        2
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 18553,
+          "max_absolute_difference": 346.238,
+          "mean_absolute_difference": 0.1612544224167016,
+          "l1_difference": 40628.85800000005,
+          "pearson_r": 0.9999996397054141
+        },
+        "TPM": {
+          "different_values": 11156,
+          "max_absolute_difference": 526.5219860000002,
+          "mean_absolute_difference": 0.02660818440991448,
+          "l1_difference": 6704.065103000003,
+          "pearson_r": 0.9998924504107632
+        },
+        "NumReads": {
+          "different_values": 2072,
+          "max_absolute_difference": 25.542,
+          "mean_absolute_difference": 0.0007489194499017682,
+          "l1_difference": 188.69400000000002,
+          "pearson_r": 0.9996500808112982
+        }
+      }
+    },
+    {
+      "group": "within_iobrpy",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 42358,
+          "max_absolute_difference": 1693.3269999999902,
+          "mean_absolute_difference": 0.6226963386318988,
+          "l1_difference": 156891.45600000006,
+          "pearson_r": 0.9999968812232738
+        },
+        "TPM": {
+          "different_values": 10951,
+          "max_absolute_difference": 879.9976910000005,
+          "mean_absolute_difference": 0.05477763135877439,
+          "l1_difference": 13801.498109000002,
+          "pearson_r": 0.9992567544535574
+        },
+        "NumReads": {
+          "different_values": 2507,
+          "max_absolute_difference": 57.52600000000001,
+          "mean_absolute_difference": 0.0016578714452977722,
+          "l1_difference": 417.7090000000002,
+          "pearson_r": 0.9984552694273979
+        }
+      }
+    },
+    {
+      "group": "within_iobrpy",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 231691,
+          "max_absolute_difference": 662.7930000000001,
+          "mean_absolute_difference": 0.9298163441884467,
+          "l1_difference": 234271.8770000001,
+          "pearson_r": 0.9999996285233375
+        },
+        "TPM": {
+          "different_values": 11158,
+          "max_absolute_difference": 375.058134,
+          "mean_absolute_difference": 0.018790351094441424,
+          "l1_difference": 4734.322909999989,
+          "pearson_r": 0.9999521217958444
+        },
+        "NumReads": {
+          "different_values": 1817,
+          "max_absolute_difference": 24.866,
+          "mean_absolute_difference": 0.0008863170010517747,
+          "l1_difference": 223.3119999999999,
+          "pearson_r": 0.9995881829492513
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 16783,
+          "max_absolute_difference": 795.0379999999996,
+          "mean_absolute_difference": 0.06171262725486681,
+          "l1_difference": 15548.804999999966,
+          "pearson_r": 0.9999990176115227
+        },
+        "TPM": {
+          "different_values": 10952,
+          "max_absolute_difference": 260.813831,
+          "mean_absolute_difference": 0.021584921839217324,
+          "l1_difference": 5438.428982000001,
+          "pearson_r": 0.9998314082238351
+        },
+        "NumReads": {
+          "different_values": 855,
+          "max_absolute_difference": 14.808000000000007,
+          "mean_absolute_difference": 0.0009909587029429867,
+          "l1_difference": 249.6770000000002,
+          "pearson_r": 0.9996952309080436
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        1
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 220007,
+          "max_absolute_difference": 331.6819999999998,
+          "mean_absolute_difference": 0.8746632771725112,
+          "l1_difference": 220375.78600000008,
+          "pearson_r": 0.9999997640366587
+        },
+        "TPM": {
+          "different_values": 11154,
+          "max_absolute_difference": 502.644376,
+          "mean_absolute_difference": 0.019976601881288317,
+          "l1_difference": 5033.204726999998,
+          "pearson_r": 0.9999125132253688
+        },
+        "NumReads": {
+          "different_values": 1591,
+          "max_absolute_difference": 25.0,
+          "mean_absolute_difference": 0.0007940028973427794,
+          "l1_difference": 200.053,
+          "pearson_r": 0.9995840312349327
+        }
+      }
+    },
+    {
+      "group": "within_iobrx",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrx",
+        2
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 36077,
+          "max_absolute_difference": 688.223,
+          "mean_absolute_difference": 0.13116060804508758,
+          "l1_difference": 33046.57100000004,
+          "pearson_r": 0.999998946500974
+        },
+        "TPM": {
+          "different_values": 10944,
+          "max_absolute_difference": 549.154598,
+          "mean_absolute_difference": 0.02159278360024608,
+          "l1_difference": 5440.409792000001,
+          "pearson_r": 0.9997334393142796
+        },
+        "NumReads": {
+          "different_values": 1213,
+          "max_absolute_difference": 54.872,
+          "mean_absolute_difference": 0.0012077434462503221,
+          "l1_difference": 304.2969999999999,
+          "pearson_r": 0.9988062338913162
+        }
+      }
+    },
+    {
+      "group": "within_iobrx",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrx",
+        2
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 47232,
+          "max_absolute_difference": 345.552,
+          "mean_absolute_difference": 0.181992649481058,
+          "l1_difference": 45853.95799999997,
+          "pearson_r": 0.999999812076461
+        },
+        "TPM": {
+          "different_values": 11153,
+          "max_absolute_difference": 526.425675,
+          "mean_absolute_difference": 0.018948132325216794,
+          "l1_difference": 4774.076679999997,
+          "pearson_r": 0.9999291738938966
+        },
+        "NumReads": {
+          "different_values": 687,
+          "max_absolute_difference": 11.0,
+          "mean_absolute_difference": 0.0005579964676231866,
+          "l1_difference": 140.59,
+          "pearson_r": 0.9998546495448218
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        2
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 22113,
+          "max_absolute_difference": 792.2389999999996,
+          "mean_absolute_difference": 0.07804543668512214,
+          "l1_difference": 19663.937999999947,
+          "pearson_r": 0.9999987493996051
+        },
+        "TPM": {
+          "different_values": 10952,
+          "max_absolute_difference": 870.213205,
+          "mean_absolute_difference": 0.03234747349725149,
+          "l1_difference": 8150.107684999999,
+          "pearson_r": 0.9993697512912912
+        },
+        "NumReads": {
+          "different_values": 1118,
+          "max_absolute_difference": 73.062,
+          "mean_absolute_difference": 0.0015624059851957694,
+          "l1_difference": 393.65600000000006,
+          "pearson_r": 0.9977923849859935
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        2
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 180705,
+          "max_absolute_difference": 346.552,
+          "mean_absolute_difference": 0.8152985969716814,
+          "l1_difference": 205418.558,
+          "pearson_r": 0.9999996329359016
+        },
+        "TPM": {
+          "different_values": 11154,
+          "max_absolute_difference": 420.92476200000004,
+          "mean_absolute_difference": 0.025231142882657612,
+          "l1_difference": 6357.112604999998,
+          "pearson_r": 0.9999178480891775
+        },
+        "NumReads": {
+          "different_values": 2108,
+          "max_absolute_difference": 16.108,
+          "mean_absolute_difference": 0.0008329741422079335,
+          "l1_difference": 209.87199999999987,
+          "pearson_r": 0.9997386004044143
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 36713,
+          "max_absolute_difference": 1604.761999999988,
+          "mean_absolute_difference": 0.5971341231569129,
+          "l1_difference": 150450.928,
+          "pearson_r": 0.9999966945877568
+        },
+        "TPM": {
+          "different_values": 10946,
+          "max_absolute_difference": 713.0438009999998,
+          "mean_absolute_difference": 0.04741527011569526,
+          "l1_difference": 11946.514382,
+          "pearson_r": 0.9994536526392408
+        },
+        "NumReads": {
+          "different_values": 2502,
+          "max_absolute_difference": 46.525000000000034,
+          "mean_absolute_difference": 0.0014005358099660652,
+          "l1_difference": 352.87199999999996,
+          "pearson_r": 0.9989402771461819
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 70002,
+          "max_absolute_difference": 663.875,
+          "mean_absolute_difference": 0.2804742553233711,
+          "l1_difference": 70666.89099999997,
+          "pearson_r": 0.9999996183118955
+        },
+        "TPM": {
+          "different_values": 11154,
+          "max_absolute_difference": 524.815744,
+          "mean_absolute_difference": 0.02115199477684503,
+          "l1_difference": 5329.35084399999,
+          "pearson_r": 0.9999287707970087
+        },
+        "NumReads": {
+          "different_values": 1423,
+          "max_absolute_difference": 13.824000000000012,
+          "mean_absolute_difference": 0.000752412137087972,
+          "l1_difference": 189.57399999999998,
+          "pearson_r": 0.9997838967340213
+        }
+      }
+    },
+    {
+      "group": "within_iobrx",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 22737,
+          "max_absolute_difference": 795.0379999999996,
+          "mean_absolute_difference": 0.1375253477803575,
+          "l1_difference": 34650.19899999997,
+          "pearson_r": 0.999999036332127
+        },
+        "TPM": {
+          "different_values": 10947,
+          "max_absolute_difference": 373.133783,
+          "mean_absolute_difference": 0.02324945872477228,
+          "l1_difference": 5857.817373,
+          "pearson_r": 0.9997762559729977
+        },
+        "NumReads": {
+          "different_values": 1149,
+          "max_absolute_difference": 15.978000000000009,
+          "mean_absolute_difference": 0.0009414538310412568,
+          "l1_difference": 237.20399999999987,
+          "pearson_r": 0.999658787317209
+        }
+      }
+    },
+    {
+      "group": "within_iobrx",
+      "left": [
+        "iobrx",
+        1
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 58305,
+          "max_absolute_difference": 244.57400000000007,
+          "mean_absolute_difference": 0.22135879026016542,
+          "l1_difference": 55772.453999999976,
+          "pearson_r": 0.9999998989343989
+        },
+        "TPM": {
+          "different_values": 11157,
+          "max_absolute_difference": 525.9090060000003,
+          "mean_absolute_difference": 0.025092293770713012,
+          "l1_difference": 6322.128876999997,
+          "pearson_r": 0.9998635708740111
+        },
+        "NumReads": {
+          "different_values": 997,
+          "max_absolute_difference": 15.845,
+          "mean_absolute_difference": 0.0008359865849060353,
+          "l1_difference": 210.63100000000014,
+          "pearson_r": 0.9996993418046339
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        2
+      ],
+      "right": [
+        "iobrpy",
+        2
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 43387,
+          "max_absolute_difference": 792.2389999999996,
+          "mean_absolute_difference": 0.18096209640610408,
+          "l1_difference": 45594.30499999996,
+          "pearson_r": 0.9999986432059759
+        },
+        "TPM": {
+          "different_values": 10954,
+          "max_absolute_difference": 870.834734,
+          "mean_absolute_difference": 0.036939150630072866,
+          "l1_difference": 9307.00369700001,
+          "pearson_r": 0.9992684954629969
+        },
+        "NumReads": {
+          "different_values": 1556,
+          "max_absolute_difference": 73.103,
+          "mean_absolute_difference": 0.0019228473338492986,
+          "l1_difference": 484.471,
+          "pearson_r": 0.9969726136859722
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        2
+      ],
+      "right": [
+        "iobrpy",
+        2
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 212938,
+          "max_absolute_difference": 330.9050000000002,
+          "mean_absolute_difference": 0.9355475382508782,
+          "l1_difference": 235715.88000000003,
+          "pearson_r": 0.9999997588818171
+        },
+        "TPM": {
+          "different_values": 11154,
+          "max_absolute_difference": 523.2771149999999,
+          "mean_absolute_difference": 0.023328435224544048,
+          "l1_difference": 5877.7158969999955,
+          "pearson_r": 0.9999243009177069
+        },
+        "NumReads": {
+          "different_values": 2100,
+          "max_absolute_difference": 7.0,
+          "mean_absolute_difference": 0.0005174495445615288,
+          "l1_difference": 130.374,
+          "pearson_r": 0.9999275457956629
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        2
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 18021,
+          "max_absolute_difference": 1636.3399999999674,
+          "mean_absolute_difference": 0.5271245539878152,
+          "l1_difference": 132811.667,
+          "pearson_r": 0.9999962926013868
+        },
+        "TPM": {
+          "different_values": 10946,
+          "max_absolute_difference": 798.7121619999998,
+          "mean_absolute_difference": 0.05320960276239805,
+          "l1_difference": 13406.425464,
+          "pearson_r": 0.9992472348407281
+        },
+        "NumReads": {
+          "different_values": 2494,
+          "max_absolute_difference": 54.872,
+          "mean_absolute_difference": 0.0018743386715881815,
+          "l1_difference": 472.24900000000025,
+          "pearson_r": 0.9977876256837829
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrx",
+        2
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 37310,
+          "max_absolute_difference": 662.6689999999999,
+          "mean_absolute_difference": 0.1283844535730588,
+          "l1_difference": 32347.105000000032,
+          "pearson_r": 0.9999995778145658
+        },
+        "TPM": {
+          "different_values": 11156,
+          "max_absolute_difference": 375.058134,
+          "mean_absolute_difference": 0.015838699601119232,
+          "l1_difference": 3990.639557999996,
+          "pearson_r": 0.9999540104674843
+        },
+        "NumReads": {
+          "different_values": 1312,
+          "max_absolute_difference": 11.0,
+          "mean_absolute_difference": 0.0006105217201484391,
+          "l1_difference": 153.82399999999996,
+          "pearson_r": 0.9998578340972133
+        }
+      }
+    },
+    {
+      "group": "within_iobrx",
+      "left": [
+        "iobrx",
+        2
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 43771,
+          "max_absolute_difference": 795.0379999999996,
+          "mean_absolute_difference": 0.2414256434680797,
+          "l1_difference": 60828.39800000002,
+          "pearson_r": 0.999998789862644
+        },
+        "TPM": {
+          "different_values": 10951,
+          "max_absolute_difference": 549.154598,
+          "mean_absolute_difference": 0.031517366176499764,
+          "l1_difference": 7940.957994999998,
+          "pearson_r": 0.9996208450889579
+        },
+        "NumReads": {
+          "different_values": 1552,
+          "max_absolute_difference": 54.872,
+          "mean_absolute_difference": 0.0013299874977674583,
+          "l1_difference": 335.0969999999999,
+          "pearson_r": 0.9988100816372845
+        }
+      }
+    },
+    {
+      "group": "within_iobrx",
+      "left": [
+        "iobrx",
+        2
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 26041,
+          "max_absolute_difference": 344.939,
+          "mean_absolute_difference": 0.06771586989740237,
+          "l1_difference": 17061.352000000014,
+          "pearson_r": 0.9999998939942715
+        },
+        "TPM": {
+          "different_values": 11150,
+          "max_absolute_difference": 502.644376,
+          "mean_absolute_difference": 0.018550778523942765,
+          "l1_difference": 4673.961402999999,
+          "pearson_r": 0.9999112402759979
+        },
+        "NumReads": {
+          "different_values": 792,
+          "max_absolute_difference": 15.845,
+          "mean_absolute_difference": 0.0005955309479867436,
+          "l1_difference": 150.047,
+          "pearson_r": 0.9998266851888684
+        }
+      }
+    },
+    {
+      "group": "within_iobrpy",
+      "left": [
+        "iobrpy",
+        2
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 43435,
+          "max_absolute_difference": 1548.4280000000144,
+          "mean_absolute_difference": 0.6281830406223334,
+          "l1_difference": 158273.858,
+          "pearson_r": 0.9999962503789688
+        },
+        "TPM": {
+          "different_values": 10954,
+          "max_absolute_difference": 1068.4969980000005,
+          "mean_absolute_difference": 0.06285174164831021,
+          "l1_difference": 15835.810567,
+          "pearson_r": 0.9986826366051287
+        },
+        "NumReads": {
+          "different_values": 2517,
+          "max_absolute_difference": 73.526,
+          "mean_absolute_difference": 0.002224960806493224,
+          "l1_difference": 560.5900000000003,
+          "pearson_r": 0.9961706178575832
+        }
+      }
+    },
+    {
+      "group": "within_iobrpy",
+      "left": [
+        "iobrpy",
+        2
+      ],
+      "right": [
+        "iobrpy",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 235460,
+          "max_absolute_difference": 664.489,
+          "mean_absolute_difference": 1.0421608422138877,
+          "l1_difference": 262577.63500000007,
+          "pearson_r": 0.9999994636571539
+        },
+        "TPM": {
+          "different_values": 11159,
+          "max_absolute_difference": 521.6671839999999,
+          "mean_absolute_difference": 0.030119652354587106,
+          "l1_difference": 7588.797008999994,
+          "pearson_r": 0.9998868913317498
+        },
+        "NumReads": {
+          "different_values": 2232,
+          "max_absolute_difference": 11.0,
+          "mean_absolute_difference": 0.0007780516362048776,
+          "l1_difference": 196.03399999999993,
+          "pearson_r": 0.9998295653936313
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        2
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 16109,
+          "max_absolute_difference": 687.685,
+          "mean_absolute_difference": 0.11424466670635605,
+          "l1_difference": 28784.514999999938,
+          "pearson_r": 0.9999989679861643
+        },
+        "TPM": {
+          "different_values": 10958,
+          "max_absolute_difference": 867.030721,
+          "mean_absolute_difference": 0.03623438422734218,
+          "l1_difference": 9129.434277999999,
+          "pearson_r": 0.9994004181168904
+        },
+        "NumReads": {
+          "different_values": 752,
+          "max_absolute_difference": 72.799,
+          "mean_absolute_difference": 0.0015946657141156166,
+          "l1_difference": 401.78400000000016,
+          "pearson_r": 0.9979620066503938
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        2
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 224494,
+          "max_absolute_difference": 345.939,
+          "mean_absolute_difference": 0.984459685261257,
+          "l1_difference": 248039.54,
+          "pearson_r": 0.999999679257525
+        },
+        "TPM": {
+          "different_values": 11162,
+          "max_absolute_difference": 522.7604460000002,
+          "mean_absolute_difference": 0.03101273427397749,
+          "l1_difference": 7813.813463999999,
+          "pearson_r": 0.9998586329125085
+        },
+        "NumReads": {
+          "different_values": 2133,
+          "max_absolute_difference": 15.845,
+          "mean_absolute_difference": 0.0007891687007600566,
+          "l1_difference": 198.83500000000006,
+          "pearson_r": 0.999770449511936
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        3
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188044",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 44633,
+          "max_absolute_difference": 1750.810999999987,
+          "mean_absolute_difference": 0.6518147407275109,
+          "l1_difference": 164227.983,
+          "pearson_r": 0.9999960393074716
+        },
+        "TPM": {
+          "different_values": 10955,
+          "max_absolute_difference": 951.3509450000001,
+          "mean_absolute_difference": 0.05726014152130343,
+          "l1_difference": 14426.978957000007,
+          "pearson_r": 0.9991488689154076
+        },
+        "NumReads": {
+          "different_values": 2515,
+          "max_absolute_difference": 62.50300000000004,
+          "mean_absolute_difference": 0.0017938917663868556,
+          "l1_difference": 451.9800000000002,
+          "pearson_r": 0.9982085370455505
+        }
+      }
+    },
+    {
+      "group": "between_arms",
+      "left": [
+        "iobrpy",
+        3
+      ],
+      "right": [
+        "iobrx",
+        3
+      ],
+      "sample": "ERR188104",
+      "columns": {
+        "Length": {
+          "different_values": 0,
+          "max_absolute_difference": 0.0,
+          "mean_absolute_difference": 0.0,
+          "l1_difference": 0.0,
+          "pearson_r": 1.0
+        },
+        "EffectiveLength": {
+          "different_values": 27447,
+          "max_absolute_difference": 662.8409999999999,
+          "mean_absolute_difference": 0.08571392907463637,
+          "l1_difference": 21596.053000000007,
+          "pearson_r": 0.9999996752063488
+        },
+        "TPM": {
+          "different_values": 11158,
+          "max_absolute_difference": 502.644376,
+          "mean_absolute_difference": 0.02019656289813656,
+          "l1_difference": 5088.625004999997,
+          "pearson_r": 0.9999039312970068
+        },
+        "NumReads": {
+          "different_values": 1182,
+          "max_absolute_difference": 17.410000000000025,
+          "mean_absolute_difference": 0.0007072572483181523,
+          "l1_difference": 178.19700000000006,
+          "pearson_r": 0.9997521545692319
+        }
+      }
+    }
+  ]
+}

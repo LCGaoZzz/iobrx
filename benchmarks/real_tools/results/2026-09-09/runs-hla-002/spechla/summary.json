@@ -1,0 +1,380 @@
+{
+  "case": {
+    "name": "spechla",
+    "function": "spechla",
+    "parameters": {
+      "name": "NA06985",
+      "read1": "<WORK>/data/NA06985_1.filter.fastq.gz",
+      "read2": "<WORK>/data/NA06985_2.filter.fastq.gz",
+      "outdir": "{output}",
+      "threads": 4,
+      "use_exon": 1
+    },
+    "upstream_cli": [
+      "spechla",
+      "-n",
+      "NA06985",
+      "-1",
+      "<WORK>/data/NA06985_1.filter.fastq.gz",
+      "-2",
+      "<WORK>/data/NA06985_2.filter.fastq.gz",
+      "-o",
+      "{output}",
+      "-j",
+      "4",
+      "-u",
+      "1"
+    ]
+  },
+  "repeats": 3,
+  "runs": [
+    {
+      "arm": "iobrpy",
+      "repeat": 1,
+      "wall_seconds": 93.33512222599893,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "spechla",
+        "-n",
+        "NA06985",
+        "-1",
+        "<WORK>/data/NA06985_1.filter.fastq.gz",
+        "-2",
+        "<WORK>/data/NA06985_2.filter.fastq.gz",
+        "-o",
+        "<WORK>/runs-hla-002/spechla/active",
+        "-j",
+        "4",
+        "-u",
+        "1"
+      ],
+      "output": "<WORK>/runs-hla-002/spechla/repeat-1-iobrpy",
+      "products": {
+        "files": {
+          "NA06985/hla.result.txt": "45d2f6f7083ce6fe1c7463036ffef1941eee99a82ae67242db1f9ca95921f7d1",
+          "NA06985/hla.allele.1.HLA_A.fasta": "9595c74a992030f4d089866e6e1582d439c41f02d39aca9080022e54d2095dfd",
+          "NA06985/hla.allele.1.HLA_B.fasta": "62bbcb7dbe58f0dd49b857bb56b4b41eb0ba8ef7d927ab6882021f80056a0ded",
+          "NA06985/hla.allele.1.HLA_C.fasta": "a2519c01c5c9f5b40966febf5f8570934ed9dbe43193b40df25869cb92384367",
+          "NA06985/hla.allele.1.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.1.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.1.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.1.HLA_DQB1.fasta": "5fff6d9309930904e857e7405d58e1f7b111764a05be1e295d79ff5c9550484d",
+          "NA06985/hla.allele.1.HLA_DRB1.fasta": "e7be1a38c8c105e55cd73cc7d1c138d99a46286bd44915eaf8aee2826bfbf11b",
+          "NA06985/hla.allele.2.HLA_A.fasta": "412406b9e049396470872925767cbe2be0f812d9e728f5ec9d4227e0db38de06",
+          "NA06985/hla.allele.2.HLA_B.fasta": "c57325e3228a4ef003b13436434655af7cc7c3bf862a645ff23b602b7b41df7c",
+          "NA06985/hla.allele.2.HLA_C.fasta": "fc0da87647ec6f8efed0e023f4992acccdf1977d481089309bc04aea66f4e7ea",
+          "NA06985/hla.allele.2.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.2.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.2.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.2.HLA_DQB1.fasta": "6c6032a74bab39de0a7ac43d0292d9c11bd6a2007533b4fcb13b136a18083d2b",
+          "NA06985/hla.allele.2.HLA_DRB1.fasta": "dec0f66672baf0b952531c4ee523c2e797ea467ade5b40a2c748d9db4fe8beda"
+        },
+        "metrics": {
+          "NA06985/hla.result.txt": {
+            "lines": [
+              "# version: IPD-IMGT/HLA 3.38.0",
+              "Sample\tHLA_A_1\tHLA_A_2\tHLA_B_1\tHLA_B_2\tHLA_C_1\tHLA_C_2\tHLA_DPA1_1\tHLA_DPA1_2\tHLA_DPB1_1\tHLA_DPB1_2\tHLA_DQA1_1\tHLA_DQA1_2\tHLA_DQB1_1\tHLA_DQB1_2\tHLA_DRB1_1\tHLA_DRB1_2",
+              "NA06985\tA*03:01:01:01\tA*02:01:01:01\tB*07:02:01:01\tB*57:01:01:01\tC*06:02:23\tC*07:02:25\tDPA1*01:03:01:01\tDPA1*01:03:01:01\tDPB1*04:01:01:01\tDPB1*04:01:01:01\tDQA1*01:02:01:01\tDQA1*01:02:01:01\tDQB1*06:02:01:01\tDQB1*06:02:01:01\tDRB1*15:01:01:01\tDRB1*15:01:01:01"
+            ]
+          }
+        }
+      },
+      "peak_rss_kib": 340756
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 1,
+      "wall_seconds": 92.02430307800023,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-hla-002/spechla/repeat-1-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-hla-002/spechla/repeat-1-iobrx",
+      "products": {
+        "files": {
+          "NA06985/hla.result.txt": "45d2f6f7083ce6fe1c7463036ffef1941eee99a82ae67242db1f9ca95921f7d1",
+          "NA06985/hla.allele.1.HLA_A.fasta": "9595c74a992030f4d089866e6e1582d439c41f02d39aca9080022e54d2095dfd",
+          "NA06985/hla.allele.1.HLA_B.fasta": "62bbcb7dbe58f0dd49b857bb56b4b41eb0ba8ef7d927ab6882021f80056a0ded",
+          "NA06985/hla.allele.1.HLA_C.fasta": "a2519c01c5c9f5b40966febf5f8570934ed9dbe43193b40df25869cb92384367",
+          "NA06985/hla.allele.1.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.1.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.1.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.1.HLA_DQB1.fasta": "5fff6d9309930904e857e7405d58e1f7b111764a05be1e295d79ff5c9550484d",
+          "NA06985/hla.allele.1.HLA_DRB1.fasta": "e7be1a38c8c105e55cd73cc7d1c138d99a46286bd44915eaf8aee2826bfbf11b",
+          "NA06985/hla.allele.2.HLA_A.fasta": "412406b9e049396470872925767cbe2be0f812d9e728f5ec9d4227e0db38de06",
+          "NA06985/hla.allele.2.HLA_B.fasta": "c57325e3228a4ef003b13436434655af7cc7c3bf862a645ff23b602b7b41df7c",
+          "NA06985/hla.allele.2.HLA_C.fasta": "fc0da87647ec6f8efed0e023f4992acccdf1977d481089309bc04aea66f4e7ea",
+          "NA06985/hla.allele.2.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.2.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.2.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.2.HLA_DQB1.fasta": "6c6032a74bab39de0a7ac43d0292d9c11bd6a2007533b4fcb13b136a18083d2b",
+          "NA06985/hla.allele.2.HLA_DRB1.fasta": "dec0f66672baf0b952531c4ee523c2e797ea467ade5b40a2c748d9db4fe8beda"
+        },
+        "metrics": {
+          "NA06985/hla.result.txt": {
+            "lines": [
+              "# version: IPD-IMGT/HLA 3.38.0",
+              "Sample\tHLA_A_1\tHLA_A_2\tHLA_B_1\tHLA_B_2\tHLA_C_1\tHLA_C_2\tHLA_DPA1_1\tHLA_DPA1_2\tHLA_DPB1_1\tHLA_DPB1_2\tHLA_DQA1_1\tHLA_DQA1_2\tHLA_DQB1_1\tHLA_DQB1_2\tHLA_DRB1_1\tHLA_DRB1_2",
+              "NA06985\tA*03:01:01:01\tA*02:01:01:01\tB*07:02:01:01\tB*57:01:01:01\tC*06:02:23\tC*07:02:25\tDPA1*01:03:01:01\tDPA1*01:03:01:01\tDPB1*04:01:01:01\tDPB1*04:01:01:01\tDQA1*01:02:01:01\tDQA1*01:02:01:01\tDQB1*06:02:01:01\tDQB1*06:02:01:01\tDRB1*15:01:01:01\tDRB1*15:01:01:01"
+            ]
+          }
+        }
+      },
+      "peak_rss_kib": 340748
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 2,
+      "wall_seconds": 85.79713120200176,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-hla-002/spechla/repeat-2-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-hla-002/spechla/repeat-2-iobrx",
+      "products": {
+        "files": {
+          "NA06985/hla.result.txt": "45d2f6f7083ce6fe1c7463036ffef1941eee99a82ae67242db1f9ca95921f7d1",
+          "NA06985/hla.allele.1.HLA_A.fasta": "9595c74a992030f4d089866e6e1582d439c41f02d39aca9080022e54d2095dfd",
+          "NA06985/hla.allele.1.HLA_B.fasta": "62bbcb7dbe58f0dd49b857bb56b4b41eb0ba8ef7d927ab6882021f80056a0ded",
+          "NA06985/hla.allele.1.HLA_C.fasta": "a2519c01c5c9f5b40966febf5f8570934ed9dbe43193b40df25869cb92384367",
+          "NA06985/hla.allele.1.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.1.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.1.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.1.HLA_DQB1.fasta": "5fff6d9309930904e857e7405d58e1f7b111764a05be1e295d79ff5c9550484d",
+          "NA06985/hla.allele.1.HLA_DRB1.fasta": "e7be1a38c8c105e55cd73cc7d1c138d99a46286bd44915eaf8aee2826bfbf11b",
+          "NA06985/hla.allele.2.HLA_A.fasta": "412406b9e049396470872925767cbe2be0f812d9e728f5ec9d4227e0db38de06",
+          "NA06985/hla.allele.2.HLA_B.fasta": "c57325e3228a4ef003b13436434655af7cc7c3bf862a645ff23b602b7b41df7c",
+          "NA06985/hla.allele.2.HLA_C.fasta": "fc0da87647ec6f8efed0e023f4992acccdf1977d481089309bc04aea66f4e7ea",
+          "NA06985/hla.allele.2.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.2.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.2.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.2.HLA_DQB1.fasta": "6c6032a74bab39de0a7ac43d0292d9c11bd6a2007533b4fcb13b136a18083d2b",
+          "NA06985/hla.allele.2.HLA_DRB1.fasta": "dec0f66672baf0b952531c4ee523c2e797ea467ade5b40a2c748d9db4fe8beda"
+        },
+        "metrics": {
+          "NA06985/hla.result.txt": {
+            "lines": [
+              "# version: IPD-IMGT/HLA 3.38.0",
+              "Sample\tHLA_A_1\tHLA_A_2\tHLA_B_1\tHLA_B_2\tHLA_C_1\tHLA_C_2\tHLA_DPA1_1\tHLA_DPA1_2\tHLA_DPB1_1\tHLA_DPB1_2\tHLA_DQA1_1\tHLA_DQA1_2\tHLA_DQB1_1\tHLA_DQB1_2\tHLA_DRB1_1\tHLA_DRB1_2",
+              "NA06985\tA*03:01:01:01\tA*02:01:01:01\tB*07:02:01:01\tB*57:01:01:01\tC*06:02:23\tC*07:02:25\tDPA1*01:03:01:01\tDPA1*01:03:01:01\tDPB1*04:01:01:01\tDPB1*04:01:01:01\tDQA1*01:02:01:01\tDQA1*01:02:01:01\tDQB1*06:02:01:01\tDQB1*06:02:01:01\tDRB1*15:01:01:01\tDRB1*15:01:01:01"
+            ]
+          }
+        }
+      },
+      "peak_rss_kib": 340752
+    },
+    {
+      "arm": "iobrpy",
+      "repeat": 2,
+      "wall_seconds": 93.81265405900012,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "spechla",
+        "-n",
+        "NA06985",
+        "-1",
+        "<WORK>/data/NA06985_1.filter.fastq.gz",
+        "-2",
+        "<WORK>/data/NA06985_2.filter.fastq.gz",
+        "-o",
+        "<WORK>/runs-hla-002/spechla/active",
+        "-j",
+        "4",
+        "-u",
+        "1"
+      ],
+      "output": "<WORK>/runs-hla-002/spechla/repeat-2-iobrpy",
+      "products": {
+        "files": {
+          "NA06985/hla.result.txt": "45d2f6f7083ce6fe1c7463036ffef1941eee99a82ae67242db1f9ca95921f7d1",
+          "NA06985/hla.allele.1.HLA_A.fasta": "9595c74a992030f4d089866e6e1582d439c41f02d39aca9080022e54d2095dfd",
+          "NA06985/hla.allele.1.HLA_B.fasta": "62bbcb7dbe58f0dd49b857bb56b4b41eb0ba8ef7d927ab6882021f80056a0ded",
+          "NA06985/hla.allele.1.HLA_C.fasta": "a2519c01c5c9f5b40966febf5f8570934ed9dbe43193b40df25869cb92384367",
+          "NA06985/hla.allele.1.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.1.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.1.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.1.HLA_DQB1.fasta": "5fff6d9309930904e857e7405d58e1f7b111764a05be1e295d79ff5c9550484d",
+          "NA06985/hla.allele.1.HLA_DRB1.fasta": "e7be1a38c8c105e55cd73cc7d1c138d99a46286bd44915eaf8aee2826bfbf11b",
+          "NA06985/hla.allele.2.HLA_A.fasta": "412406b9e049396470872925767cbe2be0f812d9e728f5ec9d4227e0db38de06",
+          "NA06985/hla.allele.2.HLA_B.fasta": "c57325e3228a4ef003b13436434655af7cc7c3bf862a645ff23b602b7b41df7c",
+          "NA06985/hla.allele.2.HLA_C.fasta": "fc0da87647ec6f8efed0e023f4992acccdf1977d481089309bc04aea66f4e7ea",
+          "NA06985/hla.allele.2.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.2.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.2.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.2.HLA_DQB1.fasta": "6c6032a74bab39de0a7ac43d0292d9c11bd6a2007533b4fcb13b136a18083d2b",
+          "NA06985/hla.allele.2.HLA_DRB1.fasta": "dec0f66672baf0b952531c4ee523c2e797ea467ade5b40a2c748d9db4fe8beda"
+        },
+        "metrics": {
+          "NA06985/hla.result.txt": {
+            "lines": [
+              "# version: IPD-IMGT/HLA 3.38.0",
+              "Sample\tHLA_A_1\tHLA_A_2\tHLA_B_1\tHLA_B_2\tHLA_C_1\tHLA_C_2\tHLA_DPA1_1\tHLA_DPA1_2\tHLA_DPB1_1\tHLA_DPB1_2\tHLA_DQA1_1\tHLA_DQA1_2\tHLA_DQB1_1\tHLA_DQB1_2\tHLA_DRB1_1\tHLA_DRB1_2",
+              "NA06985\tA*03:01:01:01\tA*02:01:01:01\tB*07:02:01:01\tB*57:01:01:01\tC*06:02:23\tC*07:02:25\tDPA1*01:03:01:01\tDPA1*01:03:01:01\tDPB1*04:01:01:01\tDPB1*04:01:01:01\tDQA1*01:02:01:01\tDQA1*01:02:01:01\tDQB1*06:02:01:01\tDQB1*06:02:01:01\tDRB1*15:01:01:01\tDRB1*15:01:01:01"
+            ]
+          }
+        }
+      },
+      "peak_rss_kib": 340852
+    },
+    {
+      "arm": "iobrpy",
+      "repeat": 3,
+      "wall_seconds": 89.2316433979995,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "spechla",
+        "-n",
+        "NA06985",
+        "-1",
+        "<WORK>/data/NA06985_1.filter.fastq.gz",
+        "-2",
+        "<WORK>/data/NA06985_2.filter.fastq.gz",
+        "-o",
+        "<WORK>/runs-hla-002/spechla/active",
+        "-j",
+        "4",
+        "-u",
+        "1"
+      ],
+      "output": "<WORK>/runs-hla-002/spechla/repeat-3-iobrpy",
+      "products": {
+        "files": {
+          "NA06985/hla.result.txt": "45d2f6f7083ce6fe1c7463036ffef1941eee99a82ae67242db1f9ca95921f7d1",
+          "NA06985/hla.allele.1.HLA_A.fasta": "9595c74a992030f4d089866e6e1582d439c41f02d39aca9080022e54d2095dfd",
+          "NA06985/hla.allele.1.HLA_B.fasta": "62bbcb7dbe58f0dd49b857bb56b4b41eb0ba8ef7d927ab6882021f80056a0ded",
+          "NA06985/hla.allele.1.HLA_C.fasta": "a2519c01c5c9f5b40966febf5f8570934ed9dbe43193b40df25869cb92384367",
+          "NA06985/hla.allele.1.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.1.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.1.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.1.HLA_DQB1.fasta": "5fff6d9309930904e857e7405d58e1f7b111764a05be1e295d79ff5c9550484d",
+          "NA06985/hla.allele.1.HLA_DRB1.fasta": "e7be1a38c8c105e55cd73cc7d1c138d99a46286bd44915eaf8aee2826bfbf11b",
+          "NA06985/hla.allele.2.HLA_A.fasta": "412406b9e049396470872925767cbe2be0f812d9e728f5ec9d4227e0db38de06",
+          "NA06985/hla.allele.2.HLA_B.fasta": "c57325e3228a4ef003b13436434655af7cc7c3bf862a645ff23b602b7b41df7c",
+          "NA06985/hla.allele.2.HLA_C.fasta": "fc0da87647ec6f8efed0e023f4992acccdf1977d481089309bc04aea66f4e7ea",
+          "NA06985/hla.allele.2.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.2.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.2.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.2.HLA_DQB1.fasta": "6c6032a74bab39de0a7ac43d0292d9c11bd6a2007533b4fcb13b136a18083d2b",
+          "NA06985/hla.allele.2.HLA_DRB1.fasta": "dec0f66672baf0b952531c4ee523c2e797ea467ade5b40a2c748d9db4fe8beda"
+        },
+        "metrics": {
+          "NA06985/hla.result.txt": {
+            "lines": [
+              "# version: IPD-IMGT/HLA 3.38.0",
+              "Sample\tHLA_A_1\tHLA_A_2\tHLA_B_1\tHLA_B_2\tHLA_C_1\tHLA_C_2\tHLA_DPA1_1\tHLA_DPA1_2\tHLA_DPB1_1\tHLA_DPB1_2\tHLA_DQA1_1\tHLA_DQA1_2\tHLA_DQB1_1\tHLA_DQB1_2\tHLA_DRB1_1\tHLA_DRB1_2",
+              "NA06985\tA*03:01:01:01\tA*02:01:01:01\tB*07:02:01:01\tB*57:01:01:01\tC*06:02:23\tC*07:02:25\tDPA1*01:03:01:01\tDPA1*01:03:01:01\tDPB1*04:01:01:01\tDPB1*04:01:01:01\tDQA1*01:02:01:01\tDQA1*01:02:01:01\tDQB1*06:02:01:01\tDQB1*06:02:01:01\tDRB1*15:01:01:01\tDRB1*15:01:01:01"
+            ]
+          }
+        }
+      },
+      "peak_rss_kib": 340380
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 3,
+      "wall_seconds": 86.32433636599853,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-hla-002/spechla/repeat-3-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-hla-002/spechla/repeat-3-iobrx",
+      "products": {
+        "files": {
+          "NA06985/hla.result.txt": "45d2f6f7083ce6fe1c7463036ffef1941eee99a82ae67242db1f9ca95921f7d1",
+          "NA06985/hla.allele.1.HLA_A.fasta": "9595c74a992030f4d089866e6e1582d439c41f02d39aca9080022e54d2095dfd",
+          "NA06985/hla.allele.1.HLA_B.fasta": "62bbcb7dbe58f0dd49b857bb56b4b41eb0ba8ef7d927ab6882021f80056a0ded",
+          "NA06985/hla.allele.1.HLA_C.fasta": "a2519c01c5c9f5b40966febf5f8570934ed9dbe43193b40df25869cb92384367",
+          "NA06985/hla.allele.1.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.1.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.1.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.1.HLA_DQB1.fasta": "5fff6d9309930904e857e7405d58e1f7b111764a05be1e295d79ff5c9550484d",
+          "NA06985/hla.allele.1.HLA_DRB1.fasta": "e7be1a38c8c105e55cd73cc7d1c138d99a46286bd44915eaf8aee2826bfbf11b",
+          "NA06985/hla.allele.2.HLA_A.fasta": "412406b9e049396470872925767cbe2be0f812d9e728f5ec9d4227e0db38de06",
+          "NA06985/hla.allele.2.HLA_B.fasta": "c57325e3228a4ef003b13436434655af7cc7c3bf862a645ff23b602b7b41df7c",
+          "NA06985/hla.allele.2.HLA_C.fasta": "fc0da87647ec6f8efed0e023f4992acccdf1977d481089309bc04aea66f4e7ea",
+          "NA06985/hla.allele.2.HLA_DPA1.fasta": "0d68370180c82ea6a915588b75c1cc3f6e3b7780466ca98f10a52535d6c9bc42",
+          "NA06985/hla.allele.2.HLA_DPB1.fasta": "3b8ec67daf45a3bace626e55d3f748d5cbbd6536475a3cf22949ba90b85417ed",
+          "NA06985/hla.allele.2.HLA_DQA1.fasta": "032a841194c15c5277acc6986aa8004ee871f790bb2bc146184c1c92d54db437",
+          "NA06985/hla.allele.2.HLA_DQB1.fasta": "6c6032a74bab39de0a7ac43d0292d9c11bd6a2007533b4fcb13b136a18083d2b",
+          "NA06985/hla.allele.2.HLA_DRB1.fasta": "dec0f66672baf0b952531c4ee523c2e797ea467ade5b40a2c748d9db4fe8beda"
+        },
+        "metrics": {
+          "NA06985/hla.result.txt": {
+            "lines": [
+              "# version: IPD-IMGT/HLA 3.38.0",
+              "Sample\tHLA_A_1\tHLA_A_2\tHLA_B_1\tHLA_B_2\tHLA_C_1\tHLA_C_2\tHLA_DPA1_1\tHLA_DPA1_2\tHLA_DPB1_1\tHLA_DPB1_2\tHLA_DQA1_1\tHLA_DQA1_2\tHLA_DQB1_1\tHLA_DQB1_2\tHLA_DRB1_1\tHLA_DRB1_2",
+              "NA06985\tA*03:01:01:01\tA*02:01:01:01\tB*07:02:01:01\tB*57:01:01:01\tC*06:02:23\tC*07:02:25\tDPA1*01:03:01:01\tDPA1*01:03:01:01\tDPB1*04:01:01:01\tDPB1*04:01:01:01\tDQA1*01:02:01:01\tDQA1*01:02:01:01\tDQB1*06:02:01:01\tDQB1*06:02:01:01\tDRB1*15:01:01:01\tDRB1*15:01:01:01"
+            ]
+          }
+        }
+      },
+      "peak_rss_kib": 340700
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "repeat": 1,
+      "equal": true,
+      "compared_products": 17,
+      "different_products": []
+    },
+    {
+      "repeat": 2,
+      "equal": true,
+      "compared_products": 17,
+      "different_products": []
+    },
+    {
+      "repeat": 3,
+      "equal": true,
+      "compared_products": 17,
+      "different_products": []
+    }
+  ],
+  "within_arm_repeatability": {
+    "iobrpy": [
+      {
+        "equal": true,
+        "compared_products": 17,
+        "different_products": []
+      },
+      {
+        "equal": true,
+        "compared_products": 17,
+        "different_products": []
+      }
+    ],
+    "iobrx": [
+      {
+        "equal": true,
+        "compared_products": 17,
+        "different_products": []
+      },
+      {
+        "equal": true,
+        "compared_products": 17,
+        "different_products": []
+      }
+    ]
+  },
+  "median_wall_seconds": {
+    "iobrpy": 93.33512222599893,
+    "iobrx": 86.32433636599853
+  },
+  "speedup_original_over_iobrx": 1.0812144773436314
+}

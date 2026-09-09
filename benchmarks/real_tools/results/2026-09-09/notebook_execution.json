@@ -1,0 +1,22 @@
+[
+  {
+    "notebook": "24_real_fastq_qc.ipynb",
+    "execution_seconds": 5.291324419999
+  },
+  {
+    "notebook": "25_real_salmon.ipynb",
+    "execution_seconds": 28.8423796449988
+  },
+  {
+    "notebook": "26_real_star_bam.ipynb",
+    "execution_seconds": 9.509909501000948
+  },
+  {
+    "notebook": "27_real_hla_extraction.ipynb",
+    "execution_seconds": 4.980541460001405
+  },
+  {
+    "notebook": "28_real_spechla.ipynb",
+    "execution_seconds": 129.60647260099904
+  }
+]

@@ -1,0 +1,218 @@
+[
+  {
+    "arm": "iobrpy",
+    "repeat": 1,
+    "wall_seconds": 3.7580275149994122,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "-m",
+      "iobrpy.main",
+      "extract_hla_read",
+      "-s",
+      "NA06985",
+      "-b",
+      "<WORK>/data/NA06985.GRCh38.chr6.bam",
+      "-r",
+      "hg38",
+      "-o",
+      "<WORK>/runs-hla-002/extract_hla_read/active",
+      "--no-auto-install"
+    ],
+    "output": "<WORK>/runs-hla-002/extract_hla_read/repeat-1-iobrpy",
+    "products": {
+      "files": {
+        "NA06985_extract.unpaired.fq.gz": "3dff57390b788633bafaa49b67e31f06f94baa540905933d79741b1b676cfe4f",
+        "NA06985_extract_1.fq.gz": "44ffd6a047817a5b2ccb26e4726a08d22768451ca1cb205abe471af1809fd974",
+        "NA06985_extract_2.fq.gz": "af98869c525760f93b915896d8759c83880dde5b9a03c461e22da08b0d20511f"
+      },
+      "metrics": {
+        "NA06985_extract.unpaired.fq.gz": {
+          "reads": 120
+        },
+        "NA06985_extract_1.fq.gz": {
+          "reads": 25748
+        },
+        "NA06985_extract_2.fq.gz": {
+          "reads": 25748
+        }
+      }
+    },
+    "peak_rss_kib": 327860
+  },
+  {
+    "arm": "iobrx",
+    "repeat": 1,
+    "wall_seconds": 4.822294932999284,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "<REPO>/benchmarks/real_tools/arm.py",
+      "<WORK>/runs-hla-002/extract_hla_read/repeat-1-iobrx.request.json"
+    ],
+    "output": "<WORK>/runs-hla-002/extract_hla_read/repeat-1-iobrx",
+    "products": {
+      "files": {
+        "NA06985_extract.unpaired.fq.gz": "3dff57390b788633bafaa49b67e31f06f94baa540905933d79741b1b676cfe4f",
+        "NA06985_extract_1.fq.gz": "44ffd6a047817a5b2ccb26e4726a08d22768451ca1cb205abe471af1809fd974",
+        "NA06985_extract_2.fq.gz": "af98869c525760f93b915896d8759c83880dde5b9a03c461e22da08b0d20511f"
+      },
+      "metrics": {
+        "NA06985_extract.unpaired.fq.gz": {
+          "reads": 120
+        },
+        "NA06985_extract_1.fq.gz": {
+          "reads": 25748
+        },
+        "NA06985_extract_2.fq.gz": {
+          "reads": 25748
+        }
+      }
+    },
+    "peak_rss_kib": 124408
+  },
+  {
+    "arm": "iobrx",
+    "repeat": 2,
+    "wall_seconds": 4.866326855999432,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "<REPO>/benchmarks/real_tools/arm.py",
+      "<WORK>/runs-hla-002/extract_hla_read/repeat-2-iobrx.request.json"
+    ],
+    "output": "<WORK>/runs-hla-002/extract_hla_read/repeat-2-iobrx",
+    "products": {
+      "files": {
+        "NA06985_extract.unpaired.fq.gz": "3dff57390b788633bafaa49b67e31f06f94baa540905933d79741b1b676cfe4f",
+        "NA06985_extract_1.fq.gz": "44ffd6a047817a5b2ccb26e4726a08d22768451ca1cb205abe471af1809fd974",
+        "NA06985_extract_2.fq.gz": "af98869c525760f93b915896d8759c83880dde5b9a03c461e22da08b0d20511f"
+      },
+      "metrics": {
+        "NA06985_extract.unpaired.fq.gz": {
+          "reads": 120
+        },
+        "NA06985_extract_1.fq.gz": {
+          "reads": 25748
+        },
+        "NA06985_extract_2.fq.gz": {
+          "reads": 25748
+        }
+      }
+    },
+    "peak_rss_kib": 124580
+  },
+  {
+    "arm": "iobrpy",
+    "repeat": 2,
+    "wall_seconds": 3.804455309998957,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "-m",
+      "iobrpy.main",
+      "extract_hla_read",
+      "-s",
+      "NA06985",
+      "-b",
+      "<WORK>/data/NA06985.GRCh38.chr6.bam",
+      "-r",
+      "hg38",
+      "-o",
+      "<WORK>/runs-hla-002/extract_hla_read/active",
+      "--no-auto-install"
+    ],
+    "output": "<WORK>/runs-hla-002/extract_hla_read/repeat-2-iobrpy",
+    "products": {
+      "files": {
+        "NA06985_extract.unpaired.fq.gz": "3dff57390b788633bafaa49b67e31f06f94baa540905933d79741b1b676cfe4f",
+        "NA06985_extract_1.fq.gz": "44ffd6a047817a5b2ccb26e4726a08d22768451ca1cb205abe471af1809fd974",
+        "NA06985_extract_2.fq.gz": "af98869c525760f93b915896d8759c83880dde5b9a03c461e22da08b0d20511f"
+      },
+      "metrics": {
+        "NA06985_extract.unpaired.fq.gz": {
+          "reads": 120
+        },
+        "NA06985_extract_1.fq.gz": {
+          "reads": 25748
+        },
+        "NA06985_extract_2.fq.gz": {
+          "reads": 25748
+        }
+      }
+    },
+    "peak_rss_kib": 327724
+  },
+  {
+    "arm": "iobrpy",
+    "repeat": 3,
+    "wall_seconds": 4.821566854001503,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "-m",
+      "iobrpy.main",
+      "extract_hla_read",
+      "-s",
+      "NA06985",
+      "-b",
+      "<WORK>/data/NA06985.GRCh38.chr6.bam",
+      "-r",
+      "hg38",
+      "-o",
+      "<WORK>/runs-hla-002/extract_hla_read/active",
+      "--no-auto-install"
+    ],
+    "output": "<WORK>/runs-hla-002/extract_hla_read/repeat-3-iobrpy",
+    "products": {
+      "files": {
+        "NA06985_extract.unpaired.fq.gz": "3dff57390b788633bafaa49b67e31f06f94baa540905933d79741b1b676cfe4f",
+        "NA06985_extract_1.fq.gz": "44ffd6a047817a5b2ccb26e4726a08d22768451ca1cb205abe471af1809fd974",
+        "NA06985_extract_2.fq.gz": "af98869c525760f93b915896d8759c83880dde5b9a03c461e22da08b0d20511f"
+      },
+      "metrics": {
+        "NA06985_extract.unpaired.fq.gz": {
+          "reads": 120
+        },
+        "NA06985_extract_1.fq.gz": {
+          "reads": 25748
+        },
+        "NA06985_extract_2.fq.gz": {
+          "reads": 25748
+        }
+      }
+    },
+    "peak_rss_kib": 328084
+  },
+  {
+    "arm": "iobrx",
+    "repeat": 3,
+    "wall_seconds": 2.8200202519983577,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "<REPO>/benchmarks/real_tools/arm.py",
+      "<WORK>/runs-hla-002/extract_hla_read/repeat-3-iobrx.request.json"
+    ],
+    "output": "<WORK>/runs-hla-002/extract_hla_read/repeat-3-iobrx",
+    "products": {
+      "files": {
+        "NA06985_extract.unpaired.fq.gz": "3dff57390b788633bafaa49b67e31f06f94baa540905933d79741b1b676cfe4f",
+        "NA06985_extract_1.fq.gz": "44ffd6a047817a5b2ccb26e4726a08d22768451ca1cb205abe471af1809fd974",
+        "NA06985_extract_2.fq.gz": "af98869c525760f93b915896d8759c83880dde5b9a03c461e22da08b0d20511f"
+      },
+      "metrics": {
+        "NA06985_extract.unpaired.fq.gz": {
+          "reads": 120
+        },
+        "NA06985_extract_1.fq.gz": {
+          "reads": 25748
+        },
+        "NA06985_extract_2.fq.gz": {
+          "reads": 25748
+        }
+      }
+    },
+    "peak_rss_kib": 124480
+  }
+]

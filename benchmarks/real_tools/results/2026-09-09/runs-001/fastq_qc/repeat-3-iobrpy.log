@@ -1,0 +1,20 @@
+### FASTQ files quality control using fastp ###
+
+Saved/Existing output files:
+<WORK>/runs-001/fastq_qc/active/ERR188044_1.fastq.gz
+<WORK>/runs-001/fastq_qc/active/ERR188044_2.fastq.gz
+<WORK>/runs-001/fastq_qc/active/ERR188104_1.fastq.gz
+<WORK>/runs-001/fastq_qc/active/ERR188104_2.fastq.gz
+
+MultiQC report saved to:
+<WORK>/runs-001/fastq_qc/active/multiqc_report/multiqc_fastp_report.html
+   
+#########################################################
+ IOBRpy: Immuno-Oncology Biological Research using Python 
+ If you encounter any issues, please report them at 
+ https://github.com/IOBR/IOBRpy/issues 
+#########################################################
+ Author: Haonan Huang, Dongqiang Zeng
+ Email: interlaken@smu.edu.cn 
+#########################################################
+   

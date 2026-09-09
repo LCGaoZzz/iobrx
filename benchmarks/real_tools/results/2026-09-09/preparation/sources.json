@@ -1,0 +1,124 @@
+[
+  {
+    "file": "data/geuvadis/ERR188044_1.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR188/ERR188044/ERR188044_1.fastq.gz",
+    "read_prefix": 100000,
+    "bytes": 6735333,
+    "sha256": "151b10762a37114d5935eacffda17a06eac4874368a914876219775d06c5d93a",
+    "download_or_reuse_seconds": 0.0035049539983447175,
+    "decompressed_sha256": "95a4469fafdfc632b4482f10c32989ae57ab68c2633b315ad54a02b76370f2c8"
+  },
+  {
+    "file": "data/geuvadis/ERR188044_2.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR188/ERR188044/ERR188044_2.fastq.gz",
+    "read_prefix": 100000,
+    "bytes": 6773265,
+    "sha256": "94133e9ea2d4b79d08a33e1c02c8e35807a412e800ce9513f0799530514e2701",
+    "download_or_reuse_seconds": 0.003370710001036059,
+    "decompressed_sha256": "ffa910c554dad9c7c332de7a3255c84e7c44dd37ddb7c20c0b263cab70ded079"
+  },
+  {
+    "file": "data/geuvadis/ERR188104_1.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR188/ERR188104/ERR188104_1.fastq.gz",
+    "read_prefix": 100000,
+    "bytes": 6578677,
+    "sha256": "4e22bcbe226b4462302994c0a070184ba53c01e4f7d9edfe90bd335703a67b31",
+    "download_or_reuse_seconds": 0.003499956999803544,
+    "decompressed_sha256": "e59766f5bc22364c95f734e10176399553f15980af316462d7668a5340d7e445"
+  },
+  {
+    "file": "data/geuvadis/ERR188104_2.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/ERR188/ERR188104/ERR188104_2.fastq.gz",
+    "read_prefix": 100000,
+    "bytes": 6625284,
+    "sha256": "73c3e484a75598204f0c269f9f237a110ad12f74ecb862411b42ef053bd6947a",
+    "download_or_reuse_seconds": 0.003292341998530901,
+    "decompressed_sha256": "bc81d20dbf66d6734244accbedf05d45e843a43488bdf61467f3624c15d35a7f"
+  },
+  {
+    "file": "data/yeast/reads/sampleA_1.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/DRR392/DRR392086/DRR392086_1.fastq.gz",
+    "read_prefix": 30000,
+    "bytes": 1082674,
+    "sha256": "67d5a5daa025c0dd2e26265ceeb5b2445ced0d3d41fac3e4a7ebdc433b71cf5d",
+    "download_or_reuse_seconds": 0.0007436929990944918,
+    "decompressed_sha256": "96f5cdfcfe45d7a6b374be383ec2fefc95f67406917e8c2ab6bb34ee917bd1d2"
+  },
+  {
+    "file": "data/yeast/reads/sampleA_2.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/DRR392/DRR392086/DRR392086_2.fastq.gz",
+    "read_prefix": 30000,
+    "bytes": 1083744,
+    "sha256": "75f2357891a1bc97ed8a899f4dcead438091a32c4b79532c975a383786e6bdd1",
+    "download_or_reuse_seconds": 0.0007029109983704984,
+    "decompressed_sha256": "6fd5e0f1663ba078d45be0cff9468b4783d622a6498b161003cd78ce5e4e5838"
+  },
+  {
+    "file": "data/yeast/reads/sampleB_1.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/DRR392/DRR392094/DRR392094_1.fastq.gz",
+    "read_prefix": 30000,
+    "bytes": 1163893,
+    "sha256": "1a67d213a4df471aef5022100f75989f4969666121a5106787a8f7c8cd407ecc",
+    "download_or_reuse_seconds": 0.000678919999700156,
+    "decompressed_sha256": "d0ebb56ac49d3a62ecfade713c515759201d196abaef3716413062485d1395b2"
+  },
+  {
+    "file": "data/yeast/reads/sampleB_2.fastq.gz",
+    "url": "https://ftp.sra.ebi.ac.uk/vol1/fastq/DRR392/DRR392094/DRR392094_2.fastq.gz",
+    "read_prefix": 30000,
+    "bytes": 1179686,
+    "sha256": "36fcc6f4cb4fb93e9b1c21b31c0cafdbf794751b8c1c99b321c79cc15155254d",
+    "download_or_reuse_seconds": 0.0006666249992122175,
+    "decompressed_sha256": "236cc583d7f30fdfe2fb0f5fa2ff8bf247e49a68cceabe175b3c2d22c9e8423b"
+  },
+  {
+    "file": "data/gencode.v44.transcripts.fa.gz",
+    "url": "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_44/gencode.v44.transcripts.fa.gz",
+    "read_prefix": null,
+    "bytes": 82601810,
+    "sha256": "50a4143885523829c2fc8b1399b97c136ead8f313457165b855d63751a4e63f4",
+    "download_or_reuse_seconds": 0.03781800000069779
+  },
+  {
+    "file": "data/yeast/genome.fa.gz",
+    "url": "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/146/045/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.fna.gz",
+    "read_prefix": null,
+    "bytes": 3843460,
+    "sha256": "1ec41f951b35f2752d5065edeafe6972455609d4383fb36dae12519a60b27a73",
+    "download_or_reuse_seconds": 0.0020390589997987263
+  },
+  {
+    "file": "data/yeast/genes.gtf.gz",
+    "url": "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/146/045/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.gtf.gz",
+    "read_prefix": null,
+    "bytes": 2293663,
+    "sha256": "b43af4bd39ae4d53afe6addb957b448ebdcfba48dd7c18066259b3322fbc8b8c",
+    "download_or_reuse_seconds": 0.0012450869999156566
+  },
+  {
+    "file": "data/NA06985_1.filter.fastq.gz",
+    "url": "https://raw.githubusercontent.com/deepomicslab/SpecHLA/c965423bb263eb4ead599d7cca8d103e616cf1c5/example/exon/NA06985_1.filter.fastq.gz",
+    "read_prefix": null,
+    "bytes": 4689248,
+    "sha256": "00318a0e08d22d4c845afa8c1e8fbfc550e44b385934c732de2f192f200460c5",
+    "download_or_reuse_seconds": 0.0022438750002038432,
+    "decompressed_sha256": "c713f4b0632beb41a244d98ff2d3dfe22a8acd0d047709684851827bae1b3ebb"
+  },
+  {
+    "file": "data/NA06985_2.filter.fastq.gz",
+    "url": "https://raw.githubusercontent.com/deepomicslab/SpecHLA/c965423bb263eb4ead599d7cca8d103e616cf1c5/example/exon/NA06985_2.filter.fastq.gz",
+    "read_prefix": null,
+    "bytes": 4676409,
+    "sha256": "dd2de221c4a65d78465e159a49c0c78a311c48d5bddae170ee8f6430bf3a18c0",
+    "download_or_reuse_seconds": 0.002246074000140652,
+    "decompressed_sha256": "94c784db2e4cf15142b0a49654b99f6a85bc604f6db01b4caacf98648b120049"
+  },
+  {
+    "file": "data/GRCh38.chr6.fa.gz",
+    "url": "https://ftp.ensembl.org/pub/release-110/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.chromosome.6.fa.gz",
+    "read_prefix": null,
+    "bytes": 51500559,
+    "sha256": "f686625e68fed0c94eb30cfdd55f12e21430116fe05e8b9705437715b90b12f7",
+    "download_or_reuse_seconds": 0.023816274999262532
+  }
+]

@@ -5,7 +5,7 @@ build-backend = "maturin"
 [project]
 name = "iobrx"
 version = "0.3.0"
-description = "Bit-exact, multithreaded acceleration layer for IOBRpy (CIBERSORT, signature scoring, TPM, EPIC, quanTIseq, MCP-counter, ESTIMATE, annotation)"
+description = "Accelerated IOBRpy workflows with a pandas API, Rust kernels and scoped numerical parity validation"
 readme = "README.md"
 license = { text = "MIT" }
 license-files = ["LICENSE", "rust/vendor/THIRD_PARTY_NOTICES.md", "rust/vendor/LICENSE.*"]

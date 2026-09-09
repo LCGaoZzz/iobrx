@@ -1,0 +1,1186 @@
+[install_spechap] Starting SpecHap / ExtractHAIRs build...
+[install_spechap] SPEC_HLA_ROOT: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA
+[install_spechap] CONDA_PREFIX: <TOOLCHAIN>
+[install_spechap] Using make -j 4
+[install_spechap] Checking for ARPACK library...
+[install_spechap] Found ARPACK library under <TOOLCHAIN>/lib; skip installation.
+[install_spechap] Building SpecHap...
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- CURRENT CONDA PREFIX: <TOOLCHAIN>
+-- Found HTSlib  : <TOOLCHAIN>/lib/libhts.so
+--    HTSlib include dirs: <TOOLCHAIN>/include/htslib
+--    HTSlib libraries: <TOOLCHAIN>/lib/libhts.so
+-- Found ARPACK  : <TOOLCHAIN>/lib/libarpack.so
+--    ARPACK include dirs: <TOOLCHAIN>/include/arpack
+--    ARPACK libraries: <TOOLCHAIN>/lib/libarpack.so
+-- Configuring done (1.4s)
+-- Generating done (0.0s)
+-- Build files have been written to: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/build
+[  8%] Building CXX object CMakeFiles/SpecHap.dir/frag_io.cpp.o
+[ 16%] Building CXX object CMakeFiles/SpecHap.dir/graph.cpp.o
+[ 25%] Building CXX object CMakeFiles/SpecHap.dir/hic_util.cpp.o
+[ 33%] Building CXX object CMakeFiles/SpecHap.dir/main.cpp.o
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/graph.cpp:4:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/graph.h: In constructor ‘VariantGraph::VariantGraph()’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/graph.h:21:11: warning: ‘VariantGraph::hap_visited’ will be initialized after [-Wreorder]
+   21 |     bool *hap_visited;
+      |           ^~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/graph.h:20:11: warning:   ‘bool* VariantGraph::filtered’ [-Wreorder]
+   20 |     bool *filtered;
+      |           ^~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/graph.cpp:7:1: warning:   when initialized here [-Wreorder]
+    7 | VariantGraph::VariantGraph()
+      | ^~~~~~~~~~~~
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:5:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:30:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+   30 |     std::fstream::streampos nxt_window_start;
+      |                             ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/istream:40,
+                 from /usr/include/c++/13/fstream:40,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:8:
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h: In constructor ‘FragmentReader::FragmentReader(const char*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:31:10: warning: ‘FragmentReader::nxt_window_set’ will be initialized after [-Wreorder]
+   31 |     bool nxt_window_set;
+      |          ^~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:28:14: warning:   ‘uint32_t FragmentReader::intended_window_end’ [-Wreorder]
+   28 |     uint32_t intended_window_end;
+      |              ^~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:38:1: warning:   when initialized here [-Wreorder]
+   38 | FragmentReader::FragmentReader(const char *file_name)
+      | ^~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp: In member function ‘bool FragmentReader::get_next_pe(Fragment&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:61:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+   61 |     std::fstream::streampos curr_pos;
+      |                             ^~~~~~~~
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:99:33: warning: comparison of integer expressions of different signedness: ‘std::vector<std::basic_string<char> >::size_type’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+   99 |         if (this->buffer.size() < estimated_buffer_len)
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:130:18: warning: unused variable ‘tmp’ [-Wunused-variable]
+  130 |             auto tmp = 33;
+      |                  ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp: In member function ‘bool FragmentReader::get_next_tenx(Fragment&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:170:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+  170 |     std::fstream::streampos curr_pos;
+      |                             ^~~~~~~~
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:204:33: warning: comparison of integer expressions of different signedness: ‘std::vector<std::basic_string<char> >::size_type’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+  204 |         if (this->buffer.size() < estimated_buffer_len)
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:211:22: warning: unused variable ‘name’ [-Wunused-variable]
+  211 |         std::string &name = this->buffer[1];
+      |                      ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp: In member function ‘bool FragmentReader::get_next_hic(Fragment&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:274:33: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+  274 |         std::fstream::streampos curr_pos = this->tell();
+      |                                 ^~~~~~~~
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:299:33: warning: comparison of integer expressions of different signedness: ‘std::vector<std::basic_string<char> >::size_type’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+  299 |         if (this->buffer.size() < estimated_buffer_len)
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:307:22: warning: unused variable ‘name’ [-Wunused-variable]
+  307 |         std::string &name = this->buffer[1];
+      |                      ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp: In member function ‘bool FragmentReader::get_next_nanopore(Fragment&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:363:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+  363 |     std::fstream::streampos curr_pos;
+      |                             ^~~~~~~~
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:400:33: warning: comparison of integer expressions of different signedness: ‘std::vector<std::basic_string<char> >::size_type’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+  400 |         if (this->buffer.size() < estimated_buffer_len)
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:368:13: warning: variable ‘index_idx’ set but not used [-Wunused-but-set-variable]
+  368 |         int index_idx = 2;
+      |             ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:407:22: warning: unused variable ‘name’ [-Wunused-variable]
+  407 |         std::string &name = this->buffer[1];
+      |                      ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp: In member function ‘bool FragmentReader::get_next_pacbio(Fragment&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:466:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+  466 |     std::fstream::streampos curr_pos;
+      |                             ^~~~~~~~
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:503:33: warning: comparison of integer expressions of different signedness: ‘std::vector<std::basic_string<char> >::size_type’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+  503 |         if (this->buffer.size() < estimated_buffer_len)
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:471:13: warning: variable ‘index_idx’ set but not used [-Wunused-but-set-variable]
+  471 |         int index_idx = 2;
+      |             ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:510:22: warning: unused variable ‘name’ [-Wunused-variable]
+  510 |         std::string &name = this->buffer[1];
+      |                      ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp: In member function ‘bool FragmentReader::get_next_matrix(std::vector<Fragment>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:567:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+  567 |     std::fstream::streampos curr_pos;
+      |                             ^~~~~~~~
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:585:24: warning: comparison of integer expressions of different signedness: ‘long unsigned int’ and ‘int’ [-Wsign-compare]
+  585 |         if (token_size < estimated_buffer_len)
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:572:13: warning: unused variable ‘index_idx’ [-Wunused-variable]
+  572 |         int index_idx = 2;
+      |             ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp: In member function ‘bool FragmentReader::get_next_hybrid(Fragment&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:675:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+  675 |     std::fstream::streampos curr_pos;
+      |                             ^~~~~~~~
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:696:24: warning: comparison of integer expressions of different signedness: ‘long unsigned int’ and ‘int’ [-Wsign-compare]
+  696 |         if (token_size < estimated_buffer_len)
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:733:33: warning: comparison of integer expressions of different signedness: ‘std::vector<std::basic_string<char> >::size_type’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+  733 |         if (this->buffer.size() < estimated_buffer_len)
+      |             ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.cpp:741:22: warning: unused variable ‘name’ [-Wunused-variable]
+  741 |         std::string &name = this->buffer[1];
+      |                      ^~~~
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:9,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:10,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.h:9,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/main.cpp:2:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:30:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+   30 |     std::fstream::streampos nxt_window_start;
+      |                             ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/ostream:40,
+                 from /usr/include/c++/13/iostream:41,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/main.cpp:1:
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h: In member function ‘uint Spectral::setBlkIdx(uint)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:137:5: warning: no return statement in function returning non-void [-Wreturn-type]
+  137 |     }
+      |     ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h: In member function ‘int VCFReader::get_next_record_contig(ptr_ResultforSingleVariant&, bool)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:127:17: warning: unused variable ‘tmp’ [-Wunused-variable]
+  127 |             int tmp = 33;
+      |                 ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:113:21: warning: variable ‘ndp’ set but not used [-Wunused-but-set-variable]
+  113 |         int dp = 0, ndp;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:114:21: warning: variable ‘naf’ set but not used [-Wunused-but-set-variable]
+  114 |         int af = 0, naf;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:116:21: warning: variable ‘nps’ set but not used [-Wunused-but-set-variable]
+  116 |         int ps = 0, nps;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/main.cpp: In function ‘int main(int, char**)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/main.cpp:117:13: warning: unused variable ‘columns’ [-Wunused-variable]
+  117 |         int columns = getenv("COLUMNS") ? atoi(getenv("COLUMNS")) : 80;
+      |             ^~~~~~~
+[ 41%] Building CXX object CMakeFiles/SpecHap.dir/phaser.cpp.o
+[ 50%] Building CXX object CMakeFiles/SpecHap.dir/results.cpp.o
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:5:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h: In constructor ‘ResultforSingleVariant::ResultforSingleVariant()’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:55:30: warning: ‘ResultforSingleVariant::L1_G0’ will be initialized after [-Wreorder]
+   55 |     int L0_G0, L0_G1, L1_G1, L1_G0;            //L0: local hap 0, L1: local hap 1, G1: global hap 1, G0: global hap 0
+      |                              ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:49:9: warning:   ‘int ResultforSingleVariant::ad0’ [-Wreorder]
+   49 |     int ad0, ad1;
+      |         ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:10:1: warning:   when initialized here [-Wreorder]
+   10 | ResultforSingleVariant::ResultforSingleVariant()
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:57:18: warning: ‘ResultforSingleVariant::not_rescued’ will be initialized after [-Wreorder]
+   57 |     int rescued, not_rescued;
+      |                  ^~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:56:12: warning:   ‘double ResultforSingleVariant::MMD’ [-Wreorder]
+   56 |     double MMD;
+      |            ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:10:1: warning:   when initialized here [-Wreorder]
+   10 | ResultforSingleVariant::ResultforSingleVariant()
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h: In constructor ‘ResultforSingleVariant::ResultforSingleVariant(bcf1_t*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:55:30: warning: ‘ResultforSingleVariant::L1_G0’ will be initialized after [-Wreorder]
+   55 |     int L0_G0, L0_G1, L1_G1, L1_G0;            //L0: local hap 0, L1: local hap 1, G1: global hap 1, G0: global hap 0
+      |                              ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:49:9: warning:   ‘int ResultforSingleVariant::ad0’ [-Wreorder]
+   49 |     int ad0, ad1;
+      |         ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:18:1: warning:   when initialized here [-Wreorder]
+   18 | ResultforSingleVariant::ResultforSingleVariant(bcf1_t *record)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:57:18: warning: ‘ResultforSingleVariant::not_rescued’ will be initialized after [-Wreorder]
+   57 |     int rescued, not_rescued;
+      |                  ^~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:56:12: warning:   ‘double ResultforSingleVariant::MMD’ [-Wreorder]
+   56 |     double MMD;
+      |            ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:18:1: warning:   when initialized here [-Wreorder]
+   18 | ResultforSingleVariant::ResultforSingleVariant(bcf1_t *record)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h: In constructor ‘ResultforSingleVariant::ResultforSingleVariant(const double&, const uint&, const int&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:53:10: warning: ‘ResultforSingleVariant::pos’ will be initialized after [-Wreorder]
+   53 |     uint pos;
+      |          ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:51:9: warning:   ‘int ResultforSingleVariant::dp’ [-Wreorder]
+   51 |     int dp;
+      |         ^~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:27:1: warning:   when initialized here [-Wreorder]
+   27 | ResultforSingleVariant::ResultforSingleVariant(const double &qual, const uint &pos, const int &dp)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:55:30: warning: ‘ResultforSingleVariant::L1_G0’ will be initialized after [-Wreorder]
+   55 |     int L0_G0, L0_G1, L1_G1, L1_G0;            //L0: local hap 0, L1: local hap 1, G1: global hap 1, G0: global hap 0
+      |                              ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:49:9: warning:   ‘int ResultforSingleVariant::ad0’ [-Wreorder]
+   49 |     int ad0, ad1;
+      |         ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:27:1: warning:   when initialized here [-Wreorder]
+   27 | ResultforSingleVariant::ResultforSingleVariant(const double &qual, const uint &pos, const int &dp)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:57:18: warning: ‘ResultforSingleVariant::not_rescued’ will be initialized after [-Wreorder]
+   57 |     int rescued, not_rescued;
+      |                  ^~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:56:12: warning:   ‘double ResultforSingleVariant::MMD’ [-Wreorder]
+   56 |     double MMD;
+      |            ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:27:1: warning:   when initialized here [-Wreorder]
+   27 | ResultforSingleVariant::ResultforSingleVariant(const double &qual, const uint &pos, const int &dp)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h: In copy constructor ‘ResultforSingleVariant::ResultforSingleVariant(const ResultforSingleVariant&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:55:30: warning: ‘ResultforSingleVariant::L1_G0’ will be initialized after [-Wreorder]
+   55 |     int L0_G0, L0_G1, L1_G1, L1_G0;            //L0: local hap 0, L1: local hap 1, G1: global hap 1, G0: global hap 0
+      |                              ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:55:23: warning:   ‘int ResultforSingleVariant::L1_G1’ [-Wreorder]
+   55 |     int L0_G0, L0_G1, L1_G1, L1_G0;            //L0: local hap 0, L1: local hap 1, G1: global hap 1, G0: global hap 0
+      |                       ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:38:1: warning:   when initialized here [-Wreorder]
+   38 | ResultforSingleVariant::ResultforSingleVariant(const ResultforSingleVariant &rhs)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:55:23: warning: ‘ResultforSingleVariant::L1_G1’ will be initialized after [-Wreorder]
+   55 |     int L0_G0, L0_G1, L1_G1, L1_G0;            //L0: local hap 0, L1: local hap 1, G1: global hap 1, G0: global hap 0
+      |                       ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:53:10: warning:   ‘uint ResultforSingleVariant::pos’ [-Wreorder]
+   53 |     uint pos;
+      |          ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:38:1: warning:   when initialized here [-Wreorder]
+   38 | ResultforSingleVariant::ResultforSingleVariant(const ResultforSingleVariant &rhs)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:53:10: warning: ‘ResultforSingleVariant::pos’ will be initialized after [-Wreorder]
+   53 |     uint pos;
+      |          ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:51:9: warning:   ‘int ResultforSingleVariant::dp’ [-Wreorder]
+   51 |     int dp;
+      |         ^~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:38:1: warning:   when initialized here [-Wreorder]
+   38 | ResultforSingleVariant::ResultforSingleVariant(const ResultforSingleVariant &rhs)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:51:9: warning: ‘ResultforSingleVariant::dp’ will be initialized after [-Wreorder]
+   51 |     int dp;
+      |         ^~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:49:9: warning:   ‘int ResultforSingleVariant::ad0’ [-Wreorder]
+   49 |     int ad0, ad1;
+      |         ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:38:1: warning:   when initialized here [-Wreorder]
+   38 | ResultforSingleVariant::ResultforSingleVariant(const ResultforSingleVariant &rhs)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:57:18: warning: ‘ResultforSingleVariant::not_rescued’ will be initialized after [-Wreorder]
+   57 |     int rescued, not_rescued;
+      |                  ^~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.h:56:12: warning:   ‘double ResultforSingleVariant::MMD’ [-Wreorder]
+   56 |     double MMD;
+      |            ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:38:1: warning:   when initialized here [-Wreorder]
+   38 | ResultforSingleVariant::ResultforSingleVariant(const ResultforSingleVariant &rhs)
+      | ^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/results.cpp:38:1: warning: ‘ResultforSingleVariant::alt_count’ is initialized with itself [-Winit-self]
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:9,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:10,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.h:9,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:5:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:30:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+   30 |     std::fstream::streampos nxt_window_start;
+      |                             ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/istream:40,
+                 from /usr/include/c++/13/fstream:40,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:8:
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+[ 58%] Building CXX object CMakeFiles/SpecHap.dir/spectral.cpp.o
+[ 66%] Building CXX object CMakeFiles/SpecHap.dir/tenx_util.cpp.o
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.h:12,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.cpp:4:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:30:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+   30 |     std::fstream::streampos nxt_window_start;
+      |                             ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/istream:40,
+                 from /usr/include/c++/13/fstream:40,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:8:
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:9,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:5:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:30:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+   30 |     std::fstream::streampos nxt_window_start;
+      |                             ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/istream:40,
+                 from /usr/include/c++/13/fstream:40,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:8:
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h: In member function ‘uint Spectral::setBlkIdx(uint)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:137:5: warning: no return statement in function returning non-void [-Wreturn-type]
+  137 |     }
+      |     ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.cpp: In member function ‘void Barcode::get_barcode_support(ptr_PhasedBlock)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.cpp:104:17: warning: variable ‘h1p’ set but not used [-Wunused-but-set-variable]
+  104 |     double h0p, h1p;
+      |                 ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h: In member function ‘int VCFReader::get_next_record_contig(ptr_ResultforSingleVariant&, bool)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:127:17: warning: unused variable ‘tmp’ [-Wunused-variable]
+  127 |             int tmp = 33;
+      |                 ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.h: In constructor ‘BarcodeLinkers::BarcodeLinkers(ChromoPhaser*, uint)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.h:42:10: warning: ‘BarcodeLinkers::max_barcode_spanning’ will be initialized after [-Wreorder]
+   42 |     uint max_barcode_spanning;
+      |          ^~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.h:41:22: warning:   ‘RegionFragStats* BarcodeLinkers::regionFragStats’ [-Wreorder]
+   41 |     RegionFragStats *regionFragStats;
+      |                      ^~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.cpp:142:1: warning:   when initialized here [-Wreorder]
+  142 | BarcodeLinkers::BarcodeLinkers(ChromoPhaser *chromo_phaser, uint max_barcode_spanning):
+      | ^~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:113:21: warning: variable ‘ndp’ set but not used [-Wunused-but-set-variable]
+  113 |         int dp = 0, ndp;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:114:21: warning: variable ‘naf’ set but not used [-Wunused-but-set-variable]
+  114 |         int af = 0, naf;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:116:21: warning: variable ‘nps’ set but not used [-Wunused-but-set-variable]
+  116 |         int ps = 0, nps;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.h: In constructor ‘BarcodeLinkers::BarcodeLinkers(uint)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.h:42:10: warning: ‘BarcodeLinkers::max_barcode_spanning’ will be initialized after [-Wreorder]
+   42 |     uint max_barcode_spanning;
+      |          ^~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.h:40:19: warning:   ‘ChromoPhaser* BarcodeLinkers::chromo_phaser’ [-Wreorder]
+   40 |     ChromoPhaser *chromo_phaser;
+      |                   ^~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/tenx_util.cpp:168:1: warning:   when initialized here [-Wreorder]
+  168 | BarcodeLinkers::BarcodeLinkers(uint max_barcode_spanning)
+      | ^~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp: In constructor ‘Phaser::Phaser(const std::string&, const std::string&, std::vector<std::basic_string<char> >&, const std::string&, std::vector<double>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:18:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::basic_string<char> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   18 |     for (int i = 0; i < fnfrags.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp: In member function ‘int Phaser::load_contig_records(ChromoPhaser*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:74:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint’ {aka ‘unsigned int’} [-Wsign-compare]
+   74 |     for (int i = 0; i < chromo_phaser->variant_count; i++)
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp: In member function ‘int Phaser::load_contig_blocks(ChromoPhaser*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:102:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint’ {aka ‘unsigned int’} [-Wsign-compare]
+  102 |     for (int i = 0; i < chromo_phaser->variant_count; i++)
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp: In member function ‘void Phaser::phasing()’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:132:28: warning: comparison of integer expressions of different signedness: ‘uint’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+  132 |     for (uint rid = 0; rid < frvcf->contigs_count; rid++)
+      |                        ~~~~^~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp: In member function ‘void Phaser::phase_HiC_recursive(ChromoPhaser*, std::set<unsigned int>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:270:64: warning: comparison of integer expressions of different signedness: ‘std::map<unsigned int, unsigned int>::size_type’ {aka ‘long unsigned int’} and ‘int’ [-Wsign-compare]
+  270 |     while (n_recursion < RECURSIVE_LIMIT || block_idxes.size() != prev_blk_count)
+      |                                             ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:295:45: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  295 |                 if (phased + HiC_poss_block >= prev_block_idxes.size())
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:299:59: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  299 |                     if (HiC_poss_block + phased + overlap >= prev_block_idxes.size())
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:309:31: warning: comparison of integer expressions of different signedness: ‘uint’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+  309 |                 while ( count < overlap )
+      |                         ~~~~~~^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:318:55: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  318 |                 if (phased + HiC_poss_block - overlap >= prev_block_idxes.size())
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:322:49: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  322 |                     if (phased + HiC_poss_block >= prev_block_idxes.size())
+      |                         ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.cpp:277:14: warning: variable ‘start’ set but not used [-Wunused-but-set-variable]
+  277 |         uint start = 0, end = 0;
+      |              ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h: In member function ‘uint Spectral::setBlkIdx(uint)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:137:5: warning: no return statement in function returning non-void [-Wreturn-type]
+  137 |     }
+      |     ^
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/phaser.h:9,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:11:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h: In member function ‘int VCFReader::get_next_record_contig(ptr_ResultforSingleVariant&, bool)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:127:17: warning: unused variable ‘tmp’ [-Wunused-variable]
+  127 |             int tmp = 33;
+      |                 ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:113:21: warning: variable ‘ndp’ set but not used [-Wunused-but-set-variable]
+  113 |         int dp = 0, ndp;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:114:21: warning: variable ‘naf’ set but not used [-Wunused-but-set-variable]
+  114 |         int af = 0, naf;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:116:21: warning: variable ‘nps’ set but not used [-Wunused-but-set-variable]
+  116 |         int ps = 0, nps;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::reset()’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:152:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  152 |     for (int i = 0; i < OPERATIONS.size(); i++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::set_prev_buff(ViewMap&, CViewMap&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:178:12: warning: unused variable ‘w’ [-Wunused-variable]
+  178 |     double w = 1;
+      |            ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::read_fragment_10x(int, ViewMap&, CViewMap&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:277:17: warning: unused variable ‘dd’ [-Wunused-variable]
+  277 |             int dd = 9;
+      |                 ^~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::add_snp_edge(Fragment&, ViewMap&, CViewMap&, double)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:430:20: warning: unused variable ‘score’ [-Wunused-variable]
+  430 |             double score = abs(P_H1 - P_H2);
+      |                    ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::add_snp_edge_barcode(ViewMap&, CViewMap&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:492:24: warning: unused variable ‘score’ [-Wunused-variable]
+  492 |                 double score = abs(P_H1 - P_H2);
+      |                        ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::add_snp_edge_hic(ViewMap&, CViewMap&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:555:24: warning: unused variable ‘score’ [-Wunused-variable]
+  555 |                 double score = abs(P_H1 - P_H2);
+      |                        ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::cal_prob_matrix(ViewMap&, CViewMap&, GMatrix*, CMatrix*, VariantGraph*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:593:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint’ {aka ‘unsigned int’} [-Wsign-compare]
+  593 |     for (int i = 0; i < var_count; i++)
+      |                     ~~^~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:595:27: warning: comparison of integer expressions of different signedness: ‘int’ and ‘uint’ {aka ‘unsigned int’} [-Wsign-compare]
+  595 |         for (int j = 0; j < var_count; j++)
+      |                         ~~^~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:601:18: warning: unused variable ‘tm1’ [-Wunused-variable]
+  601 |             auto tm1 = weighted_graph(2 * i, 2*j);
+      |                  ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:602:18: warning: unused variable ‘tm3’ [-Wunused-variable]
+  602 |             auto tm3 = weighted_graph(2*i, 2*j+1);
+      |                  ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:589:10: warning: unused variable ‘tsize’ [-Wunused-variable]
+  589 |     auto tsize = weighted_graph.size();
+      |          ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::solver()’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:704:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+  704 |     for (int k = 0; k < var_count - 1; k++) {
+      |                     ~~^~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:715:14: warning: unused variable ‘tsize’ [-Wunused-variable]
+  715 |         auto tsize = this->adjacency_matrix.size();
+      |              ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:716:14: warning: unused variable ‘tm1’ [-Wunused-variable]
+  716 |         auto tm1 = this->adjacency_matrix(2 * k, 2 * j);
+      |              ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:717:14: warning: unused variable ‘tm3’ [-Wunused-variable]
+  717 |         auto tm3 = this->adjacency_matrix(2 * k, 2 * j + 1);
+      |              ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:732:17: warning: unused variable ‘tmp’ [-Wunused-variable]
+  732 |             int tmp = 9;
+      |                 ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::add_snp_edge_barcode_subroutine(ViewMap&, CViewMap&, VariantGraph&, std::map<unsigned int, int>&, std::map<unsigned int, unsigned int>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:829:24: warning: unused variable ‘score’ [-Wunused-variable]
+  829 |                 double score = abs(P_H1 - P_H2);
+      |                        ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::add_snp_edge_subroutine(ViewMap&, CViewMap&, VariantGraph&, std::map<unsigned int, int>&, std::map<unsigned int, unsigned int>&, std::map<unsigned int, double>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:921:24: warning: unused variable ‘score’ [-Wunused-variable]
+  921 |                 double score = abs(P_H1 - P_H2);
+      |                        ^~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::solver_subroutine(int, std::map<unsigned int, int>&, std::map<unsigned int, unsigned int>&, std::map<unsigned int, double>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:966:24: warning: comparison of integer expressions of different signedness: ‘uint’ {aka ‘unsigned int’} and ‘int’ [-Wsign-compare]
+  966 |     for (uint i = 0; i < block_count; i++)
+      |                      ~~^~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::separate_connected_component(const Eigen::VectorXd&, const std::set<unsigned int>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1282:14: warning: unused variable ‘tmp2’ [-Wunused-variable]
+ 1282 |         auto tmp2 = abs(vec(2*i));
+      |              ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1283:14: warning: unused variable ‘tmp3’ [-Wunused-variable]
+ 1283 |         auto tmp3 = abs(vec(2*i+1));
+      |              ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘void Spectral::fragment_supported_flipping_score(ptr_PhasedBlock&, Fragment&, int*, double*, std::map<unsigned int, std::set<unsigned int> >&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1533:20: warning: unused variable ‘j’ [-Wunused-variable]
+ 1533 |         for (auto &j : fragment.snps)
+      |                    ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In member function ‘std::unordered_map<unsigned int, std::set<unsigned int> > Spectral::load_hic_poss_info()’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1697:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::set<unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1697 |     for (int i = 0; i < var_idx.size(); i++)
+      |                     ~~^~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1715:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::set<unsigned int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+ 1715 |     for (int i = 0; i < var_idx.size(); i++)
+      |                     ~~^~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In instantiation of ‘void Spectral::find_connected_component(const Eigen::MatrixBase<Derived>&, const std::set<unsigned int>&) [with Derived = Eigen::Matrix<double, -1, -1>]’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:681:41:   required from here
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1203:10: warning: variable ‘prev_idx’ set but not used [-Wunused-but-set-variable]
+ 1203 |     uint prev_idx, idx, start_idx, i;
+      |          ^~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1203:20: warning: unused variable ‘idx’ [-Wunused-variable]
+ 1203 |     uint prev_idx, idx, start_idx, i;
+      |                    ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1203:36: warning: unused variable ‘i’ [-Wunused-variable]
+ 1203 |     uint prev_idx, idx, start_idx, i;
+      |                                    ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In instantiation of ‘void Spectral::find_connected_component(const Eigen::MatrixBase<Derived>&, const std::set<unsigned int>&) [with Derived = Eigen::Matrix<int, -1, -1>]’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:754:41:   required from here
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1203:10: warning: variable ‘prev_idx’ set but not used [-Wunused-but-set-variable]
+ 1203 |     uint prev_idx, idx, start_idx, i;
+      |          ^~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1203:20: warning: unused variable ‘idx’ [-Wunused-variable]
+ 1203 |     uint prev_idx, idx, start_idx, i;
+      |                    ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1203:36: warning: unused variable ‘i’ [-Wunused-variable]
+ 1203 |     uint prev_idx, idx, start_idx, i;
+      |                                    ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In instantiation of ‘void Spectral::find_connected_component(const Eigen::MatrixBase<Derived>&, const std::set<unsigned int>&, VariantGraph&, std::map<unsigned int, unsigned int>&) [with Derived = Eigen::Matrix<int, -1, -1>]’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:984:41:   required from here
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1166:10: warning: variable ‘prev_idx’ set but not used [-Wunused-but-set-variable]
+ 1166 |     uint prev_idx, start_idx;
+      |          ^~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp: In instantiation of ‘bool Spectral::cal_fiedler_vec(int, const Eigen::MatrixBase<Derived>&, GMatrix&, Eigen::VectorXd&) [with Derived = Eigen::Matrix<double, -1, -1>; GMatrix = Eigen::Matrix<double, -1, -1>; Eigen::VectorXd = Eigen::Matrix<double, -1, 1>]’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1432:36:   required from here
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.cpp:1404:10: warning: variable ‘converge’ set but not used [-Wunused-but-set-variable]
+ 1404 |     bool converge = true;
+      |          ^~~~~~~~
+[ 75%] Building CXX object CMakeFiles/SpecHap.dir/type.cpp.o
+[ 83%] Building CXX object CMakeFiles/SpecHap.dir/util.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/util.cpp: In function ‘void logging(std::ostream&, const std::string&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/util.cpp:10:17: warning: unused variable ‘t’ [-Wunused-variable]
+   10 |     std::time_t t = std::time(nullptr);
+      |                 ^
+[ 91%] Building CXX object CMakeFiles/SpecHap.dir/vcf_io.cpp.o
+In file included from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:9,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:10,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:5:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:30:29: warning: ‘std::ios_base::streampos’ is deprecated: use 'std::streampos' instead [-Wdeprecated-declarations]
+   30 |     std::fstream::streampos nxt_window_start;
+      |                             ^~~~~~~~~~~~~~~~
+In file included from /usr/include/c++/13/ios:44,
+                 from /usr/include/c++/13/istream:40,
+                 from /usr/include/c++/13/fstream:40,
+                 from <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/frag_io.h:8:
+/usr/include/c++/13/bits/ios_base.h:512:28: note: declared here
+  512 |     typedef std::streampos streampos
+      |                            ^~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h: In member function ‘uint Spectral::setBlkIdx(uint)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/spectral.h:137:5: warning: no return statement in function returning non-void [-Wreturn-type]
+  137 |     }
+      |     ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h: In member function ‘int VCFReader::get_next_record_contig(ptr_ResultforSingleVariant&, bool)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:127:17: warning: unused variable ‘tmp’ [-Wunused-variable]
+  127 |             int tmp = 33;
+      |                 ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:113:21: warning: variable ‘ndp’ set but not used [-Wunused-but-set-variable]
+  113 |         int dp = 0, ndp;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:114:21: warning: variable ‘naf’ set but not used [-Wunused-but-set-variable]
+  114 |         int af = 0, naf;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.h:116:21: warning: variable ‘nps’ set but not used [-Wunused-but-set-variable]
+  116 |         int ps = 0, nps;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp: In member function ‘void VCFWriter::header_init()’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:206:9: warning: unused variable ‘rr’ [-Wunused-variable]
+  206 |     int rr = bcf_hdr_write(fp, header);
+      |         ^~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp: In member function ‘void VCFWriter::write_nxt_record(bcf1_t*, ptr_ResultforSingleVariant, unsigned int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:222:13: warning: unused variable ‘tmp’ [-Wunused-variable]
+  222 |         int tmp = 33;
+      |             ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:310:9: warning: unused variable ‘rr’ [-Wunused-variable]
+  310 |     int rr = bcf_write(this->fp, this->header, record_w);
+      |         ^~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp: In member function ‘void VCFWriter::write_nxt_contigs(const char*, ChromoPhaser*, VCFReader&, const std::set<unsigned int>&)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:333:18: warning: unused variable ‘tmp’ [-Wunused-variable]
+  333 |             auto tmp = 44;
+      |                  ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:346:21: warning: unused variable ‘tmp’ [-Wunused-variable]
+  346 |                 int tmp = 2;
+      |                     ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:357:22: warning: unused variable ‘blk_no’ [-Wunused-variable]
+  357 |                 uint blk_no = encountered_phased_block[block];
+      |                      ^~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/SpecHap/vcf_io.cpp:354:17: warning: unused variable ‘mm’ [-Wunused-variable]
+  354 |             int mm = encountered_phased_block.count(block);
+      |                 ^~
+[100%] Linking CXX executable SpecHap
+[100%] Built target SpecHap
+[install_spechap] SpecHap build finished.
+[install_spechap] Building ExtractHAIRs...
+-- CURRENT CONDA PREFIX: <TOOLCHAIN>
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Configuring done (1.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/build
+[  5%] Building CXX object CMakeFiles/ExtractHAIRs.dir/bamread.cpp.o
+[ 11%] Building CXX object CMakeFiles/ExtractHAIRs.dir/edlib.cpp.o
+[ 17%] Building CXX object CMakeFiles/ExtractHAIRs.dir/estimate_hmm_params.cpp.o
+[ 23%] Building CXX object CMakeFiles/ExtractHAIRs.dir/extracthairs.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/bamread.cpp: In function ‘int fetch_func(const bam1_t*, void*, bam_hdr_t*, alignedread*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/bamread.cpp:57:19: warning: comparison of integer expressions of different signedness: ‘int’ and ‘const uint32_t’ {aka ‘const unsigned int’} [-Wsign-compare]
+   57 |     for (i = 0; i < c->n_cigar; ++i) {
+      |                 ~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/bamread.cpp:90:29: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+   90 |                 for (op=1;op<strlen(barcode);op++){
+      |                           ~~^~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/bamread.cpp:111:35: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+  111 |                     for (k = 1; k < strlen(diverg); k++)
+      |                                 ~~^~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/bamread.cpp:18:14: warning: unused variable ‘fp’ [-Wunused-variable]
+   18 |     samFile *fp = (samFile*) data;
+      |              ^~
+[ 29%] Building CXX object CMakeFiles/ExtractHAIRs.dir/fosmidbam_hairs.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/estimate_hmm_params.cpp: In function ‘int realignment_params(char*, REFLIST*, char*, Align_Params*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/estimate_hmm_params.cpp:196:27: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+  196 |                 for (i=0;i<strlen(newregion);i++)
+      |                          ~^~~~~~~~~~~~~~~~~~
+[ 35%] Building CXX object CMakeFiles/ExtractHAIRs.dir/hapfragments.cpp.o
+[ 41%] Building CXX object CMakeFiles/ExtractHAIRs.dir/hashtable.cpp.o
+[ 47%] Building CXX object CMakeFiles/ExtractHAIRs.dir/nw.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hashtable.cpp: In function ‘int hashstring(char*, int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hashtable.cpp:15:18: warning: comparison of integer expressions of different signedness: ‘long unsigned int’ and ‘int’ [-Wsign-compare]
+   15 |         if (hash >= htsize) hash = hash % htsize;
+      |             ~~~~~^~~~~~~~~
+[ 52%] Building CXX object CMakeFiles/ExtractHAIRs.dir/parsebamread.cpp.o
+[ 58%] Building CXX object CMakeFiles/ExtractHAIRs.dir/print_clusters.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp: In function ‘int filter_ref_bnd(FRAGMENT*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp:93:9: warning: unused variable ‘k’ [-Wunused-variable]
+   93 |     int k  = 0;
+      |         ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp:107:1: warning: no return statement in function returning non-void [-Wreturn-type]
+  107 | }
+      | ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp: In function ‘int print_fragment(FRAGMENT*, VARIANT*, FILE*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp:111:14: warning: unused variable ‘tmpp’ [-Wunused-variable]
+  111 |         auto tmpp = 33;
+      |              ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp:120:13: warning: unused variable ‘tmp’ [-Wunused-variable]
+  120 |         int tmp = 33;
+      |             ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp: In function ‘int print_matepair(FRAGMENT*, FRAGMENT*, VARIANT*, FILE*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp:230:13: warning: unused variable ‘tmp’ [-Wunused-variable]
+  230 |         int tmp = 33;
+      |             ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp: In function ‘int print_dup_region_snp(VARIANT*, FILE*, int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/hapfragments.cpp:391:1: warning: control reaches end of non-void function [-Wreturn-type]
+  391 | }
+      | ^
+[ 64%] Building CXX object CMakeFiles/ExtractHAIRs.dir/readfasta.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readfasta.cpp: In function ‘int read_fasta(char*, REFLIST*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readfasta.cpp:215:31: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+  215 |                 for (j = 0; j < seq->seq.l; j++) reflist->sequences[i][j] = toupper(reflist->sequences[i][j]);
+      |                             ~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/parsebamread.cpp: In function ‘int compare_read_SNP(alignedread*, VARIANT*, int, int, int, int, FRAGMENT*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/parsebamread.cpp:14:19: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+   14 |     for (j = 0; j < strlen(varlist[ss].allele1); j++) {
+      |                 ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/parsebamread.cpp:22:23: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+   22 |         for (j = 0; j < strlen(varlist[ss].allele2); j++) {
+      |                     ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/parsebamread.cpp: In function ‘int extract_variants_read(alignedread*, HASHTABLE*, CHROMVARS*, VARIANT*, int, FRAGMENT*, int, REFLIST*, int*, bool)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/parsebamread.cpp:275:14: warning: unused variable ‘tmppp’ [-Wunused-variable]
+  275 |         auto tmppp = 3;
+      |              ^~~~~
+[ 70%] Building CXX object CMakeFiles/ExtractHAIRs.dir/readvariant.cpp.o
+[ 76%] Building CXX object CMakeFiles/ExtractHAIRs.dir/realign_pairHMM.cpp.o
+[ 82%] Building CXX object CMakeFiles/ExtractHAIRs.dir/realignbamread.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp: In function ‘double sum_all_alignments_logspace(char*, char*, Align_Params*, int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:117:13: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  117 |         free(lower_prev);       free(middle_prev);      free(upper_prev);
+      |         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:31:43: note: returned from ‘void* operator new [](std::size_t)’
+   31 |     double* lower_prev = new double[lw + 1];
+      |                                           ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:117:37: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  117 |         free(lower_prev);       free(middle_prev);      free(upper_prev);
+      |                                 ~~~~^~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:32:48: note: returned from ‘void* operator new [](std::size_t)’
+   32 |         double* middle_prev = new double[lw + 1];
+      |                                                ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:117:61: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  117 |         free(lower_prev);       free(middle_prev);      free(upper_prev);
+      |                                                         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:33:47: note: returned from ‘void* operator new [](std::size_t)’
+   33 |         double* upper_prev = new double[lw + 1];
+      |                                               ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:118:13: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  118 |         free(lower_curr);       free(middle_curr);      free(upper_curr);
+      |         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:34:47: note: returned from ‘void* operator new [](std::size_t)’
+   34 |         double* lower_curr = new double[lw + 1];
+      |                                               ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:118:37: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  118 |         free(lower_curr);       free(middle_curr);      free(upper_curr);
+      |                                 ~~~~^~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:35:48: note: returned from ‘void* operator new [](std::size_t)’
+   35 |         double* middle_curr = new double[lw + 1];
+      |                                                ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:118:61: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  118 |         free(lower_curr);       free(middle_curr);      free(upper_curr);
+      |                                                         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:36:47: note: returned from ‘void* operator new [](std::size_t)’
+   36 |         double* upper_curr = new double[lw + 1];
+      |                                               ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp: In function ‘double sum_all_alignments_fast(char*, char*, Align_Params*, int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:228:13: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  228 |         free(lower_prev);       free(middle_prev);      free(upper_prev);
+      |         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:132:40: note: returned from ‘void* operator new [](std::size_t)’
+  132 |     auto lower_prev = new double[lw + 1];
+      |                                        ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:228:37: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  228 |         free(lower_prev);       free(middle_prev);      free(upper_prev);
+      |                                 ~~~~^~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:133:41: note: returned from ‘void* operator new [](std::size_t)’
+  133 |     auto middle_prev = new double[lw + 1];
+      |                                         ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:228:61: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  228 |         free(lower_prev);       free(middle_prev);      free(upper_prev);
+      |                                                         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:134:40: note: returned from ‘void* operator new [](std::size_t)’
+  134 |     auto upper_prev = new double[lw + 1];
+      |                                        ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:229:13: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  229 |         free(lower_curr);       free(middle_curr);      free(upper_curr);
+      |         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:135:40: note: returned from ‘void* operator new [](std::size_t)’
+  135 |     auto lower_curr = new double[lw + 1];
+      |                                        ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:229:37: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  229 |         free(lower_curr);       free(middle_curr);      free(upper_curr);
+      |                                 ~~~~^~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:136:41: note: returned from ‘void* operator new [](std::size_t)’
+  136 |     auto middle_curr = new double[lw + 1];
+      |                                         ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:229:61: warning: ‘void free(void*)’ called on pointer returned from a mismatched allocation function [-Wmismatched-new-delete]
+  229 |         free(lower_curr);       free(middle_curr);      free(upper_curr);
+      |                                                         ~~~~^~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realign_pairHMM.cpp:137:40: note: returned from ‘void* operator new [](std::size_t)’
+  137 |     auto upper_curr = new double[lw + 1];
+      |                                        ^
+[ 88%] Building C object CMakeFiles/ExtractHAIRs.dir/ssw.c.o
+[ 94%] Building CXX object CMakeFiles/ExtractHAIRs.dir/ssw_cpp.cpp.o
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp: In function ‘unsigned int rand_interval(unsigned int, unsigned int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp:39:20: warning: comparison of integer expressions of different signedness: ‘int’ and ‘const unsigned int’ [-Wsign-compare]
+   39 |         } while (r >= limit);
+      |                  ~~^~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp: In function ‘int realign_HAPs(alignedread*, REFLIST*, int*, VARIANT*, int*, int, FRAGMENT*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp:136:48: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+  136 |         if (positions[0] < 0 || positions[2]-1 >= strlen(read->sequence)){
+      |                                 ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp: In function ‘int realign_and_extract_variants_read(alignedread*, HASHTABLE*, CHROMVARS*, VARIANT*, int, FRAGMENT*, int, REFLIST*)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp:541:13: warning: unused variable ‘tmp3’ [-Wunused-variable]
+  541 |         int tmp3 = 8;
+      |             ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp:606:18: warning: unused variable ‘tmp’ [-Wunused-variable]
+  606 |             auto tmp = 0;
+      |                  ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/realignbamread.cpp:619:27: warning: unused variable ‘tmp3’ [-Wunused-variable]
+  619 |                     auto  tmp3 = 9;
+      |                           ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp: In function ‘int parse_variant_hts(VARIANT*, bcf1_t*, const bcf_hdr_t*, int, int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:220:13: warning: unused variable ‘id’ [-Wunused-variable]
+  220 |         int id = 99;
+      |             ^~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:237:13: warning: unused variable ‘jjdd’ [-Wunused-variable]
+  237 |         int jjdd=0;
+      |             ^~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:264:13: warning: unused variable ‘tmp’ [-Wunused-variable]
+  264 |         int tmp = 33;
+      |             ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:310:13: warning: unused variable ‘m’ [-Wunused-variable]
+  310 |         int m = 2;
+      |             ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:457:29: warning: unused variable ‘rninfo’ [-Wunused-variable]
+  457 |                         int rninfo = 0;
+      |                             ^~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:397:25: warning: variable ‘sninfo’ set but not used [-Wunused-but-set-variable]
+  397 |                     int sninfo = 0;
+      |                         ^~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:247:22: warning: variable ‘ngt’ set but not used [-Wunused-but-set-variable]
+  247 |     int ngt_arr = 0, ngt = 0, *gt = NULL;
+      |                      ^~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:347:12: warning: unused variable ‘k’ [-Wunused-variable]
+  347 |     int j, k;
+      |            ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp: In function ‘void bnd_to_ref_seq(VARIANT*, REFLIST*, int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:788:18: warning: unused variable ‘m’ [-Wunused-variable]
+  788 |             auto m = seq[i];
+      |                  ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:798:22: warning: unused variable ‘c’ [-Wunused-variable]
+  798 |                 auto c = variant->bnd_seq[199];
+      |                      ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:799:22: warning: unused variable ‘k’ [-Wunused-variable]
+  799 |                 auto k = 3;
+      |                      ^
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:808:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+  808 |             for (int i = 0 ; i < strlen(variant->bnd_ins_seq); i++) {
+      |                              ~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp: In function ‘int parse_variant_hts(VARIANT*, bcf1_t*, const bcf_hdr_t*, int, int)’:
+<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/extractHairs/readvariant.cpp:607:1: warning: control reaches end of non-void function [-Wreturn-type]
+  607 | }
+      | ^
+[100%] Linking CXX executable ExtractHAIRs
+[100%] Built target ExtractHAIRs
+[install_spechap] ExtractHAIRs build finished.
+[install_spechap] Marked <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/SpecHLA_RNAseq.sh as executable.
+[install_spechap] Done.
+[SpecHLA_RNAseq] Found SpecHap and ExtractHAIRs in <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin
+[SpecHLA_RNAseq] Delegating to SpecHLA.sh (using caller-provided -u)
+[SpecHLA_RNAseq] SpecHLA.sh: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/SpecHLA.sh
+[SpecHLA_RNAseq] SpecHLA root: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA
+Start profiling HLA for NA06985.
+use 4 threads.
+map the reads to database to assign reads to corresponding genes.
+Can't detect novoalign license, use bowtie2.
+52771 reads; of these:
+  52771 (100.00%) were paired; of these:
+    27282 (51.70%) aligned concordantly 0 times
+    2563 (4.86%) aligned concordantly exactly 1 time
+    22926 (43.44%) aligned concordantly >1 times
+    ----
+    27282 pairs aligned concordantly 0 times; of these:
+      14 (0.05%) aligned discordantly 1 time
+    ----
+    27268 pairs aligned 0 times concordantly or discordantly; of these:
+      54536 mates make up the pairs; of these:
+        53910 (98.85%) aligned 0 times
+        21 (0.04%) aligned exactly 1 time
+        605 (1.11%) aligned >1 times
+48.92% overall alignment rate
+start assigning reads...
+read bam cost 4.5737504959106445
+read no. for A is 1054.
+read no. for B is 802.
+read no. for C is 1081.
+read no. for DPA1 is 618.
+read no. for DPB1 is 2393.
+read no. for DQA1 is 1276.
+read no. for DQB1 is 834.
+read no. for DRB1 is 1193.
+read assigment cost 6.280594348907471
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 105542 sequences (9494975 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 12450, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (121, 144, 178)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (7, 292)
+[M::mem_pestat] mean and std.dev: (150.15, 42.25)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 349)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 105542 reads in 2.199 CPU sec, 2.158 real sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2108 sequences (198595 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1022, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (125, 150, 185)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (5, 305)
+[M::mem_pestat] mean and std.dev: (156.61, 42.93)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 365)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2108 reads in 0.045 CPU sec, 0.012 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_A/HLA_A.fa <WORK>/hla-preflight/NA06985/A.R1.fq.gz <WORK>/hla-preflight/NA06985/A.R2.fq.gz
+[main] Real time: 0.020 sec; CPU: 0.049 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 1604 sequences (152029 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 798, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (124, 150, 180)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (12, 292)
+[M::mem_pestat] mean and std.dev: (154.54, 39.93)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 348)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 1604 reads in 0.019 CPU sec, 0.006 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_B/HLA_B.fa <WORK>/hla-preflight/NA06985/B.R1.fq.gz <WORK>/hla-preflight/NA06985/B.R2.fq.gz
+[main] Real time: 0.013 sec; CPU: 0.022 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2162 sequences (207653 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1070, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (128, 149, 182)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (20, 290)
+[M::mem_pestat] mean and std.dev: (155.95, 40.26)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 344)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2162 reads in 0.041 CPU sec, 0.012 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_C/HLA_C.fa <WORK>/hla-preflight/NA06985/C.R1.fq.gz <WORK>/hla-preflight/NA06985/C.R2.fq.gz
+[main] Real time: 0.020 sec; CPU: 0.044 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 1236 sequences (119293 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 618, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (126, 150, 183)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (12, 297)
+[M::mem_pestat] mean and std.dev: (155.54, 42.07)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 354)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 1236 reads in 0.006 CPU sec, 0.003 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DPA1/HLA_DPA1.fa <WORK>/hla-preflight/NA06985/DPA1.R1.fq.gz <WORK>/hla-preflight/NA06985/DPA1.R2.fq.gz
+[main] Real time: 0.007 sec; CPU: 0.009 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 4786 sequences (465517 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1940, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (123, 146, 180)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (9, 294)
+[M::mem_pestat] mean and std.dev: (152.83, 42.16)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 351)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 4786 reads in 0.114 CPU sec, 0.030 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DPB1/HLA_DPB1.fa <WORK>/hla-preflight/NA06985/DPB1.R1.fq.gz <WORK>/hla-preflight/NA06985/DPB1.R2.fq.gz
+[main] Real time: 0.049 sec; CPU: 0.120 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2552 sequences (247535 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1276, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (131, 154, 190)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (13, 308)
+[M::mem_pestat] mean and std.dev: (161.30, 42.31)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 367)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2552 reads in 0.023 CPU sec, 0.008 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DQA1/HLA_DQA1.fa <WORK>/hla-preflight/NA06985/DQA1.R1.fq.gz <WORK>/hla-preflight/NA06985/DQA1.R2.fq.gz
+[main] Real time: 0.017 sec; CPU: 0.027 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 1668 sequences (160844 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 724, 0, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (125, 149, 178)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (19, 284)
+[M::mem_pestat] mean and std.dev: (153.48, 38.44)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 337)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 1668 reads in 0.041 CPU sec, 0.011 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DQB1/HLA_DQB1.fa <WORK>/hla-preflight/NA06985/DQB1.R1.fq.gz <WORK>/hla-preflight/NA06985/DQB1.R2.fq.gz
+[main] Real time: 0.017 sec; CPU: 0.044 sec
+[M::bwa_idx_load_from_disk] read 0 ALT contigs
+[M::process] read 2386 sequences (228235 bp)...
+[M::mem_pestat] # candidate unique pairs for (FF, FR, RF, RR): (0, 1174, 1, 0)
+[M::mem_pestat] skip orientation FF as there are not enough pairs
+[M::mem_pestat] analyzing insert size distribution for orientation FR...
+[M::mem_pestat] (25, 50, 75) percentile: (124, 146, 176)
+[M::mem_pestat] low and high boundaries for computing mean and std.dev: (20, 280)
+[M::mem_pestat] mean and std.dev: (151.71, 40.31)
+[M::mem_pestat] low and high boundaries for proper pairs: (1, 332)
+[M::mem_pestat] skip orientation RF as there are not enough pairs
+[M::mem_pestat] skip orientation RR as there are not enough pairs
+[M::mem_process_seqs] Processed 2386 reads in 0.032 CPU sec, 0.014 real sec
+[main] Version: 0.7.19-r1273
+[main] CMD: bwa mem -t 4 -U 10000 -L 10000,10000 -R @RG\tID:NA06985\tSM:NA06985 <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA/HLA_DRB1/HLA_DRB1.fa <WORK>/hla-preflight/NA06985/DRB1.R1.fq.gz <WORK>/hla-preflight/NA06985/DRB1.R2.fq.gz
+[main] Real time: 0.022 sec; CPU: 0.035 sec
+start realignment...
+
+Attention: please ensure the platform can run gzip -l automatically, otherwise, it may not continue.
+BAM and VCF are ready.
+Mean depth {'HLA_A': 56, 'HLA_B': 37, 'HLA_C': 48, 'HLA_DPA1': 12, 'HLA_DPB1': 39, 'HLA_DQA1': 38, 'HLA_DQB1': 21, 'HLA_DRB1': 20}
+Minimum Minor Allele Frequency is 0.1.
+parameter:	sample:NA06985	dir:<WORK>/hla-preflight/NA06985	pop:Unknown	gene:HLA_A	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_A.0	100
+HLA_A.1	99.2588932806324
+HLA_A.2	49.407114624506
+HLA_A.3	98.7154150197628
+Select_id	HLA_A.0
+Num of hete small variant is 30 in HLA_A.
+3 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 4.
+Selected combination is  0
+Small variant-phasing of HLA_A is done! Haplotype ratio is 0.527:0.473
+Phasing of HLA_A is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/hla-preflight/NA06985	pop:Unknown	gene:HLA_B	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_B.0	99.2094861660079
+HLA_B.1	98.5665583717448
+HLA_B.2	49.0108803165183
+HLA_B.3	98.7154150197628
+Select_id	HLA_B.0
+Num of hete small variant is 26 in HLA_B.
+3 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 4.
+Selected combination is  0
+Small variant-phasing of HLA_B is done! Haplotype ratio is 0.54:0.46
+Phasing of HLA_B is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/hla-preflight/NA06985	pop:Unknown	gene:HLA_C	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_C.0	97.7339901477833
+HLA_C.1	97.6847290640395
+HLA_C.2	98.0295566502463
+HLA_C.3	97.9802955665025
+HLA_C.4	48.5714285714285
+HLA_C.5	48.5714285714285
+HLA_C.6	97.3891625615763
+HLA_C.7	97.1428571428571
+Select_id	HLA_C.2
+Num of hete small variant is 27 in HLA_C.
+4 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 8.
+Selected combination is  2
+Small variant-phasing of HLA_C is done! Haplotype ratio is 0.481:0.519
+Phasing of HLA_C is done!
+
+
+Num of hete small variant is 0 in HLA_DPA1.
+No heterozygous locus, no need to phase.
+Phasing of HLA_DPA1 is done!
+
+
+Num of hete small variant is 0 in HLA_DPB1.
+No heterozygous locus, no need to phase.
+Phasing of HLA_DPB1 is done!
+
+
+Num of hete small variant is 0 in HLA_DQA1.
+No heterozygous locus, no need to phase.
+Phasing of HLA_DQA1 is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/hla-preflight/NA06985	pop:Unknown	gene:HLA_DQB1	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_DQB1.0	99.8704663212436
+Select_id	HLA_DQB1.0
+Num of hete small variant is 2 in HLA_DQB1.
+1 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 1.
+Selected combination is  0
+Small variant-phasing of HLA_DQB1 is done! Haplotype ratio is 0.331:0.669
+Phasing of HLA_DQB1 is done!
+
+
+parameter:	sample:NA06985	dir:<WORK>/hla-preflight/NA06985	pop:Unknown	gene:HLA_DRB1	db:<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/../../db/HLA
+HLA_DRB1.0	2.80260521042084
+Select_id	HLA_DRB1.0
+Num of hete small variant is 4 in HLA_DRB1.
+1 blocks after phasing.
+Start link blocks with database...
+Num of all possible haps is 1.
+Selected combination is  0
+Small variant-phasing of HLA_DRB1 is done! Haplotype ratio is 0.208:0.792
+Phasing of HLA_DRB1 is done!
+
+
+start annotation...
+parameter:	sample:NA06985	dir:<WORK>/hla-preflight/NA06985	pop:Unknown	wxs:exon	G_nom:0
+Start G group resolution annotation...
+The region with low read depth is masked by N. The cutoff is specified by -k.
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_A.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_A.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_B.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_B.fasta
+The ratio of N (masked) is 0.02 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_C.fasta
+The ratio of N (masked) is 0.02 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_C.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_DPA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_DPA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_DPB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_DPB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_DQA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_DQA1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_DQB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_DQB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.1.HLA_DRB1.fasta
+The ratio of N (masked) is 0.0 for the allele <WORK>/hla-preflight/NA06985/hla.allele.2.HLA_DRB1.fasta
+Clean output dir.
+# version: IPD-IMGT/HLA 3.38.0
+Sample	HLA_A_1	HLA_A_2	HLA_B_1	HLA_B_2	HLA_C_1	HLA_C_2	HLA_DPA1_1	HLA_DPA1_2	HLA_DPB1_1	HLA_DPB1_2	HLA_DQA1_1	HLA_DQA1_2	HLA_DQB1_1	HLA_DQB1_2	HLA_DRB1_1	HLA_DRB1_2
+NA06985	A*03:01:01:01	A*02:01:01:01	B*07:02:01:01	B*57:01:01:01	C*06:02:23	C*07:02:25	DPA1*01:03:01:01	DPA1*01:03:01:01	DPB1*04:01:01:01	DPB1*04:01:01:01	DQA1*01:02:01:01	DQA1*01:02:01:01	DQB1*06:02:01:01	DQB1*06:02:01:01	DRB1*15:01:01:01	DRB1*15:01:01:01
+NA06985 is done.
+[SpecHLA] Using SpecHLA root: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA
+[SpecHLA] Python module 'pysam' is available.
+[SpecHLA] Python module 'Bio' is available.
+[SpecHLA] Prepending '<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin' to PATH
+[SpecHLA] Prepending '<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/fermikit/fermi.kit' to PATH
+[SpecHLA] Prepending '<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin' to LD_LIBRARY_PATH for libwfa2.so.0
+[SpecHLA] Found samtools: <TOOLCHAIN>/bin/samtools
+[SpecHLA] Found bwa: <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/fermikit/fermi.kit/bwa
+[SpecHLA] Found bowtie2: <TOOLCHAIN>/bin/bowtie2
+[SpecHLA] Found freebayes: <TOOLCHAIN>/bin/freebayes
+[SpecHLA] Found bgzip: <TOOLCHAIN>/bin/bgzip
+[SpecHLA] Found tabix: <TOOLCHAIN>/bin/tabix
+[SpecHLA] Forcing '<TOOLCHAIN>/bin' to the front of PATH
+[SpecHLA] Found conda bcftools 1.21; reuse without reinstall: <TOOLCHAIN>/bin/bcftools
+[SpecHLA] Using bundled blastn at <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/bin/blastn.
+[SpecHLA] vcflib is available with required version 1.0.10.
+[SpecHLA] SpecHap or ExtractHAIRs build directory not found;
+[SpecHLA] will ensure dependencies (ARPACK / CMake<3.30) and then build them with install_spechap.sh...
+[SpecHLA] Detected existing ARPACK installation; skip installing it.
+[SpecHLA] Found cmake 3.29.6 (OK: version < 3.30).
+[SpecHLA] Running command: bash <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/install_spechap.sh 4
+[SpecHLA] Finished running install_spechap.sh.
+[SpecHLA] Detected existing Bowtie2 index for DRB reference, skip building.
+[SpecHLA] Running command: bash <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/script/whole/SpecHLA_RNAseq.sh -n NA06985 -1 <WORK>/data/NA06985_1.filter.fastq.gz -2 <WORK>/data/NA06985_2.filter.fastq.gz -o <WORK>/hla-preflight -j 4 -u 1
+[SpecHLA] Wrote merged HLA typing table with 2 row(s) to: <WORK>/hla-preflight/hla_result_merged.txt
+   
+#########################################################
+ IOBRpy: Immuno-Oncology Biological Research using Python 
+ If you encounter any issues, please report them at 
+ https://github.com/IOBR/IOBRpy/issues 
+#########################################################
+ Author: Haonan Huang, Dongqiang Zeng
+ Email: interlaken@smu.edu.cn 
+#########################################################
+   

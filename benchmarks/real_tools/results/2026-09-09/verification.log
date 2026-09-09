@@ -1,0 +1,104 @@
+COMMAND ['<TOOLCHAIN>/bin/python', 'scripts/validate_tutorials.py']
+Validated 28 executed notebooks, 84 figure exports and 4 dataset checksums.
+COMMAND ['<TOOLCHAIN>/bin/python', 'scripts/check_release.py', '--source', '--installed']
+0.3.0
+Installed iobrx 0.3.0: <TOOLCHAIN>/lib/python3.11/site-packages/iobrx/__init__.py
+{'native_available': True, 'native_reason': None, 'sorting': 'numpy CPU dispatch', 'requires_avx512': False, 'bundled_openblas_found': True}
+COMMAND ['<TOOLCHAIN>/bin/python', '-m', 'pip', 'check']
+No broken requirements found.
+COMMAND ['<TOOLCHAIN>/bin/python', '-m', 'pytest', '-q', '--junitxml=<WORK>/local-tests.xml']
+........................................................................ [ 29%]
+........................................................................ [ 58%]
+........................................................................ [ 87%]
+...............................                                          [100%]
+=============================== warnings summary ===============================
+tests/test_api_smoke.py: 344 warnings
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/workflow/calculate_sig_score.py:171: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+    pdata[name] = vec
+
+tests/test_api_smoke.py::test_calculate_sig_score_parity[pca]
+tests/test_api_smoke.py::test_calculate_sig_score_parity[integration]
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/workflow/calculate_sig_score.py:175: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+    pdata['TMEscore_CIR'] = pdata['TMEscoreA_CIR'] - pdata['TMEscoreB_CIR']
+
+tests/test_api_smoke.py::test_calculate_sig_score_parity[pca]
+tests/test_api_smoke.py::test_calculate_sig_score_parity[integration]
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/workflow/calculate_sig_score.py:177: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+    pdata['TMEscore_plus'] = pdata['TMEscoreA_plus'] - pdata['TMEscoreB_plus']
+
+tests/test_api_smoke.py: 344 warnings
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/workflow/calculate_sig_score.py:209: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+    pdata[name] = vec
+
+tests/test_api_smoke.py::test_calculate_sig_score_parity[zscore]
+tests/test_api_smoke.py::test_calculate_sig_score_parity[integration]
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/workflow/calculate_sig_score.py:213: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+    pdata['TMEscore_CIR'] = pdata['TMEscoreA_CIR'] - pdata['TMEscoreB_CIR']
+
+tests/test_api_smoke.py::test_calculate_sig_score_parity[zscore]
+tests/test_api_smoke.py::test_calculate_sig_score_parity[integration]
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/workflow/calculate_sig_score.py:215: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
+    pdata['TMEscore_plus'] = pdata['TMEscoreA_plus'] - pdata['TMEscoreB_plus']
+
+tests/test_api_smoke.py::test_count2tpm_parity_and_packaged_mode
+tests/test_api_smoke.py::test_count2tpm_parity_and_packaged_mode
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrx/_fast/count2tpm_fast.py:483: UserWarning: >>>--- Omit 134 genes of which length is not available !
+    warnings.warn(f">>>--- Omit {int((~valid).sum())} genes of which length is not available !")
+
+tests/test_api_smoke.py::test_count2tpm_parity_and_packaged_mode
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/workflow/count2tpm.py:229: UserWarning: >>>--- Omit 134 genes of which length is not available !
+    warnings.warn(f">>>--- Omit {(~valid).sum()} genes of which length is not available !")
+
+tests/test_parity_bayesprism.py::test_legacy_bit_identical_to_original
+tests/test_parity_bayesprism_rust.py::test_rust_legacy_bit_identical_to_original
+tests/test_parity_bayesprism_rust.py::test_rust_fallback_paths_stay_bit_identical
+tests/test_parity_bayesprism_rust.py::test_rust_fallback_paths_stay_bit_identical
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/bayesprism/prism.py:106: FutureWarning: unique with argument that is not not a Series, Index, ExtensionArray, or np.ndarray is deprecated and will raise in a future version.
+    if len(pd.unique(cell_type_labels)) > len(pd.unique(cell_state_labels)):
+
+tests/test_parity_bayesprism.py: 4 warnings
+tests/test_parity_bayesprism_rust.py: 6 warnings
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrx/_fast/bayesprism_fast.py:1109: FutureWarning: unique with argument that is not not a Series, Index, ExtensionArray, or np.ndarray is deprecated and will raise in a future version.
+    if len(pd.unique(cell_type_labels)) > len(pd.unique(cell_state_labels)):
+
+tests/test_parity_lr_cal.py::test_double_log_nan_skipna_min
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrx/_fast/lr_cal_fast.py:223: RuntimeWarning: invalid value encountered in log2
+    expr = np.log2(sub + 1)
+
+tests/test_parity_lr_cal.py::test_double_log_nan_skipna_min
+  <TOOLCHAIN>/lib/python3.11/site-packages/pandas/core/internals/blocks.py:395: RuntimeWarning: invalid value encountered in log2
+    result = func(self.values, **kwargs)
+
+tests/test_parity_lr_cal.py::test_guard_fallback_object_and_duplicate
+  <REPO>/tests/test_parity_lr_cal.py:231: FutureWarning: Setting an item of incompatible dtype is deprecated and will raise an error in a future version of pandas. Value 'x' has dtype incompatible with float64, please explicitly cast to a compatible dtype first.
+    obj.iloc[0, 1] = "x"                         # forces object dtype
+
+tests/test_parity_nmf.py::test_nmf_output_files_byte_identical
+  <TOOLCHAIN>/lib/python3.11/site-packages/sklearn/decomposition/_nmf.py:1728: ConvergenceWarning: Maximum number of iterations 500 reached. Increase it to improve convergence.
+    warnings.warn(
+
+tests/test_parity_nmf.py::test_nmf_seed_invariance_and_kmax_clamp
+tests/test_parity_nmf.py::test_nmf_seed_invariance_and_kmax_clamp
+tests/test_parity_nmf.py::test_nmf_seed_invariance_and_kmax_clamp
+tests/test_parity_nmf.py::test_nmf_seed_invariance_and_kmax_clamp
+  <TOOLCHAIN>/lib/python3.11/site-packages/sklearn/decomposition/_nmf.py:1728: ConvergenceWarning: Maximum number of iterations 200 reached. Increase it to improve convergence.
+    warnings.warn(
+
+tests/test_parity_orchestration.py::test_immune_postproc_fast_bitwise
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/utils/process_immune_data_batch.py:161: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+    immdata_combined = pd.concat(all_samples, ignore_index=True)
+
+tests/test_parity_orchestration.py::test_immune_postproc_fast_bitwise
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/utils/process_immune_data_batch.py:218: RuntimeWarning: invalid value encountered in scalar divide
+    evenness = float(shannon / np.log(mask.sum()))
+
+tests/test_parity_orchestration.py::test_immune_postproc_fast_bitwise
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrx/_fast/trust4_fast.py:510: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+    immdata_combined = pd.concat(all_samples, ignore_index=True)
+
+tests/test_parity_orchestration.py::test_immune_postproc_fast_bitwise
+  <TOOLCHAIN>/lib/python3.11/site-packages/iobrx/_fast/trust4_fast.py:588: RuntimeWarning: invalid value encountered in scalar divide
+    evenness = float(shannon / np.log(mask.sum()))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+247 passed, 15 deselected, 725 warnings in 50.84s
