@@ -17,6 +17,7 @@ def test_real_stdio_handshake_tools_run_and_boundary(fixtures, tmp_path):
     request = request_for("signature_pca", fixtures, tmp_path / "run")
     request["input"]["path"] = "input.parquet"
     request["output_dir"] = "run"
+    request["provenance"] = "sha256"
 
     async def check():
         config = StdioServerParameters(command=sys.executable, args=["-m", "iobrx_harness.mcp_server", "--workspace", str(tmp_path)])
@@ -26,18 +27,22 @@ def test_real_stdio_handshake_tools_run_and_boundary(fixtures, tmp_path):
                 tools = await session.list_tools()
                 assert {tool.name for tool in tools.tools} == {
                     "iobrx_capabilities", "iobrx_doctor", "iobrx_validate", "iobrx_run", "iobrx_status"}
-                cap = await session.call_tool("iobrx_capabilities", {})
+                cap = await session.call_tool("iobrx_capabilities", {"analysis": "signature_pca"})
                 assert not cap.isError
                 assert "signature_pca" in json.dumps(cap.model_dump())
-                validated = await session.call_tool("iobrx_validate", {"request": request})
-                assert not validated.isError
-                assert not (tmp_path / "run").exists()
+                assert "batch_salmon" not in json.dumps(cap.model_dump())
+                # A known request can run without a separate validation/doctor call.
                 result = await session.call_tool("iobrx_run", {"request": request})
                 assert not result.isError, result
                 manifest = json.loads((tmp_path / "run/results_manifest.json").read_text())
                 assert manifest["status"] == "completed"
                 state = await session.call_tool("iobrx_status", {"path": "run"})
                 assert not state.isError
+                audit = await session.call_tool("iobrx_status", {"path": "run", "verify_hashes": True})
+                assert not audit.isError
+                (tmp_path / "run/result.csv").write_text("edited for downstream work")
+                assert not (await session.call_tool("iobrx_status", {"path": "run"})).isError
+                assert (await session.call_tool("iobrx_status", {"path": "run", "verify_hashes": True})).isError
                 bad = await session.call_tool("iobrx_status", {"path": str(fixtures)})
                 assert bad.isError
                 request["output_dir"] = str(fixtures / "escaped-output")

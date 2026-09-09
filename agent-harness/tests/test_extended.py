@@ -175,7 +175,8 @@ def test_profile_rnaseq_defaults_and_result_files(tmp_path, fixtures, monkeypatc
     assert (tmp_path / "run/cibersort.parquet").exists()
 
 
-def test_zero_feature_and_changed_source(tmp_path, monkeypatch):
+@pytest.mark.parametrize("provenance", ["metadata", "sha256"])
+def test_zero_feature_and_changed_source(tmp_path, monkeypatch, provenance):
     import iobrx
     data = pd.DataFrame(np.arange(32).reshape(8, 4) + 1., index=[f"S{i}" for i in range(8)], columns=list("ABCD"))
     data["D"] = 0.
@@ -183,10 +184,50 @@ def test_zero_feature_and_changed_source(tmp_path, monkeypatch):
     data.to_parquet(source)
     req = request("tme_cluster", source, tmp_path / "run", kind="feature_table", orientation="samples_by_features", scale="linear")
     req["parameters"] = {"min_nc": 2, "max_nc": 3}
+    req["provenance"] = provenance
     assert runtime.validate(req, tmp_path)["status"] == "validated"
     def fake(frame, **kwargs):
         data.assign(A=999.).to_parquet(source)
         return frame
     monkeypatch.setattr(iobrx, "tme_cluster", fake)
     manifest = runtime.run(req, tmp_path)
-    assert manifest["status"] == "failed" and manifest["error"]["code"] == "input_changed"
+    if provenance == "sha256":
+        assert manifest["status"] == "failed" and manifest["error"]["code"] == "input_changed"
+    else:
+        assert manifest["status"] == "completed", manifest
+        result = pd.read_parquet(tmp_path / "run/result.parquet")
+        # The computation used the already loaded matrix, not the later disk edit.
+        np.testing.assert_array_equal(result["A"], data["A"])
+
+
+@pytest.mark.parametrize("provenance", ["metadata", "sha256"])
+def test_external_reference_provenance_is_opt_in(tmp_path, monkeypatch, provenance):
+    import iobrx
+    from iobrx import _run_state
+    from iobrx_harness import extended_runtime
+    reads, index = tmp_path / "reads", tmp_path / "index"
+    reads.mkdir()
+    index.mkdir()
+    for mate in (1, 2):
+        (reads / f"S_{mate}.fastq.gz").write_bytes(b"reads")
+    (index / "reference.bin").write_bytes(b"reference")
+    tool = tmp_path / "salmon"
+    tool.write_text("adapter contract stub")
+    monkeypatch.setattr(extended_runtime.shutil, "which", lambda name: str(tool))
+    def fake(index, path, out, **kwargs):
+        (Path(out) / "quant.sf").write_text("adapter contract result")
+        return {"rc": 0}
+    monkeypatch.setattr(iobrx, "batch_salmon", fake)
+    if provenance == "metadata":
+        def unexpected(*args, **kwargs):
+            raise AssertionError("Default must not hash reads, indices, executables or artifacts")
+        monkeypatch.setattr(runtime, "sha256", unexpected)
+        monkeypatch.setattr(extended_runtime, "sha256", unexpected)
+        monkeypatch.setattr(_run_state, "inventory", unexpected)
+    req = request("batch_salmon", reads, tmp_path / "run", kind="fastq_directory", index=str(index))
+    req["provenance"] = provenance
+    manifest = runtime.run(req, tmp_path)
+    assert manifest["status"] == "completed", manifest
+    assert ("files" in manifest["input"]) == (provenance == "sha256")
+    assert ("sha256" in manifest["input"]["tools"]["salmon"]) == (provenance == "sha256")
+    assert all(("sha256" in artifact) == (provenance == "sha256") for artifact in manifest["artifacts"])

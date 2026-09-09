@@ -1,7 +1,8 @@
 # Additional workflows (harness 0.2.0 / iobrx 0.3.0)
 
 The original 11 requests retain schema version `1.0`. Sixteen new identifiers
-use the same `validate → run → status` interface. `capabilities` is authoritative
+use the same direct `run` interface, with optional validation and result inspection.
+`capabilities` describes the JSON adapter's
 for parameter names, defaults and allowed fields; arbitrary CLI tokens and
 executable overrides are not accepted.
 
@@ -33,14 +34,18 @@ pairing. Keep raw reads and indices outside the new output directory.
 
 Validation checks pairs, paths (including symlinks), files and tools. It cannot
 establish that an index matches the organism, reference version or assay.
-Supply that provenance before analysis. Full SHA-256 input/reference hashing
-adds I/O time, especially for large alignment indices.
+Establish that provenance from the task and reference documentation. Default
+metadata recording avoids reading entire indices just to hash them; optional
+`provenance: sha256` adds full input/reference hashing and its I/O cost.
 
 Native outputs live under `analysis/`; tabular results also receive CSV and
-Parquet exports. Manifests include effective parameters, tool paths/hashes,
-input hashes, elapsed time and artifact hashes. Nonzero tool returns, missing
-outputs and `SystemExit` become failed manifests. Every harness run requires
-a fresh output directory; this is not a job scheduler or automatic retry API.
+Parquet exports. Manifests include effective parameters, tool paths, input/output
+metadata and elapsed time; hashes are opt-in. Nonzero tool returns, missing
+outputs and `SystemExit` become failed manifests. Existing directories are
+usable when there are no run-file collisions. Use the host's job management;
+the harness does not add a scheduler or automatic retry engine. The public
+`runall` workflow retains its own checkpoint checks for safe resume; changing
+harness provenance does not disable those checks.
 
 `tme_profile` defaults to RNA-seq settings here: `QN=false`, `arrays=false`,
 `platform=rnaseq`, original CIBERSORT solver. The direct API and `runall` retain

@@ -41,7 +41,9 @@ def main(argv=None):
     try:
         parser = Parser(description="iobrx Agent harness: JSON stdout, diagnostics on stderr")
         commands = parser.add_subparsers(dest="command", required=True)
-        for command in ("capabilities", "doctor", "schema"):
+        sub = commands.add_parser("capabilities")
+        sub.add_argument("--analysis", help="Return only this analysis and its request schema")
+        for command in ("doctor", "schema"):
             commands.add_parser(command)
         for command in ("validate", "run"):
             sub = commands.add_parser(command)
@@ -50,16 +52,17 @@ def main(argv=None):
         sub = commands.add_parser("status")
         sub.add_argument("path", help="Run directory or results_manifest.json")
         sub.add_argument("--workspace", type=Path)
+        sub.add_argument("--verify-hashes", action="store_true", help="Compare artifacts with hashes recorded by provenance=sha256")
         args = parser.parse_args(argv)
         with diagnostic_output():
             if args.command == "capabilities":
-                result = capabilities()
+                result = capabilities(args.analysis)
             elif args.command == "schema":
                 result = request_schema()
             elif args.command == "doctor":
                 result = runtime.doctor()
             elif args.command == "status":
-                result = runtime.status(args.path, args.workspace or Path.cwd(), args.workspace)
+                result = runtime.status(args.path, args.workspace or Path.cwd(), args.workspace, args.verify_hashes)
             else:
                 if args.request == "-":
                     request = json.load(sys.stdin, parse_constant=lambda x: runtime.reject(f"Non-finite JSON: {x}"))

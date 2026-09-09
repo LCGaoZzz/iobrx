@@ -1,8 +1,12 @@
 # Request and result contract v1
 
 `schema` emits the full JSON Schema, including analysis-specific allowed
-parameters and defaults. `capabilities` adds output meanings and layouts.
-Unknown fields and unsupported choices are errors.
+parameters and defaults. `capabilities --analysis <name>` returns just that
+adapter's contract and output meaning (MCP: `iobrx_capabilities(analysis=...)`).
+Omit the analysis to discover the full catalog.
+Unknown fields and unsupported choices are errors in this JSON adapter. Use
+the public Python API for custom calls outside its schema; this catalog is
+not a capability limit on the library or the agent.
 
 ```json
 {
@@ -38,17 +42,23 @@ Unknown fields and unsupported choices are errors.
   references are human except count-to-TPM, which also supports `mmus`.
 - `threads`: positive integer, default min(8, CPU count). It is passed to
   iobrx's threading API, not a hard memory/CPU limit for BLAS or the OS.
-- Output directory must not exist, even if empty. Relative request paths
+- `provenance`: `metadata` by default (paths, size/mtime, input shape, parameters
+  and versions). Set `sha256` only when a content audit is useful; it reads
+  input/reference contents and tool binaries, checks input stability through
+  execution, and records output hashes. It can add substantial I/O on large data.
+- Output directories may already exist, including with unrelated files. Existing
+  run records, `analysis/` or colliding result exports are protected from overwrite.
+  Relative request paths
   resolve beside the request file. With stdin (`--request -`) they resolve
   against the cwd, or `--workspace` when supplied. MCP paths always resolve
   inside its explicitly configured workspace, including existing symlinks.
 
 Each run records normalized `request.json` and an atomically replaced
 `results_manifest.json`. On success, the manifest has `status=completed`, input
-hash/shape, exact package versions, harness source hash, backend used,
+metadata/shape, installed package versions, backend used,
 `analysis_seconds`, `elapsed_seconds`, warnings and artifact metadata.
 Analysis time includes API resource/solver initialization; total time also
-includes preflight/imports, loading, hashes and output serialization, but not
+includes imports, input checks/loading, optional hashing and output serialization, but not
 process startup. It is not interchangeable with warm notebook benchmark time.
 
 Outputs preserve the Python API's index/columns/dtypes in Parquet. CSV is a
@@ -58,16 +68,31 @@ silently transposed to look like fraction tables. Non-finite output values
 are counted and warned about (e.g. disabled permutation inference or absent
 marker sets). Empty or entirely non-finite numerical tables fail.
 
+Call `run` directly for a known request: it performs its own input checks.
+`validate` is a separate, optional preflight, and `doctor` is optional environment
+diagnosis. There is no required sequence of tool calls.
+
 Exit codes: 0 success/validation/status read; 2 bad CLI/request/input; 3
-environment/execution/result failure; 4 existing output directory; 130 caught
+environment/execution/result or artifact-inspection failure; 4 output collision; 130 caught
 interrupt. After a run directory is created, failures are recorded there.
 Before that point, an error is returned only on stdout. Logs use stderr.
 An uncatchable kill may leave `running` and partial outputs: do not reuse them
 as completed results. Make a new directory for a fresh run.
 
-`status` rehashes listed artifacts and returns failure if any is missing or
-changed. It is read-only and does not change the original manifest, check live
-process state or rehash the original input. Hashes are provenance/integrity
-checks, not signatures against malicious edits of both data and manifest.
+`status` reads recorded execution state and checks whether listed files exist.
+It does not hash them or classify a later edit as a failed analysis. Inspect
+actual tables when judging whether existing results suit the current task.
+
+For an explicit content audit, use `status <run-directory> --verify-hashes`
+(MCP: `iobrx_status(path, verify_hashes=true)`). This also works on older manifests
+that already contain hashes. `integrity.mode` distinguishes existence checking
+from hashing; `missing`, `mismatches` and `unhashed` report inspection findings.
+Missing files, hash mismatches or absent hashes for a requested audit return
+exit 3 / MCP `isError=true`, while preserving the historical `status` and adding
+`inspection_error`. An existence check says nothing about content equality.
+Neither mode modifies the saved manifest, checks process liveness or reruns
+analysis. Hashes are optional provenance, not biological validation or signatures
+against edits of both data and manifest. Metadata alone does not prove inputs
+were unchanged during a run; preserve or snapshot sources when that matters.
 
 For the 16 new adapters, see [extended-workflows.md](extended-workflows.md). Their typed file/directory inputs replace the expression matrix fields when applicable.

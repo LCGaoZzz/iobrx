@@ -52,7 +52,8 @@ def test_all_analyses_match_public_api(analysis, fixtures, tmp_path):
     assert manifest["status"] == "completed"
     assert manifest["analysis_seconds"] > 0
     assert manifest["elapsed_seconds"] >= manifest["analysis_seconds"]
-    assert len(manifest["input"]["sha256"]) == 64
+    assert "sha256" not in manifest["input"]
+    assert manifest["input"]["size_bytes"] > 0
     assert manifest["environment"]["backend"]["requires_avx512"] is False
     matrix, _ = runtime.load_matrix(request["input"])
     expected = direct(analysis, matrix)
@@ -69,6 +70,13 @@ def test_schema_and_capabilities():
     process, data = cli("capabilities")
     assert process.returncode == 0 and len(data["analyses"]) == 27
     assert data["request_schema"] == request_schema()
+    process, selected = cli("capabilities", "--analysis", "cibersort")
+    assert process.returncode == 0 and list(selected["analyses"]) == ["cibersort"]
+    assert selected["request_schema"]["properties"]["analysis"]["enum"] == ["cibersort"]
+    assert len(selected["request_schema"]["allOf"]) == 1
+    Draft202012Validator.check_schema(selected["request_schema"])
+    process, error = cli("capabilities", "--analysis", "nonexistent")
+    assert process.returncode == 2 and error["status"] == "failed"
 
 
 @pytest.mark.parametrize("mutation", ["unknown", "missing_scale", "counts_cib", "mouse_signature", "negative_threads", "string_bool", "unsupported_parameter"])
@@ -145,21 +153,64 @@ def test_relative_paths_validation_no_writes_and_collision(fixtures, tmp_path):
     (tmp_path / "result").mkdir()
     (tmp_path / "result/keep.txt").write_text("keep")
     process, data = cli("run", "--request", tmp_path / "request.json", cwd=fixtures)
-    assert process.returncode == 4 and data["error"]["code"] == "output_exists"
+    assert process.returncode == 0 and data["status"] == "completed", data
     assert (tmp_path / "result/keep.txt").read_text() == "keep"
+    original = (tmp_path / "result/results_manifest.json").read_bytes()
+    process, data = cli("run", "--request", tmp_path / "request.json", cwd=fixtures)
+    assert process.returncode == 4 and data["error"]["code"] == "output_exists"
+    assert (tmp_path / "result/results_manifest.json").read_bytes() == original
 
 
 def test_tamper_and_execution_failure(fixtures, tmp_path):
     request = request_for("signature_pca", fixtures, tmp_path / "result")
+    request["provenance"] = "sha256"
     _, manifest = cli("run", "--request", "-", request=request)
+    assert len(manifest["input"]["sha256"]) == 64
+    process, data = cli("status", tmp_path / "result", "--verify-hashes")
+    assert process.returncode == 0 and data["integrity"]["ok"]
     (tmp_path / "result/result.csv").write_text("altered")
     process, data = cli("status", tmp_path / "result")
+    assert process.returncode == 0 and data["status"] == "completed"
+    assert data["integrity"]["mode"] == "existence"
+    original = (tmp_path / "result/results_manifest.json").read_bytes()
+    process, data = cli("status", tmp_path / "result", "--verify-hashes")
     assert process.returncode == 3 and data["integrity"]["mismatches"] == ["result.csv"]
+    assert data["status"] == "completed" and "inspection_error" in data
+    assert (tmp_path / "result/results_manifest.json").read_bytes() == original
     request["output_dir"] = str(tmp_path / "failed")
     request["parameters"] = {"signature": ["unknown_signature_group"]}
     process, data = cli("run", "--request", "-", request=request)
     assert process.returncode != 0 and data["status"] == "failed"
     assert data["artifacts"] == []
+
+
+def test_default_run_has_no_hash_or_full_doctor_prerequisite(fixtures, tmp_path, monkeypatch):
+    def unexpected(*args, **kwargs):
+        raise AssertionError("Normal runs must not invoke full hashing or doctor")
+    monkeypatch.setattr(runtime, "sha256", unexpected)
+    monkeypatch.setattr(runtime, "doctor", unexpected)
+    request = request_for("signature_pca", fixtures, tmp_path / "result")
+    manifest = runtime.run(request, tmp_path)
+    assert manifest["status"] == "completed", manifest
+    assert all("sha256" not in item for item in manifest["artifacts"])
+    assert runtime.status(tmp_path / "result", tmp_path)["integrity"]["ok"]
+    checked = runtime.status(tmp_path / "result", tmp_path, verify_hashes=True)
+    assert checked["exit_code"] == 3 and checked["integrity"]["unhashed"]
+    assert checked["status"] == "completed"
+    (tmp_path / "result/result.csv").unlink()
+    checked = runtime.status(tmp_path / "result", tmp_path)
+    assert checked["exit_code"] == 3 and checked["integrity"]["missing"] == ["result.csv"]
+    assert checked["status"] == "completed"
+
+
+def test_existing_export_is_not_overwritten(fixtures, tmp_path):
+    output = tmp_path / "result"
+    output.mkdir()
+    (output / "result.csv").write_text("user result")
+    manifest = runtime.run(request_for("signature_pca", fixtures, output), tmp_path)
+    assert manifest["status"] == "failed" and manifest["exit_code"] == 4
+    assert (output / "result.csv").read_text() == "user result"
+    assert not (output / "result.parquet").exists()
 
 
 def test_fallback_and_explicit_rust(fixtures, tmp_path):

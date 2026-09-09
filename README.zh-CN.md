@@ -322,16 +322,18 @@ iobrx 只调度重型二进制，不捆绑它们。请自行安装并放入 `PAT
 
 ## 在 Omicos／Agent 中使用
 
-[agent-harness](https://github.com/LCGaoZzz/iobrx/tree/main/agent-harness) 为 11 项分析提供统一的 JSON CLI、
+[agent-harness](https://github.com/LCGaoZzz/iobrx/tree/main/agent-harness) 为 27 个分析标识提供统一的 JSON CLI、
 可选的 stdio MCP 服务，以及可随 Omicos catalog 分发的 Agent／Skill。
 运行前检查矩阵方向、声明的数据尺度和基因 ID；运行后保存参数、输入／输出
-哈希、环境版本、实际后端和耗时。分析继续调用 iobrx 原有 API。
+元数据、环境版本、实际后端和耗时。分析继续调用 iobrx 原有 API。
+已知请求可以直接运行；能力查询、预检和环境诊断均按需使用。智能体也可以
+直接调用 Python API 完成自定义分析。默认不做全量哈希，SHA-256 审计可显式开启；
+普通结果检查只确认文件是否存在，不会把后续编辑误判为当时的分析失败。
 
 安装 iobrx 后，在仓库根目录运行：
 
 ```bash
 python -m pip install ./agent-harness
-iobrx-agent doctor
 iobrx-agent run --request agent-harness/examples/signature_pca.json
 ```
 

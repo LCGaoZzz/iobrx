@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 
 from .catalog import CATALOG
-from .runtime import HarnessError, load_matrix, reject, resolve_path, sha256
+from .runtime import HarnessError, file_metadata, load_matrix, reject, resolve_path, sha256
 
 
 PATH_FIELDS = ("path", "index", "gtf", "f", "ref")
@@ -41,7 +41,7 @@ def prepare(request):
     matrix = None
     if kind in {"matrix", "feature_table"}:
         spec = inp if kind == "matrix" else {**inp, "orientation": "samples_by_genes", "scale": "preprocessed"}
-        matrix, info = load_matrix(spec)
+        matrix, info = load_matrix(spec, request["provenance"])
         if kind == "feature_table":
             matrix = matrix.T
             info.update(loaded_orientation="samples_by_features", samples=len(matrix), features=len(matrix.columns))
@@ -81,14 +81,19 @@ def prepare(request):
             frame = pd.read_csv(path, sep="\t", nrows=5)
             if "Name" not in frame or not frame["Name"].astype(str).str.count(r"\|").ge(7).all():
                 reject("prepare_salmon requires GENCODE pipe-delimited annotations in the Name column")
-        info = {**inp, "files": inventory([inp[key] for key in PATH_FIELDS if key in inp])}
+        info = {**inp, "input_products": len(products),
+                "sources": {key: {"path": inp[key], "kind": "directory" if Path(inp[key]).is_dir() else "file",
+                                  **file_metadata(inp[key])}
+                            for key in PATH_FIELDS if key in inp}}
+        if request["provenance"] == "sha256":
+            info["files"] = inventory([inp[key] for key in PATH_FIELDS if key in inp])
     tools = list(CATALOG[name].get("required_tools", []))
     if name == "runall":
         tools.append("salmon" if params["mode"] == "salmon" else "STAR")
     missing = [tool for tool in tools if not shutil.which(tool)]
     if missing:
         raise HarnessError("Missing external tools on PATH: " + ", ".join(missing), "environment_error", 3)
-    info["tools"] = {tool: {"path": shutil.which(tool), "sha256": sha256(shutil.which(tool))} for tool in tools}
+    info["tools"] = {tool: {"path": shutil.which(tool), **file_metadata(shutil.which(tool), request["provenance"])} for tool in tools}
     return matrix, info
 
 
@@ -188,13 +193,13 @@ def dispatch(request, matrix):
     return result, "iobrx-api", notes
 
 
-def artifacts(output):
-    """Hash native outputs as well as the standardized tables."""
+def artifacts(output, provenance="metadata"):
+    """List native outputs; hash contents only for an explicitly requested audit."""
     root = Path(output)
     result = []
     for path in sorted((root / "analysis").rglob("*")):
         if path.is_file():
             resolved = resolve_path(str(path), root, root)
             result.append({"path": str(path.relative_to(root)), "format": "native",
-                           "size_bytes": resolved.stat().st_size, "sha256": sha256(resolved)})
+                           **file_metadata(resolved, provenance)})
     return result

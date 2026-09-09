@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Reliability and Omicos hardening
 
+- Simplify the Agent/Skill entrypoints: autonomous API/CLI/MCP use and on-demand references, with no mandatory doctor/validate/run/status sequence. Harness provenance defaults to metadata; SHA-256 auditing is opt-in. Allow existing output directories without run-file collisions, and separate artifact inspection from historical execution status.
 - Propagate QC/MultiQC failures, make dry runs write-free, and bind resume decisions to input/reference/tool and artifact hashes.
 - Require successful per-step records before reusing tables. Retry partial writes and failed merges, invalidate earlier checkpoints for a fresh attempt, and reject legacy run state without these records.
 - Require STAR BAM and GeneCounts together; respect `IOBRX_DISABLE_RUST` in Salmon parsing.

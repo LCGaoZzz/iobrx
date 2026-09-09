@@ -11,6 +11,9 @@ Its sibling runtime is self-contained and needs no install of iobrx-harness.
 The optional installable CLI uses precisely the same source files. Neither
 entrypoint compiles another extension or introduces an AVX-512 requirement.
 
+Use `doctor` when installation diagnosis is useful; it is not a prerequisite
+for an analysis. Normal runs record environment versions and backend information
+without checking every bundled reference or hashing harness sources.
 `doctor` reports interpreter, import path, package versions, harness source
 hash, native availability and bundled OpenBLAS detection. Missing iobrx,
 IOBRpy, required Python dependencies or reference resources yields nonzero

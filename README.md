@@ -365,16 +365,18 @@ iobrpy (references + fallback) and the pinned scientific stack.
 ## Omicos and agent workflows
 
 The [agent harness](https://github.com/LCGaoZzz/iobrx/tree/main/agent-harness) adds a JSON CLI, an optional
-stdio MCP server and a portable Omicos Agent/Skill pair for all 11 analyses.
+stdio MCP server and a portable Omicos Agent/Skill pair for 27 analysis identifiers.
 It validates matrix orientation, declared scale and gene IDs, then records
-parameters, input/output hashes, versions, backend and elapsed time in a result
+parameters, input/output metadata, versions, backend and elapsed time in a result
 manifest. Analyses use the existing iobrx API and preserve its result layouts.
+Known requests can run directly; discovery and diagnostics are optional.
+Agents can also use the public Python API for custom work. Full SHA-256
+auditing is opt-in; default result inspection checks file availability.
 
 After installing iobrx, from this checkout:
 
 ```bash
 python -m pip install ./agent-harness
-iobrx-agent doctor
 iobrx-agent run --request agent-harness/examples/signature_pca.json
 ```
 
