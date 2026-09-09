@@ -7,9 +7,8 @@ the API. Contract (per the port task): ``clusters.csv``,
 ``top_features_per_cluster.csv`` and ``pca_plot.png`` must be BYTE-identical
 (sha256), including the upstream quirks reproduced on purpose:
 
-  * top_features_per_cluster.csv is written before the output directory is
-    created and the failure is swallowed -> with a non-existent ``outdir``
-    the file is silently missing (bug-compat, pinned below);
+  * iobrx creates fresh output directories before saving feature rankings;
+    numerical/model parity is retained while this upstream output bug is fixed;
   * ``random_state`` does not change the discrete outputs (nndsva init +
     shuffle=False; floats may differ ~1e-15 exactly as in the original);
   * ``kmax >= n_samples`` is clamped to ``n_samples - 1``.
@@ -17,7 +16,7 @@ the API. Contract (per the port task): ``clusters.csv``,
 Fast lane (default ``pytest -q``): synthetic 36 x 8 input, a handful of
 original-CLI subprocess calls, well under 60 s. The frozen official input
 (cibersort_stad10.csv x the docs command) is gated behind the ``full`` mark
-and ``$IOBRX_NMF_FROZEN_INPUT``.
+with a committed public fixture; ``$IOBRX_NMF_FROZEN_INPUT`` optionally selects the campaign fixture.
 
 Until the strategy layer wires ``iobrx.nmf`` into ``src/iobrx/__init__.py``
 (see research/build_nmf/INTEGRATION.md), the helper below falls back to the
@@ -158,13 +157,13 @@ def test_nmf_all_invalid_k_raises(synthetic):
         _iobrx_nmf(zeros, kmin=2, kmax=3, max_iter=50)
 
 
-def test_nmf_outdir_missing_topfeatures_bugcompat(synthetic):
-    """BUG-COMPAT pin: non-existent outdir silently loses top_features only."""
+def test_nmf_fresh_outdir_keeps_topfeatures(synthetic):
+    """Fresh output directories must include the feature rankings."""
     df, _, d = synthetic
     out = d / "nodir_bug"  # deliberately NOT created
     res = _iobrx_nmf(df.copy(), kmin=2, kmax=3, max_iter=200, plot=True, outdir=str(out))
     assert os.path.isdir(out)
-    assert not (out / "top_features_per_cluster.csv").exists()
+    pd.testing.assert_frame_equal(pd.read_csv(out / "top_features_per_cluster.csv", index_col=0), res["top_features"])
     assert (out / "clusters.csv").exists() and (out / "pca_plot.png").exists()
     # the in-memory frame is still complete (the API route loses nothing)
     assert res["top_features"].shape[0] == res["best_k"]
@@ -214,9 +213,10 @@ def test_nmf_frozen_official_gate():
     when unset. Golden = the original CLI run here, not stored hashes, so
     the gate is library-version independent.
     """
-    frozen = os.environ.get("IOBRX_NMF_FROZEN_INPUT")
-    if not frozen or not os.path.exists(frozen):
-        pytest.skip("set IOBRX_NMF_FROZEN_INPUT to the frozen cibersort CSV")
+    from pathlib import Path
+    campaign_fixture = os.environ.get("IOBRX_NMF_FROZEN_INPUT")
+    frozen = campaign_fixture or str(Path(__file__).resolve().parents[1] / "tutorials/results/07_cibersort_result.csv")
+    assert os.path.exists(frozen), f"Missing public NMF input: {frozen}"
     import tempfile
 
     params = ["--kmin", "2", "--kmax", "10", "--features", "1:22",
@@ -231,4 +231,5 @@ def test_nmf_frozen_official_gate():
                          plot=True, outdir=port_dir)
         for name in CONTRACT_FILES:
             assert _sha(os.path.join(orig_dir, name)) == _sha(os.path.join(port_dir, name)), name
-        assert res["best_k"] == 3  # campaign-recorded selection on this input
+        if campaign_fixture:
+            assert res["best_k"] == 3  # applies only to that campaign's exact input

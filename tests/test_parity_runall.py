@@ -1,40 +1,11 @@
-"""Parity gates for the ``iobrx.runall`` end-to-end orchestrator port.
+"""Runall command-routing and numerical parity, with reliability regressions.
 
-Three tiers, in increasing cost:
-
-1. DRY-RUN CONSOLE PARITY (fast, no tools, default suite): the ORIGINAL
-   ``iobrpy.workflow.runall.main`` and the ported ``iobrx._fast.runall_fast
-   .runall_argv`` are run over identical argv on stub trees under
-   ``--dry_run`` (plus ``--resume`` on completed trees and the argparse /
-   missing-matrix error paths); their captured stdout must be BYTE-identical
-   and their exit codes equal. This pins the whole verbatim orchestration:
-   mode branching, step order, command construction, per-step default
-   injection, the sectioned + auto flag routers, legacy concurrency-flag
-   absorption, resume/dry protocols and every console line.
-2. STRUCTURE / PARSER gates (fast): the shared routing tables and helper
-   functions are source-identical to upstream; a seeded router battery
-   agrees on 200 random token lists; each step's mirror parser reproduces
-   the ``iobrpy.main`` CLI defaults (the LR_cal ``data_type='tpm'`` vs
-   function-default ``'count'`` class of traps) including the case-sensitive
-   ``--QN`` quirk.
-3. FULL-CHAIN MINIATURE (marker ``full``; synthetic mini FASTQ + the R4-style
-   deterministic fake fastp/multiqc/salmon/run-trust4 binaries; NO real
-   heavy computation): the original orchestrator (spawning real ``iobrpy``
-   child CLIs) and ``iobrx.runall`` (in-process ported substeps) run the
-   whole salmon chain on ONE miniature sample whose fake ``quant.sf`` is a
-   realistic GENCODE-format template covering every downstream resource gene
-   set (LM22 / EPIC sigGenes / TIL10 / MCP-counter / ESTIMATE / IPS /
-   signature_tme / LR pancan). Gates: identical exit codes; output trees
-   byte-identical EXCEPT the documented non-determinism (gzip mtime in the
-   merged ``*.tsv.gz`` -> compared decompressed; cibersort's unseeded
-   ``P-value`` column and its propagation into ``deconvo_merged.csv`` ->
-   compared excluding that column, R3 contract); recorded external-tool
-   command lines token-identical after root normalization.
-
-Run with the repo source on the path::
-
-    PYTHONPATH=<repo>/src pytest -q tests/test_parity_runall.py            # tiers 1-2
-    PYTHONPATH=<repo>/src pytest -q tests/test_parity_runall.py --run-full # tier 3
+Dry command plans match upstream except its false claim to have merged data;
+the port must not write during a preview. Legacy unverified resume trees are
+rejected. A full synthetic chain uses fake external tools but real numerical
+substeps and the original CLI as the comparator. Runtime sidecars are excluded
+from product equality; declared P-value, gzip timestamp and signature roundoff
+exceptions are retained in the assertions below.
 """
 from __future__ import annotations
 
@@ -123,15 +94,21 @@ def _run_both(argv, tmp_path, tag):
     port = _ra()
     buf_o, buf_p = io.StringIO(), io.StringIO()
     err_o, err_p = io.StringIO(), io.StringIO()
+    # Test the port before upstream, whose dry run incorrectly writes markers.
+    before = {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
+    with contextlib.redirect_stdout(buf_p), contextlib.redirect_stderr(err_p):
+        rc_p = port.runall_argv(list(argv))
+    if "--dry_run" in argv:
+        assert {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
     with contextlib.redirect_stdout(buf_o), contextlib.redirect_stderr(err_o):
         try:
             orig.main(list(argv))
             rc_o = 0
         except SystemExit as e:
             rc_o = e.code if isinstance(e.code, int) else 1
-    with contextlib.redirect_stdout(buf_p), contextlib.redirect_stderr(err_p):
-        rc_p = port.runall_argv(list(argv))
     so, sp = buf_o.getvalue(), buf_p.getvalue()
+    # A planned merge must not claim to have produced a file.
+    so = so.replace("[ok] merged deconvolution ->", "[dry-run] merge deconvolution ->") if "--dry_run" in argv else so
     assert so == sp, (
         f"[{tag}] stdout differs ({len(so)} vs {len(sp)} bytes):\n"
         + "\n".join(
@@ -230,17 +207,25 @@ def test_dry_sectioned_style(tmp_path, mode, idx):
 
 @pytest.mark.parametrize("mode,idx", [("salmon", IDX_S), ("star", IDX_T)])
 def test_resume_completed_tree(tmp_path, mode, idx):
-    out = _dry_case(tmp_path, mode, ["--index", idx], completed=True, resume=True)
-    assert "[resume] fastq_qc skipped" in out
-    assert "[resume] trust4 skipped" in out
-    assert "[done] runall finished." in out
-    assert "[run]" not in out               # nothing executed
+    outdir, fastq, index = tmp_path / "out", tmp_path / "fq", tmp_path / "index"
+    fastq.mkdir()
+    index.mkdir()
+    _completed_tree(str(outdir), mode)
+    with pytest.raises(ValueError, match="state|legacy|signature"):
+        _ra().runall_argv(["--mode", mode, "--outdir", str(outdir), "--fastq", str(fastq),
+                          "--index", str(index), "--resume"])
 
 
 @pytest.mark.parametrize("mode,idx", [("salmon", IDX_S), ("star", IDX_T)])
-def test_empty_tree_missing_merged_rc2(tmp_path, mode, idx):
-    out = _dry_case(tmp_path, mode, ["--index", idx], empty=True)
-    assert "[ERROR] Cannot find merged" in out
+def test_empty_tree_dry_run_plans_without_writes(tmp_path, mode, idx):
+    output = tmp_path / "out"
+    buf = io.StringIO()
+    with contextlib.redirect_stdout(buf):
+        rc = _ra().runall_argv(["--mode", mode, "--outdir", str(output), "--fastq", str(tmp_path / "fq"),
+                               "--index", idx, "--dry_run"])
+    assert rc == 0
+    assert "[done] runall finished." in buf.getvalue()
+    assert not output.exists()
 
 
 def test_invalid_mode_rc2(tmp_path):
@@ -418,7 +403,7 @@ def test_api_dry_run_and_backends(tmp_path):
                            dry_run=True, unknown=["--index", IDX_S],
                            backend="python")
     assert res == {"rc": 0}
-    assert buf.getvalue() == out          # same console as backend='auto'
+    assert buf.getvalue().replace("[ok] merged deconvolution ->", "[dry-run] merge deconvolution ->") == out
 
     # CLI-style main() keeps the upstream SystemExit behaviour
     port = _ra()
@@ -638,7 +623,10 @@ def _tree_manifest(root):
     for dirpath, dirnames, filenames in os.walk(root):
         for fn in filenames:
             p = os.path.join(dirpath, fn)
-            out[os.path.relpath(p, root)] = _sha(p)
+            rel = os.path.relpath(p, root).replace(os.sep, "/")
+            if fn.endswith(".iobrx.json") or fn == ".iobrx-run-state.json" or rel == "01-qc/multiqc_report/task.complete":
+                continue
+            out[rel] = _sha(p)
     return out
 
 

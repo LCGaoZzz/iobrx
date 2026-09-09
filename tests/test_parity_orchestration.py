@@ -319,6 +319,9 @@ def _tree_manifest(root):
         for fn in filenames:
             p = os.path.join(dirpath, fn)
             rel = os.path.relpath(p, root)
+            # Reliability metadata is intentionally additional to upstream outputs.
+            if fn.endswith(".iobrx.json") or rel.replace(os.sep, "/") == "multiqc_report/task.complete":
+                continue
             out[rel] = _sha(p)
     return out
 
@@ -359,7 +362,8 @@ def test_fastq_qc_pe_parity_and_resume(tmp_path, monkeypatch, fakebins):
     _set_calllog(monkeypatch, str(p_log))
     res = fq.fastq_qc(str(in_dir), str(p_out), num_threads=4, batch_size=2,
                       length_required=50)
-    assert set(res) == {"results", "outputs", "multiqc_report"}
+    assert set(res) == {"rc", "results", "outputs", "multiqc_report"}
+    assert res["rc"] == 0
     assert sorted(r["sample"] for r in res["results"]) == ["SRR_A", "SRR_B"]
     assert all(r["status"] == "processed" for r in res["results"])
     assert res["multiqc_report"] == str(p_out / "multiqc_report" / "multiqc_fastp_report.html")

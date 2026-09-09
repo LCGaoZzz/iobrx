@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from . import SKILL_ID, __version__
-from .catalog import CATALOG, request_schema
+from .catalog import CATALOG, LEGACY_ANALYSES, request_schema
 
 
 class HarnessError(Exception):
@@ -80,6 +80,9 @@ def normalize_request(request, base, workspace=None):
     result.setdefault("threads", min(8, os.cpu_count() or 1))
     result["input"]["path"] = str(resolve_path(result["input"]["path"], base, workspace))
     result["output_dir"] = str(resolve_path(result["output_dir"], base, workspace))
+    if result["analysis"] not in LEGACY_ANALYSES:
+        from .extended_runtime import normalize
+        return normalize(result, base, workspace)
     if result["input"]["gene_id"] == "mgi" and result["input"]["organism"] != "mmus":
         reject("mgi identifiers require organism=mmus")
     if result["analysis"] == "anno_eset":
@@ -155,6 +158,7 @@ def load_matrix(spec):
 
 def doctor():
     import iobrx
+    import shutil
     from importlib.resources import files
 
     versions = {name: importlib.metadata.version(name) for name in
@@ -176,20 +180,33 @@ def doctor():
             "iobrx_version": iobrx.__version__, "iobrx_path": str(Path(iobrx.__file__).resolve()),
             "python": sys.version.split()[0], "executable": sys.executable,
             "platform": platform.platform(), "machine": platform.machine(), "versions": versions,
-            "backend": iobrx.backend_info(), "checks": "imports and bundled resources; not a numerical parity test"}
+            "backend": iobrx.backend_info(),
+            "external_tools": {tool: shutil.which(tool) for tool in ("fastp", "multiqc", "salmon", "STAR", "run-trust4")},
+            "checks": "imports and bundled resources; external tools are optional until requested; not a numerical parity test"}
 
 
 def validate(request, base, workspace=None):
     normalized = normalize_request(request, base, workspace)
-    _, info = load_matrix(normalized["input"])
+    _, info = prepare_input(normalized)
     return {"schema_version": "1.0", "skill_id": SKILL_ID, "status": "validated",
             "request": normalized, "input": info,
             "output_available": not Path(normalized["output_dir"]).exists(),
-            "checks": "schema, declared scale/IDs/species, numeric matrix; no biological scale inference or solver run"}
+            "checks": "schema, input contracts and tool availability; no biological scale inference or solver run"}
+
+
+def prepare_input(request):
+    if request["analysis"] in LEGACY_ANALYSES:
+        return load_matrix(request["input"])
+    from .extended_runtime import prepare
+    return prepare(request)
 
 
 def dispatch(request, matrix):
     import iobrx
+
+    if request["analysis"] not in LEGACY_ANALYSES:
+        from .extended_runtime import dispatch as extended_dispatch
+        return extended_dispatch(request, matrix)
 
     name = request["analysis"]
     params = deepcopy(request["parameters"])
@@ -254,7 +271,8 @@ def save_results(result, output, analysis):
             raise HarnessError("Unsafe output table name", "invalid_result", 3)
         numeric = frame.select_dtypes(include="number")
         finite_count = int(np.isfinite(numeric.to_numpy()).sum())
-        if numeric.empty or finite_count == 0:
+        text_table = analysis == "nmf" and name == "top_features"
+        if not text_table and (numeric.empty or finite_count == 0):
             raise HarnessError(f"{name}: no finite numerical results; check gene overlap and scale", "invalid_result", 3)
         nonfinite = int(numeric.size - finite_count)
         if nonfinite:
@@ -290,7 +308,7 @@ def run(request, base, workspace=None):
     write_json(output / "request.json", normalized)
     try:
         environment = doctor()
-        matrix, info = load_matrix(normalized["input"])
+        matrix, info = prepare_input(normalized)
         manifest.update(environment=environment, input=info)
         write_json(manifest_path, manifest)
         execution_start = time.perf_counter()
@@ -299,9 +317,17 @@ def run(request, base, workspace=None):
             result, backend, notes = dispatch(normalized, matrix)
         notes.extend(dict.fromkeys(f"{item.category.__name__}: {item.message}" for item in captured))
         manifest["analysis_seconds"] = time.perf_counter() - execution_start
-        artifacts, result_notes = save_results(result, output, normalized["analysis"])
+        if normalized["analysis"] not in LEGACY_ANALYSES:
+            from .extended_runtime import verify_inputs
+            verify_inputs(normalized, info)
+        artifacts, result_notes = save_results(result, output, normalized["analysis"]) if result is not None else ([], [])
+        if normalized["analysis"] not in LEGACY_ANALYSES:
+            from .extended_runtime import artifacts as native_artifacts
+            artifacts.extend(native_artifacts(output))
+        if not artifacts:
+            raise HarnessError("Analysis produced no artifacts", "invalid_result", 3)
         manifest.update(status="completed", backend_used=backend, artifacts=artifacts, warnings=notes + result_notes)
-    except (Exception, KeyboardInterrupt) as exc:
+    except (Exception, KeyboardInterrupt, SystemExit) as exc:
         manifest.update(failure(exc))
         if isinstance(exc, KeyboardInterrupt):
             manifest["status"] = "interrupted"

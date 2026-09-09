@@ -1,0 +1,11 @@
+{
+  "analysis": "16_tme_cluster",
+  "input_shape": [
+    10,
+    22
+  ],
+  "seconds": 0.04428292400552891,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "The same 10-sample LM22 feature table; KL-index selection, standardized features. Clusters are exploratory labels, not validated subtypes."
+}

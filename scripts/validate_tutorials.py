@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     tutorial_dir = ROOT / "tutorials"
     notebooks = sorted(tutorial_dir.glob("*.ipynb"))
-    assert len(notebooks) == 12, f"Expected 12 tutorials, found {len(notebooks)}"
+    assert len(notebooks) == 23, f"Expected 23 tutorials, found {len(notebooks)}"
     for path in notebooks:
         text = path.read_text(encoding="utf-8")
         notebook = json.loads(text)
@@ -35,7 +35,7 @@ def main():
     for name, metadata in manifest.items():
         data = tutorial_dir / "data" / f"{name}.parquet"
         assert hashlib.sha256(data.read_bytes()).hexdigest() == metadata["parquet_sha256"], data
-    print(f"Validated {len(notebooks)} executed notebooks, 36 figure exports and {len(manifest)} dataset checksums.")
+    print(f"Validated {len(notebooks)} executed notebooks, {3 * len(notebooks)} figure exports and {len(manifest)} dataset checksums.")
 
 
 if __name__ == "__main__":

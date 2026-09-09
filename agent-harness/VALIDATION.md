@@ -1,3 +1,15 @@
+# 0.3 extension audit
+
+The current harness is 0.2.0 and requires iobrx 0.3.x. It exposes 27 typed
+analysis identifiers. The combined default suite passed 246 tests, and the
+16 new-adapter tests also passed against installed main/companion wheels.
+The Omicos catalog validator reported zero errors or warnings. See
+[current evidence and limits](../docs/VALIDATION_0.3.md) for exact scope.
+
+The original 0.2 integration record below is historical. New HLA and
+custom-reference BayesPrism adapters are not claimed, and the external-tool
+tests in this audit use stubs.
+
 # Harness validation record
 
 Validated on **2026-09-08**, WSL2 Ubuntu / Linux x86-64, Intel Core i9-13900KF

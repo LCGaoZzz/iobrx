@@ -47,6 +47,7 @@ import random
 import subprocess
 import sys
 from multiprocessing import Pool
+from iobrx._run_state import signature, completed, complete
 
 __all__ = ["fastq_qc", "fastq_qc_original", "process_sample"]
 
@@ -90,7 +91,12 @@ def process_sample(file, path1_fastq, path2_fastp, num_threads, suffix1, se,
     reverse_file = forward_file[:-len(suffix1)] + suffix2
     output_reverse = output_forward[:-len(suffix1)] + suffix2
 
-    if os.path.exists(output_forward) and os.path.exists(task_file) and (se or os.path.exists(output_reverse)):
+    expected_outputs = [output_forward] + ([] if se else [output_reverse])
+    expected_outputs += [f"{path2_fastp}/{sample_id}_fastp.html", f"{path2_fastp}/{sample_id}_fastp.json"]
+    run_signature = signature([forward_file] + ([] if se else [reverse_file]),
+                              {"num_threads": num_threads, "se": se, "suffix1": suffix1,
+                               "length_required": length_required}, [fastp_bin])
+    if completed(task_file, run_signature, expected_outputs):
         # Already processed; report outputs for summary
         outputs.append(output_forward)
         if not se:
@@ -125,8 +131,7 @@ def process_sample(file, path1_fastq, path2_fastp, num_threads, suffix1, se,
                 "--json", f"{path2_fastp}/{sample_id}_fastp.json"
             ]
         subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        with open(task_file, 'w') as f:
-            f.write("Processing complete for " + sample_id)
+        complete(task_file, run_signature, expected_outputs, "Processing complete for " + sample_id)
         if verbose:
             print(f"[Done] {sample_id} finished successfully.")
 
@@ -135,8 +140,9 @@ def process_sample(file, path1_fastq, path2_fastp, num_threads, suffix1, se,
             outputs.append(output_reverse)
         return {"sample": sample_id, "status": "processed", "outputs": outputs}
 
-    except subprocess.CalledProcessError as e:
-        print(f"Error processing {sample_id}: {e.stderr.decode()}")
+    except (subprocess.CalledProcessError, RuntimeError) as e:
+        detail = e.stderr.decode(errors="replace") if isinstance(e, subprocess.CalledProcessError) else str(e)
+        print(f"Error processing {sample_id}: {detail}")
         return {"sample": sample_id, "status": "error", "outputs": []}
 
 
@@ -153,18 +159,20 @@ def _run_multiqc(path2_fastp: str, multiqc_bin: str = "multiqc", verbose: bool =
     """
     out_dir = os.path.join(path2_fastp, "multiqc_report")
     report_html = os.path.join(out_dir, "multiqc_fastp_report.html")
-    if os.path.isfile(report_html) and os.path.getsize(report_html) > 0:
+    json_reports = sorted(os.path.join(path2_fastp, f) for f in os.listdir(path2_fastp) if f.endswith("_fastp.json"))
+    if not json_reports:
+        return None
+    try:
+        report_signature = signature(json_reports, {"module": "fastp"}, [multiqc_bin])
+    except FileNotFoundError:
+        print("MultiQC not found; the QC stage is incomplete.")
+        return None
+    report_marker = os.path.join(out_dir, "task.complete")
+    if completed(report_marker, report_signature, [report_html]):
         if verbose:
             print("MultiQC report already exists; skipping MultiQC.")
             print(report_html)
         return report_html
-
-    # collect fastp JSONs; if none, skip quietly
-    json_reports = [f for f in os.listdir(path2_fastp) if f.endswith("_fastp.json")]
-    if not json_reports:
-        if verbose:
-            print("No fastp JSON files found; skipping MultiQC.")
-        return None
 
     os.makedirs(out_dir, exist_ok=True)
 
@@ -177,10 +185,11 @@ def _run_multiqc(path2_fastp: str, multiqc_bin: str = "multiqc", verbose: bool =
         path2_fastp                   # scan the fastp output directory
     ]
     try:
-        completed = subprocess.run(
+        subprocess.run(
             cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         report_html = os.path.join(out_dir, "multiqc_fastp_report.html")
+        complete(report_marker, report_signature, [report_html])
         data_dir = os.path.join(out_dir, "multiqc_data")
         if verbose:
             print("\nMultiQC report saved to:")
@@ -190,6 +199,8 @@ def _run_multiqc(path2_fastp: str, multiqc_bin: str = "multiqc", verbose: bool =
         print("MultiQC not found. Please install it, e.g.: conda install -c bioconda multiqc")
     except subprocess.CalledProcessError as e:
         print(f"MultiQC failed: {e.stderr.decode()}")
+    except RuntimeError as e:
+        print(f"MultiQC output validation failed: {e}")
     return None
 
 
@@ -276,7 +287,8 @@ def fastq_qc(path1_fastq, path2_fastp, num_threads=8, suffix1="_1.fastq.gz",
     if verbose:
         _banner()
 
-    return {"results": results, "outputs": unique_outputs,
+    return {"rc": 0 if report and results and all(r["status"] in {"processed", "skipped"} for r in results) else 1,
+            "results": results, "outputs": unique_outputs,
             "multiqc_report": report}
 
 

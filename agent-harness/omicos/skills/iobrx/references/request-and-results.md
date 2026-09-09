@@ -32,8 +32,8 @@ Unknown fields and unsupported choices are errors.
   be nonnegative with positive sample totals; preprocessed samples cannot be
   all zero. The preprocessed declaration requires known normalization provenance;
   it is not a fallback for an unidentified matrix.
-  No imputation, ID mapping or expression transformation is performed by the
-  adapter. Upstream method preprocessing remains controlled by its parameters.
+  No imputation or unrequested biological normalization is performed by the
+  adapter. File-only APIs can require CSV serialization; see extended workflows. Upstream method preprocessing remains controlled by its parameters.
 - IDs/species: the capability catalog lists valid combinations. Packaged
   references are human except count-to-TPM, which also supports `mmus`.
 - `threads`: positive integer, default min(8, CPU count). It is passed to
@@ -69,3 +69,5 @@ as completed results. Make a new directory for a fresh run.
 changed. It is read-only and does not change the original manifest, check live
 process state or rehash the original input. Hashes are provenance/integrity
 checks, not signatures against malicious edits of both data and manifest.
+
+For the 16 new adapters, see [extended-workflows.md](extended-workflows.md). Their typed file/directory inputs replace the expression matrix fields when applicable.

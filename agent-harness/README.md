@@ -1,6 +1,6 @@
 # iobrx agent harness
 
-An Omicos-first interface for **11 iobrx analyses**: a JSON CLI, an optional
+An Omicos-first interface for **27 typed analysis identifiers**: a JSON CLI, an optional
 stdio MCP server, and a portable Omicos Agent/Skill pair. Every analysis calls
 the existing iobrx API. The harness adds input checks and auditable result
 files, without changing the numerical algorithms.
@@ -25,7 +25,7 @@ iobrx-agent capabilities
 ```
 
 The companion package is pure Python and does not compile another Rust
-extension. It requires iobrx 0.2.x; it does not remove iobrx's own installation
+extension. It requires iobrx 0.3.x; it does not remove iobrx's own installation
 requirements. It has **not been separately published to PyPI**. This source
 install is independent of the wheel/PyPI release work. The main package does
 not acquire an MCP dependency.
@@ -133,7 +133,7 @@ python -m pytest agent-harness/tests -q
 python -m build agent-harness
 ```
 
-The tests exercise all 11 analyses with public repository fixtures, preserve
+The tests exercise the original 11 analyses and the additional adapters with public repository fixtures, preserve
 numerical results through Parquet, check malformed inputs and collisions,
 relocate the complete Skill, and perform a real MCP stdio handshake/tool call.
 The separate harness CI builds its wheel/sdist, installs the wheel and runs
@@ -148,3 +148,5 @@ adapter for iobrx's API and Omicos's current Agent/Skill format, not a copy of
 the upstream CLI or a claim of full upstream command coverage. Existing
 [notebooks and figures](https://github.com/LCGaoZzz/iobrx/tree/main/tutorials)
 remain the detailed teaching and visualization material.
+
+New adapters and their precise scope: [extended workflows](omicos/skills/iobrx/references/extended-workflows.md). HLA/SpecHLA and custom-reference BayesPrism remain outside this harness.

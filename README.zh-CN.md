@@ -8,25 +8,29 @@
 它在运行时依赖 IOBRpy，沿用上游的参考资源、基因签名和分析语义。
 iobrx 的新增工作主要是 Rust 内核、并行与向量化加速、pandas 接口、
 经过验证的教程，以及 Omicos Agent 接入。输出是普通的 DataFrame 与文件，
-并与原版 IOBRpy 0.2.0 在冻结验证数据上**逐位一致（bit-exact）**，所有
-非确定性例外均有明文合同并在下文列出。
+数值一致性按方法、参数和数据集验证，不能推广为每个新增流程、任意输入都逐位一致。
+具体例外与本轮验证范围见 [0.3 验证记录](docs/VALIDATION_0.3.md)。
 
 [原版 IOBRpy 仓库](https://github.com/IOBR/IOBRpy) · [IOBRpy 官方文档](https://iobr.github.io/IOBRpy/)
 
 - **不再强制要求 AVX-512**。已在没有 AVX-512 的 i9-13900KF 上实际运行；排序交给本机 NumPy 选择兼容实现。
-- **12 本已执行的 Notebook**：11 个独立分析入口 + 1 个完整工作流，均含教程代码、结果和内嵌图；同时提供 PNG、PDF、SVG。
+- **23 本已执行的 Notebook**：原有 12 本，加上 11 本新增矩阵分析与文件处理教程，均含教程代码、结果和内嵌图；同时提供 PNG、PDF、SVG。
 - 每张分析图经历初稿、第一轮版式调整、第二轮精修，采用白底、低饱和配色、细轴线和可编辑矢量文字。参见[逐图修改记录](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/FIGURE_REVIEW.md)。
 
 **28 个公共 API** —— 26 个工作流函数（另含 `deconvolute_quantiseq` 别名与
-`load_official` 数据助手），覆盖 IOBRpy 全部功能面：免疫反卷积
+`load_official` 数据助手），覆盖以下 IOBRpy 工作流类别：免疫反卷积
 （CIBERSORT、BayesPrism、EPIC、quanTIseq、MCP-counter、ESTIMATE）、签名评分
 （PCA / zscore / ssGSEA / integration）、TPM 转换与基因注释、免疫表型评分
 IPS、配体-受体矩阵、NMF 与 TME 聚类、完整 `tme_profile` 链路，以及
 FASTQ→TME 编排阶段（fastp / salmon / STAR / TRUST4 / SpecHLA）。
 
+**Omicos 接入：** harness 现有 27 个带输入契约的分析标识（四种签名评分分别计数），其中 16 个为本轮新增适配器。HLA 与自定义参考 BayesPrism 仍通过 Python API 使用。[输入与边界](agent-harness/omicos/skills/iobrx/references/extended-workflows.md)。
+
+**证据范围：** 下方 R3–R6 耗时沿用原科学智能体报告；部分原始脚本和日志尚未入库，不能仅凭本 PR 独立复现全部倍率。本轮数值测试、模拟工具测试与实际教程耗时分别记录。
+
 ### 0.3.0 新增
 
-- **移植 19 个 IOBRpy 工作流**（战役回合 R3–R6）：`nmf`、`merge_salmon`、
+- **新增 18 个工作流 API**（战役回合 R3–R6）：`nmf`、`merge_salmon`、
   `merge_star_count`、`prepare_salmon`、`log2_eset`、`ips`、`mouse2human`、
   `lr_cal`、`tme_cluster`、`bayesprism`、`tme_profile`、`fastq_qc`、
   `batch_salmon`、`batch_star_count`、`trust4`、`runall`、`spechla`、
@@ -36,72 +40,59 @@ FASTQ→TME 编排阶段（fastp / salmon / STAR / TRUST4 / SpecHLA）。
   `bp_gibbs`（BayesPrism Gibbs 采样器，逐位复现 numpy 完整 RNG 链）。
 - **`tme_profile` 端到端 10.59×**（对原版 CLI，冻结 STAD 数据）——瓶颈转移
   链 1.12× → 8.44× → 10.59× 的终点（[BENCHMARKS.md Part II](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)）。
-- **R6 正式盲测**：14 个核心候选在统一冷启动口径下对原版 CLI 重测，全部
-  parity 合同 PASS。测试套件 **188 passed**。
+- **原战役报告的 R6 基准**：14 个核心候选在统一冷启动口径下对原版 CLI 重测，全部
+  parity 合同 PASS。原提交记录为 188 项默认测试通过；当前结果见[验证记录](docs/VALIDATION_0.3.md)。
 
 ![CIBERSORT 示例](https://raw.githubusercontent.com/LCGaoZzz/iobrx/main/tutorials/figures/07_cibersort.png)
 
+## 新增教程与实际耗时
+
+新增 11 本已执行 Notebook，包含代码、结果、内嵌图，以及两轮图形调整记录。
+下表是本机 WSL／Omicos 解释器中最终一轮 Notebook 的单次 API 调用时间，
+请求 2 线程，不包含输入准备。它们是小型教程的观测值，不是性能倍率基准；
+NMF 的 BLAS 并行度不只由请求线程数控制。BayesPrism 使用缩短的演示采样链，
+文件合并教程使用合成数据，均已在对应 Notebook 中说明。
+
+| Tutorial | Input shape | API call time |
+| --- | --- | --- |
+| [13_ips](tutorials/13_ips.ipynb) | 48058 × 4 | 0.016 s |
+| [14_lr_cal](tutorials/14_lr_cal.ipynb) | 48058 × 4 | 0.143 s |
+| [15_nmf](tutorials/15_nmf.ipynb) | 10 × 22 | 0.465 s |
+| [16_tme_cluster](tutorials/16_tme_cluster.ipynb) | 10 × 22 | 0.044 s |
+| [17_log2_eset](tutorials/17_log2_eset.ipynb) | 48058 × 4 | 0.235 s |
+| [18_mouse2human](tutorials/18_mouse2human.ipynb) | 4 × 3 | 0.020 s |
+| [19_merge_salmon](tutorials/19_merge_salmon.ipynb) | 3 × 3 | 0.076 s |
+| [20_prepare_salmon](tutorials/20_prepare_salmon.ipynb) | 3 × 4 | 0.014 s |
+| [21_merge_star_count](tutorials/21_merge_star_count.ipynb) | 3 × 3 | 0.073 s |
+| [22_tme_profile](tutorials/22_tme_profile.ipynb) | 48058 × 2 | 4.828 s |
+| [23_bayesprism](tutorials/23_bayesprism.ipynb) | 128 × 3 | 0.351 s |
+
 ## 安装
 
-已验证的环境为 **Linux x86-64 / WSL2、Python 3.11**。0.2.0 提供预编译
-wheel，普通用户无需安装 Rust 或 C++ 编译器：
+**0.3.0 目前是 PR #5 中待审核的开发版。** 2026-09-09 核实时，GitHub 最新
+Release 为 v0.1.0，且没有二进制附件。仓库具备 wheel、PyPI 和容器的构建发布
+工作流，但这不等于已经发布；请勿把尚不可用的 PyPI／清华镜像命令当作当前安装方案。
 
-```bash
-python -m pip install --only-binary=:all: iobrx==0.2.0
-python -c "import iobrx; print(iobrx.backend_info())"
-```
-
-国内用户可在清华镜像同步后使用：
-
-```bash
-python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.2.0
-```
-
-镜像尚未同步新版本时，请在第一条命令后添加 `--index-url https://pypi.org/simple`。
-`--only-binary=:all:` 会在环境不支持时明确报错，避免意外触发源码编译。
-数值依赖固定为已经验证的版本；已有环境存在版本冲突时，建议新建 Python 3.11 环境。
-
-运行完整教程时，再获取对应版本的仓库与公开数据：
-
-```bash
-git clone --branch v0.2.0 https://github.com/LCGaoZzz/iobrx.git
-cd iobrx
-python -m pip install --only-binary=:all: "iobrx[tutorials,test]==0.2.0"
-python -m jupyterlab tutorials
-```
-
-在 Omicos 环境中使用时，将上面的 `python` 换成该环境的 Python，并在
-Jupyter 中选择同一环境的内核。仓库已附公开示例矩阵，安装依赖后可以离线运行教程。
-
-也可直接使用固定版本容器：
-
-```bash
-docker run --rm ghcr.io/lcgaozzz/iobrx:0.2.0
-docker run --rm -v "$PWD:/work" -w /work ghcr.io/lcgaozzz/iobrx:0.2.0 python analysis.py
-```
-
-容器内教程和数据位于 `/opt/iobrx/tutorials`，依赖已锁定，不会自动启动 Jupyter。
-[GitHub Release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.2.0) 附 wheel、
-源码包、SHA-256 校验值和用于严格复现的容器 digest。
-
-### 开发版（0.3.0）—— 源码构建
-
-`main` 上的 0.3.0 工作流移植领先于已发布的 0.2.0 wheel，需从源码构建：
-Rust 工具链（cargo）与 C++17 编译器，混合构建由 [maturin](https://www.maturin.rs) 驱动。
+已验证源码构建目标为 **Python 3.11、Linux x86-64／WSL2**。准备 Cargo 和
+C++17 编译器，在独立 Python 环境执行：
 
 ```bash
 git clone https://github.com/LCGaoZzz/iobrx.git
 cd iobrx
-
-# 方式一：pip（PEP 517，maturin 自动编译 Rust 扩展）
+# 0.3.0 审核期间，检出 PR 对应源码：
+git fetch origin pull/5/head
+git switch --detach FETCH_HEAD
 python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
-
-# 方式二：显式用 maturin 构建 wheel
-maturin build --release -i python3.11
-python -m pip install target/wheels/iobrx-0.3.0-*.whl
-
 python -c "import iobrx; print(iobrx.backend_info())"
+python -m jupyterlab tutorials
 ```
+
+Jupyter 内核应使用同一个解释器。已有 Omicos 环境若存在数值依赖冲突，应使用
+独立环境。这条源码安装命令会编译扩展，不能称为免编译安装。
+
+发行工作流会构建和检查 Linux CPython 3.11 wheel、源码包和固定版本容器。
+正式发布与镜像同步是后续步骤，请以[发行页面](https://github.com/LCGaoZzz/iobrx/releases)
+和 [0.3.0 发行说明](docs/releases/0.3.0.md) 为准。
 
 **依赖钉版原因**（测量细节见 [BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)）：
 
@@ -193,7 +184,7 @@ iobrx.runall(mode="salmon", outdir="run_out", fastq="raw_fastq_dir",
 
 每个移植模块都沿三条路线评估过：继续调**原版 iobrpy CLI**、写**纯
 Python 快路径**、或做 **Rust 内核**。最终选择 = 在通过 bit-exact 合同的
-前提下墙钟最快的那条。19 个移植 API 的 speedup 为 **R6 正式盲测**统一口径
+前提下墙钟最快的那条。19 个移植 API 的 speedup 为 **原战役报告的 R6 基准**统一口径
 （冷启动、每次运行新子进程、双臂同窗交替、取中位数——
 `research/bench_r6/results.json`，[BENCHMARKS.md §II.6](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)）；
 编排阶段的比值来自 R5 真实数据运行（[§II.8](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)）；R3 之前的

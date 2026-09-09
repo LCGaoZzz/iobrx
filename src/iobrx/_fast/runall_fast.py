@@ -1,87 +1,32 @@
-"""runall_fast: in-process port of the ``iobrpy.workflow.runall`` orchestrator.
+"""In-process port of IOBRpy's runall command routing and assay defaults.
 
-Drop-in for ``iobrpy.workflow.runall`` (CLI ``python -m iobrpy.main runall``):
-the ENTIRE orchestration layer — the ``--mode salmon|star`` branching, the
-step order (fastq_qc -> batch_salmon/batch_star_count -> merge_salmon/
-merge_star_count -> prepare_salmon/count2tpm -> log2_eset ->
-calculate_sig_score -> 6 deconvolution methods -> deconvo merge -> LR_cal ->
-trust4), the numbered output layout (``01-qc`` ... ``07-TCRBCR``), the
-legacy "sectioned" passthrough parser, the long-flag auto-router
-(``FLAG_BUCKETS`` incl. the mode-aware ``--index``/``--project``/
-``--remove_version``/``--suffix1`` routing and the ``--method`` value
-disambiguation), the legacy concurrency-flag absorption
-(``--num_threads``/``--parallel_size``/``--num_processes`` -> ``--threads``),
-the per-step default injection (``--project runall``, ``--return_feature
-symbol``, ``--remove_version``, ``--signature all --method integration
---mini_gene_count 2 --adjust_eset``, ``--platform affymetrix``, ``--features
-HUGO_symbols``, ``--arrays --tumor --scale_mrna``, ``--reference TRef``,
-``--data_type tpm --id_type symbol --cancer_type pancan --verbose``), the
-``--resume`` done-flag/nonempty checks, the ``--dry_run`` protocol, the
-inline pandas deconvolution-merge block and every ``[run]/[ok]/[ERROR]/
-[resume]/[done]`` console line — is VERBATIM upstream code.
+Analysis calls preserve upstream data transformations, output formats and
+parameter defaults. CIBERSORT uses the original file-based solver, as in
+`tme_profile`, to avoid solver/input-rounding divergence at this boundary.
 
-THE ONE STRUCTURAL CHANGE (the acceleration): upstream ``_run`` spawns
-``subprocess.run(["iobrpy", <step>, ...])`` — each child pays the ~1.4-2.2 s
-``iobrpy.main`` full-import cold-start floor (9-10 children per run) and the
-parent itself is normally launched through that same floor. Here the child
-process is replaced by an IN-PROCESS executor: the constructed command list
-is kept byte-for-byte (so ``--dry_run`` output and the ``[run]`` headers are
-identical), then parsed with a MIRROR of the exact ``iobrpy.main`` subparser
-for that step (same flags, dests, types, choices and DEFAULTS — this is what
-pins CLI-level defaults like LR_cal's ``data_type='tpm'`` (the plain function
-default is ``'count'``), epic's ``solver='trust-constr'`` and cibersort's
-``QN=True`` without relying on the ported functions' own defaults) and
-dispatched to the already-ported ``iobrx`` substep functions plus the
-``iobrpy.main`` dispatch-layer transformations (input parsing rules,
-``_CIBERSORT``/``_estimate``/``_MCPcounter``/``_quantiseq``/``_EPIC`` column
-suffixes, transposes, ``index_label='ID'``, ``float_format='%.7f'``,
-separator-by-extension write rules, banner prints) reproduced verbatim.
-External tools (fastp/multiqc/salmon/STAR/run-trust4) are still scheduled by
-the ported substeps exactly as upstream, so tool products keep their
-byte-identity contracts; what disappears is only the per-step Python
-cold start.
+Reliability changes deliberately differ from upstream: QC errors propagate;
+dry runs only print a plan; content hashes bind resumes to their inputs,
+references, tool binaries, parameters and products. Legacy or changed output
+trees require a fresh directory. Runtime sidecars are additional outputs.
 
-Deviations (all documented, none affects output FILES):
-* step failure semantics: a child-process non-zero exit is reproduced as the
-  executor's return code (rc); an in-process exception prints its traceback
-  to stderr (like a crashing child) and yields rc=1; ``SystemExit`` (incl.
-  argparse usage errors, rc=2) is translated to its code. ``main(argv)``
-  keeps the upstream ``sys.exit(rc)`` behaviour; the library entry
-  ``runall_argv``/``iobrx.runall`` RETURN the rc instead (repo convention:
-  no SystemExit from library calls).
-* ``cwd=`` for merge_salmon/merge_star_count is honoured with a temporary
-  ``os.chdir`` (both stages in fact write into their absolute ``--path*``
-  argument, so it is a no-op safeguard).
-* console interleaving: a child's stdout/stderr hit the terminal
-  unbuffered-through-the-parent; in-process prints are sequentially
-  buffered — line CONTENT is identical, interleaving of the substep
-  protocol with the orchestrator lines can differ.
-* ``verbose=False`` (non-default) silences the substep-level protocol and
-  the dispatch-layer banners; the orchestrator's own ``[run]/[ok]/[resume]``
-  lines always print (verbatim upstream).
-* trust4 dispatches the raw token list through ``iobrx._fast.trust4_fast
-  .main`` (the same ported implementation ``iobrx.trust4`` wraps) so that
-  arbitrary sectioned passthrough tokens keep the upstream
-  ``parse_known_args`` semantics; the IOBRpy banner after the stage mirrors
-  the ``iobrpy.main`` dispatch (printed on SystemExit, gated by verbose).
-
-BUG-COMPATIBLE upstream quirks preserved (they live in the verbatim
-orchestration): done-flag files are written even under ``--dry_run``; the
-deconvolution-merge block runs (and reads the method CSVs) even under
-``--dry_run``; the ``--qn`` router token never reaches the child parser's
-case-sensitive ``--QN`` flag; ``_find_latest`` picks merged matrices by
-mtime; prepare_salmon's whole-flow try/except swallow (rc stays 0 with no
-output file, and the following log2_eset fails with rc 1) is inherited from
-``iobrx.prepare_salmon``.
+External programs still perform alignment/reconstruction. The Python wrapper
+removes repeated CLI imports; it does not promise to accelerate those tools.
+`backend="python"` remains the explicit untouched-upstream escape hatch and
+does not inherit these orchestration reliability changes.
 """
 
 import argparse
+import json
 import os
 import shlex
 import sys
 import traceback
+import threading
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from iobrx._run_state import file_hash, signature, write_json
+
+_RUN_LOCK = threading.RLock()
 
 try:
     import pandas as pd
@@ -319,13 +264,13 @@ def _step_parser(step: str) -> argparse.ArgumentParser:
 
 def _exec_fastq_qc(args, verbose):
     import iobrx
-    iobrx.fastq_qc(
+    result = iobrx.fastq_qc(
         path1_fastq=args.path1_fastq, path2_fastp=args.path2_fastp,
         num_threads=args.num_threads, suffix1=args.suffix1,
         batch_size=args.batch_size, se=args.se,
         length_required=args.length_required, verbose=verbose,
     )
-    return 0
+    return int(result["rc"])
 
 
 def _exec_batch_salmon(args, verbose):
@@ -443,15 +388,14 @@ def _exec_calculate_sig_score(args, verbose):
 def _exec_cibersort(args, verbose):
     # iobrpy.main dispatch for cibersort, verbatim (incl. the mixture read
     # semantics of the original function: sep=None + engine='python').
-    import iobrx
-    mix_df = pd.read_csv(args.input_path, sep=None, engine='python', index_col=0)
-    result_df = iobrx.cibersort(
-        mix_df,
+    from iobrpy.workflow.cibersort import cibersort
+    result_df = cibersort(
+        str(args.input_path),
         perm=args.perm,
         QN=args.QN,
         absolute=args.absolute,
         abs_method=args.abs_method,
-        n_threads=args.threads,
+        n_jobs=args.threads,
     )
     result_df.columns = [col + '_CIBERSORT' for col in result_df.columns]
     result_df.index.name = 'ID'
@@ -951,10 +895,12 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     d_star     = outdir / "02-star"
     # Create common directories (shared across modes)
     for d in [d_fastp, d_tpm, d_sigscore, d_deconv, d_lrcal, d_tcrbcr]:
-        _ensure_dir(d)
+        if not ns.dry_run:
+            _ensure_dir(d)
 
     # Create the mode-specific directory only
-    _ensure_dir(d_salmon if ns.mode == "salmon" else d_star)
+    if not ns.dry_run:
+        _ensure_dir(d_salmon if ns.mode == "salmon" else d_star)
 
     # Legacy "sectioned" style (optional)
     blocks_named = _parse_passthrough_blocks([_normalize_flag_token(t) for t in unknown])
@@ -1016,7 +962,8 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         rc = _run(cmd, dry=ns.dry_run)
         if rc != 0:
             return rc
-        fastp_done_flag.write_text("done\n", encoding="utf-8")
+        if not ns.dry_run:
+            fastp_done_flag.write_text("done\n", encoding="utf-8")
 
     # 2/3/4) Quantify & merge -> 02-*/ and 03-tpm/
     if ns.mode == "salmon":
@@ -1031,7 +978,8 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             rc = _run(cmd, dry=ns.dry_run)
             if rc != 0:
                 return rc
-            (d_salmon / ".batch_salmon.done").write_text("done\n", encoding="utf-8")
+            if not ns.dry_run:
+                (d_salmon / ".batch_salmon.done").write_text("done\n", encoding="utf-8")
         else:
             print("[resume] batch_salmon skipped.")
 
@@ -1051,11 +999,14 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             rc = _run(cmd, cwd=d_salmon, dry=ns.dry_run)
             if rc != 0:
                 return rc
-            (d_salmon / ".merge_salmon.done").write_text("done\n", encoding="utf-8")
+            if not ns.dry_run:
+                (d_salmon / ".merge_salmon.done").write_text("done\n", encoding="utf-8")
         else:
             print("[resume] merge_salmon skipped.")
 
         merged_salmon_tpm = _find_latest(d_salmon, ["*_salmon_tpm.tsv", "*_salmon_tpm.tsv.gz"])
+        if ns.dry_run and merged_salmon_tpm is None:
+            merged_salmon_tpm = d_salmon / "runall_salmon_tpm.tsv.gz"
         if merged_salmon_tpm is None:
             print("[ERROR] Cannot find merged Salmon TPM in '02-salmon/' (pattern '*_salmon_tpm.tsv*').")
             return 2
@@ -1105,7 +1056,8 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             rc = _run(cmd, dry=ns.dry_run)
             if rc != 0:
                 return rc
-            (d_star / ".batch_star_count.done").write_text("done\n", encoding="utf-8")
+            if not ns.dry_run:
+                (d_star / ".batch_star_count.done").write_text("done\n", encoding="utf-8")
         else:
             print("[resume] batch_star_count skipped.")
 
@@ -1126,11 +1078,14 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             rc = _run(cmd, cwd=d_star, dry=ns.dry_run)
             if rc != 0:
                 return rc
-            (d_star / ".merge_star_count.done").write_text("done\n", encoding="utf-8")
+            if not ns.dry_run:
+                (d_star / ".merge_star_count.done").write_text("done\n", encoding="utf-8")
         else:
             print("[resume] merge_star_count skipped.")
 
         merged_star_counts = _find_latest(d_star, ["*_star_ReadsPerGene.tsv", "*_star_ReadsPerGene.tsv.gz", "*.STAR.count*.gz"])
+        if ns.dry_run and merged_star_counts is None:
+            merged_star_counts = d_star / "runall_star_ReadsPerGene.tsv"
         if merged_star_counts is None:
             print("[ERROR] Cannot find merged STAR ReadsPerGene in '02-star/' (pattern '*_star_ReadsPerGene.tsv*').")
             return 2
@@ -1192,7 +1147,7 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
             return rc
 
     # 6) Deconvolution (6 methods) -> 05-tme/
-    if not _nonempty(tpm_matrix):
+    if not ns.dry_run and not _nonempty(tpm_matrix):
         print("[ERROR] TPM matrix missing. Abort before deconvolution.")
         return 2
 
@@ -1235,7 +1190,9 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
     # 7) Merge deconvolution results -> 05-tme/deconvo_merged.csv
     merged_wide_path = d_deconv / "deconvo_merged.csv"
 
-    if ns.resume and _nonempty(merged_wide_path):
+    if ns.dry_run:
+        print(f"[dry-run] merge deconvolution -> {merged_wide_path}")
+    elif ns.resume and _nonempty(merged_wide_path):
         print("[resume] merge deconvolution skipped.")
     else:
         if pd is None:
@@ -1330,10 +1287,62 @@ def _main_impl(argv: Optional[List[str]] = None) -> int:
         rc = _run(cmd, dry=ns.dry_run)
         if rc != 0:
             return rc
-        tcrbcr_done_flag.write_text("done\n", encoding="utf-8")
+        if not ns.dry_run:
+            tcrbcr_done_flag.write_text("done\n", encoding="utf-8")
 
     print("\n[done] runall finished.")
     return 0
+
+
+def _pipeline_products(root):
+    return {str(p.relative_to(root)): file_hash(p) for p in sorted(root.rglob("*"))
+            if p.is_file() and p.name != ".iobrx-run-state.json"}
+
+
+def _guarded_runall(argv):
+    # Reserve a run directory for one input/configuration. Legacy outputs cannot
+    # be trusted merely because they contain flags with familiar filenames.
+    args = list(sys.argv[1:] if argv is None else argv)
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--outdir")
+    parser.add_argument("--fastq")
+    parser.add_argument("--mode")
+    parser.add_argument("--dry_run", action="store_true")
+    ns, _ = parser.parse_known_args(args)
+    if ns.dry_run or not ns.outdir or not ns.fastq or ns.mode not in {"salmon", "star"}:
+        return _main_impl(args)
+    root = Path(ns.outdir).resolve()
+    state_path = root / ".iobrx-run-state.json"
+    inputs = {Path(ns.fastq).resolve()}
+    for token in args:
+        candidate = Path(token.partition("=")[2] if token.startswith("--") and "=" in token else token)
+        if not str(candidate).startswith("-") and candidate.exists():
+            candidate = candidate.resolve()
+            if candidate != root and not candidate.is_relative_to(root):
+                if root.is_relative_to(candidate):
+                    raise ValueError("outdir must be outside input and reference directories")
+                inputs.add(candidate)
+    import shutil
+    tools = [x for x in ("fastp", "multiqc", "salmon", "STAR", "run-trust4", "samtools") if shutil.which(x)]
+    current = signature(sorted(inputs), {"argv": [a for a in args if a != "--resume"]}, tools)
+    if root.exists() and any(root.iterdir()):
+        try:
+            previous = json.loads(state_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            raise ValueError("Existing run has no verifiable state; choose a new outdir") from None
+        if previous.get("signature") != current or previous.get("outputs") != _pipeline_products(root):
+            raise ValueError("Run inputs, references, parameters or outputs changed; choose a new outdir")
+    root.mkdir(parents=True, exist_ok=True)
+    state = {"signature": current, "status": "running", "outputs": _pipeline_products(root)}
+    write_json(state_path, state)
+    rc = 1
+    try:
+        rc = _main_impl(args)
+        return rc
+    finally:
+        state.update(status="completed" if rc == 0 else "failed", exit_code=rc,
+                     outputs=_pipeline_products(root))
+        write_json(state_path, state)
 
 
 def runall_argv(argv: Optional[List[str]] = None, verbose: bool = True) -> int:
@@ -1344,9 +1353,10 @@ def runall_argv(argv: Optional[List[str]] = None, verbose: bool = True) -> int:
     of calling ``sys.exit``.
     """
     global _SUBSTEP_VERBOSE
-    _SUBSTEP_VERBOSE = bool(verbose)
     try:
-        return _main_impl(argv)
+        with _RUN_LOCK:
+            _SUBSTEP_VERBOSE = bool(verbose)
+            return _guarded_runall(argv)
     except SystemExit as e:  # argparse usage errors keep their exit code
         code = e.code
         return code if isinstance(code, int) else (0 if code is None else 1)

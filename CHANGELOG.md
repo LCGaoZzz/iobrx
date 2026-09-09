@@ -4,9 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - 2026-09-08
+## [0.3.0] - Unreleased
 
-### Added — 19 new APIs from IOBRpy (campaign rounds R3–R6): 18 ported workflows + the sig-score glue optimization; public API now 28 functions
+### Reliability and Omicos hardening
+
+- Propagate QC/MultiQC failures, make dry runs write-free, and bind resume decisions to input/reference/tool and artifact hashes.
+- Require STAR BAM and GeneCounts together; respect `IOBRX_DISABLE_RUST` in Salmon parsing.
+- Use the original file-based CIBERSORT solver inside `runall`; retain NMF feature rankings in fresh output directories.
+- Add 16 typed Omicos adapters (27 identifiers total), input/output isolation and truthful failed manifests.
+- Add 11 executed tutorials (23 total), each with two reviewed figure revisions and recorded API time.
+- Enable sequential `tme_profile` and committed-data NMF checks; choose release notes from the actual tag and synchronize container metadata.
+- Correct unreleased wheel/PyPI/container claims and distinguish imported campaign reports from locally reproduced evidence.
+
+### Added — 18 workflow APIs and signature-score optimization (campaign R3–R6)
 
 - **Pure-Python ports (bit-exact, chosen route):** `nmf`,
   `merge_star_count` (stat-row bug-compat preserved), `prepare_salmon`,

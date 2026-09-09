@@ -298,12 +298,8 @@ def _rust_parse_fn(strict: bool):
     the kernel is missing (stale ``.so``); ``strict=False``
     (``engine='auto'``) degrades silently to the sequential Python parser.
     """
-    try:
-        import iobrx._rust as _ir
-
-        fn = getattr(_ir, "merge_salmon_parse", None)
-    except (ImportError, OSError):
-        fn = None
+    from iobrx._backend import _native
+    fn = getattr(_native, "merge_salmon_parse", None)
     if fn is None and strict:
         raise RuntimeError(
             "merge_salmon engine='rust' requires iobrx._rust.merge_salmon_parse "

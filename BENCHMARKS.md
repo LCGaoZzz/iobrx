@@ -1,5 +1,7 @@
 # BENCHMARKS — every number iobrx ships with, and where each one came from
 
+> Evidence status (2026-09-09): R3–R6 results are campaign-reported measurements. Some cited raw scripts/logs remain outside this repository. They are retained for provenance, not presented as independently rerun release evidence. Current local tests and tutorial timings: [0.3 validation](docs/VALIDATION_0.3.md).
+
 Two measurement eras share one precision standard: **bit-exact vs the frozen
 ORIGINAL (IOBRpy 0.2.0) references** — identical index/columns/dtypes/NaN
 mask, every numeric cell `max_abs_diff == 0.0`, or byte-/sha256-equal output

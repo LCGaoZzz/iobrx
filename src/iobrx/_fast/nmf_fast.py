@@ -36,10 +36,9 @@ sha256 equal to the recorded golden):
      module is imported lazily by ``iobrx.nmf`` and pulls matplotlib in
      only when ``plot=True``.
   4. BUG-COMPAT (upstream quirks, reproduced on purpose):
-     - ``top_features_per_cluster.csv`` is written BEFORE the output
-       directory is created and the failure is swallowed -> with a
-       non-existent ``outdir`` the file is silently missing while
-       clusters.csv / pca_plot.png are written normally.
+     - Fresh output directories are now created before saving feature
+       rankings. This fixes upstream's silently missing top-features file
+       without changing the model or table values.
      - ``read_matrix`` falls back to a literal four-space ``sep`` on any
        parse error, so real TAB-separated files do not parse.
      - ``shift`` is ignored unless ``min(X) < 0``; negative data without a
@@ -494,16 +493,11 @@ def nmf_cluster(data, kmin=2, kmax=8, features=None, log1p=False, normalize=Fals
     top_df = pd.DataFrame(rows, index=[f'cluster{i+1}' for i in range(H.shape[0])], columns=col_names)
     top_df.index.name = 'cluster'
 
-    # BUG-COMPAT (upstream main() step 5.1): this file is written BEFORE
-    # save_outputs() creates outdir, inside a swallowing try/except — with a
-    # non-existent outdir it is silently missing while the other outputs are
-    # written normally. Reproduced verbatim on the outdir path.
+    # Create the directory before the first output; never silently drop the
+    # feature rankings on a fresh run. This does not change the fitted model.
     if outdir is not None:
-        try:
-            top_df.to_csv(os.path.join(outdir, 'top_features_per_cluster.csv'))
-        except Exception as e:
-            if verbose:
-                print('Failed to save top features per cluster:', e)
+        os.makedirs(outdir, exist_ok=True)
+        top_df.to_csv(os.path.join(outdir, 'top_features_per_cluster.csv'))
 
     # 6) PCA for visualization (use W space)
     try:

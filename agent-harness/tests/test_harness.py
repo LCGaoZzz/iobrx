@@ -13,7 +13,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from iobrx_harness import runtime
-from iobrx_harness.catalog import CATALOG, request_schema
+from iobrx_harness.catalog import CATALOG, LEGACY_ANALYSES, request_schema
 from conftest import ROOT, request_for
 
 
@@ -44,7 +44,7 @@ def direct(analysis, matrix):
     return iobrx.estimate_score(matrix, platform="rnaseq")
 
 
-@pytest.mark.parametrize("analysis", list(CATALOG))
+@pytest.mark.parametrize("analysis", LEGACY_ANALYSES)
 def test_all_analyses_match_public_api(analysis, fixtures, tmp_path):
     request = request_for(analysis, fixtures, tmp_path / "result")
     process, manifest = cli("run", "--request", "-", request=request)
@@ -67,7 +67,7 @@ def test_all_analyses_match_public_api(analysis, fixtures, tmp_path):
 def test_schema_and_capabilities():
     Draft202012Validator.check_schema(request_schema())
     process, data = cli("capabilities")
-    assert process.returncode == 0 and len(data["analyses"]) == 11
+    assert process.returncode == 0 and len(data["analyses"]) == 27
     assert data["request_schema"] == request_schema()
 
 

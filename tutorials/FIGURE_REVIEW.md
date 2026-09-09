@@ -42,3 +42,25 @@ of Cell editorial approval or a guarantee of journal acceptance.
   does not establish scientific validity beyond the stated numerical tests.
 
 ![Final overview](review/round-2.png)
+
+## 0.3 additions: actual review on 2026-09-09
+
+The 11 new notebooks were executed at revision 0, then revision 1 and revision 2.
+All resulting panels were visually inspected via the contact sheets below;
+individual PNGs are retained in `review/extensions/`. Analytical input values
+were unchanged by styling. Final PNG/PDF/SVG files and inline notebook figures
+use revision 2. Warning formatting was then made portable and revision 2 was
+re-executed; no local machine paths are embedded in the shipped notebooks.
+
+| Notebooks | Initial review | Revision 1 | Revision 2 |
+| --- | --- | --- | --- |
+| IPS, LR | Redundant method suffixes and strong default colors | Shorter labels, muted teal/clay scale, thinner text | Wider layout, wrapped long labels, three colorbar ticks |
+| NMF, TME clustering | Default framing; cluster assignments absent from the heatmap | Remove frames, annotate TME labels under sample IDs | More horizontal space and explicit link between sample aliases and saved tables |
+| log2, mouse mapping | Dense labels and dominant borders | Remove borders and redundant labels | Fixed display range, sparse ticks, increased width |
+| Salmon merge/preparation, STAR merge | Default colors; STAR summary rows wasted display space | Plot variable features only; retain all rows in numeric results | Align widths, keep short gene labels and clarify display-only scaling |
+| tme_profile | Long CIBERSORT suffixes squeezed the panel | Remove repeated suffixes and reduce visual weight | Wrap labels, widen panel, simplify colorbar |
+| BayesPrism | Repeated method names obscured cell types | Keep cell-type labels; remove method suffixes and borders | Wider panel and sparse colorbar; short-chain demo caveat retained in notebook |
+
+[Initial contact sheet](review/extensions/gallery-round-0.png) ·
+[Revision 1](review/extensions/gallery-round-1.png) ·
+[Revision 2](review/extensions/gallery-round-2.png)

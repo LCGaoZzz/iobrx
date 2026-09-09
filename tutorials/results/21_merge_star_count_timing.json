@@ -1,0 +1,11 @@
+{
+  "analysis": "21_merge_star_count",
+  "input_shape": [
+    3,
+    3
+  ],
+  "seconds": 0.07266238497686572,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Synthetic ReadsPerGene tables demonstrate unstranded-column merging and the upstream handling of summary rows. This notebook does not run STAR."
+}

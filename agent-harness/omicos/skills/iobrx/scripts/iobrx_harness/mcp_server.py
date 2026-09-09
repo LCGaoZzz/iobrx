@@ -60,7 +60,7 @@ def create_server(workspace):
 
     @server.tool(annotations=read_only)
     async def iobrx_capabilities() -> dict:
-        """List 11 analyses, supported input scales/IDs and strict JSON request schemas."""
+        """List 27 analyses, input types, external tools and strict JSON request schemas."""
         return await invoke("capabilities")
 
     @server.tool(annotations=read_only)
@@ -70,7 +70,7 @@ def create_server(workspace):
 
     @server.tool(annotations=read_only)
     async def iobrx_validate(request: dict) -> dict:
-        """Validate a request and input matrix without running an analysis or writing outputs."""
+        """Validate typed inputs and tool availability without analysis or output writes."""
         return await invoke("validate", request=request)
 
     @server.tool(annotations=writes)

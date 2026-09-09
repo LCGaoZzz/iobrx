@@ -5,6 +5,7 @@ import argparse
 import email
 import importlib.metadata
 import pathlib
+import re
 import tarfile
 import tomllib
 import zipfile
@@ -14,6 +15,10 @@ def check_source(root: pathlib.Path) -> str:
     project = tomllib.loads((root / "pyproject.toml").read_text())["project"]
     cargo = tomllib.loads((root / "rust/Cargo.toml").read_text())["package"]
     assert project["version"] == cargo["version"], "Python/Rust versions differ"
+    python_version = re.search(r'__version__\s*=\s*"([^"]+)"', (root / "src/iobrx/__init__.py").read_text())
+    assert python_version and python_version.group(1) == project["version"], "Runtime/Python metadata versions differ"
+    assert f'org.opencontainers.image.version="{project["version"]}"' in (root / "Dockerfile").read_text(), "Container version differs"
+    assert (root / "docs/releases" / f'{project["version"]}.md').is_file(), "Version-specific release notes missing"
     return project["version"]
 
 

@@ -39,6 +39,7 @@ reads, parameters INCLUDING ``-p`` thread count) — matched by construction
 when the same salmon binary and arguments are used.
 """
 from __future__ import annotations
+from iobrx._run_state import signature, completed, complete
 
 import glob
 import json
@@ -170,7 +171,10 @@ def _run_salmon_one(
     # Resume logic
     quant_sf = os.path.join(out_dir, "quant.sf")
     done_flag = os.path.join(out_dir, "task.complete")
-    if _exists_nonempty(quant_sf) and os.path.exists(done_flag):
+    run_signature = signature([r1, r2, index] + ([gtf] if gtf else []),
+                              {"threads": threads, "libtype": "ISF", "gcBias": True,
+                               "validateMappings": True}, [salmon_bin])
+    if completed(done_flag, run_signature, [quant_sf]):
         if verbose:
             print(f"[Skip] {sample_id} already finished; skipping.")
         return sample_id, True, None
@@ -220,12 +224,10 @@ def _run_salmon_one(
         ).format(sid=sample_id, code=e.returncode, cmd=" ".join(cmd))
         return sample_id, False, msg
 
-    # Mark done
     try:
-        with open(done_flag, "w") as f:
-            f.write("ok\n")
-    except Exception:
-        pass
+        complete(done_flag, run_signature, [quant_sf], "ok\n")
+    except RuntimeError as exc:
+        return sample_id, False, str(exc)
 
     if verbose:
         print(f"[Done] {sample_id} finished successfully. Saved to: {quant_sf}", flush=True)

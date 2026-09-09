@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml/badge.svg)](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml)
 [![version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/LCGaoZzz/iobrx/blob/main/CHANGELOG.md)
-[![tutorials](https://img.shields.io/badge/executed_notebooks-12-teal)](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md)
+[![tutorials](https://img.shields.io/badge/executed_notebooks-23-teal)](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md)
 [![license](https://img.shields.io/badge/code-MIT-black)](https://github.com/LCGaoZzz/iobrx/blob/main/LICENSE)
 
 English · [中文说明](https://github.com/LCGaoZzz/iobrx/blob/main/README.zh-CN.md) · [Tutorial gallery](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md) · [CPU compatibility](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md) · [Benchmarks](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)
@@ -14,23 +14,27 @@ on the original [IOBRpy](https://github.com/IOBR/IOBRpy) toolkit.** It depends o
 IOBRpy and reuses its reference resources, gene signatures and analysis semantics.
 iobrx adds Rust kernels, parallel/vectorized execution, a pandas API, tested
 tutorials and Omicos agent interfaces. Inputs and outputs are ordinary
-DataFrames and files — and they are **bit-exact** against the original IOBRpy
-0.2.0 on the frozen validation data, with every nondeterministic exception
-documented below.
+DataFrames and files. Numerical parity is tested per method and fixture;
+it is not a universal bit-exact guarantee for every new workflow, parameter or
+input. See the explicit exceptions and [validation scope](docs/VALIDATION_0.3.md).
 
 [Original IOBRpy repository](https://github.com/IOBR/IOBRpy) · [Official IOBRpy documentation](https://iobr.github.io/IOBRpy/)
 
 **28 public APIs** — 26 workflow functions (plus the `deconvolute_quantiseq`
-alias and the `load_official` data helper) covering the whole IOBRpy surface:
+alias and the `load_official` data helper) covering the following IOBRpy workflow families:
 immune deconvolution (CIBERSORT, BayesPrism, EPIC, quanTIseq, MCP-counter,
 ESTIMATE), signature scoring (PCA / z-score / ssGSEA / integration), TPM
 conversion and annotation, Immunophenoscore, ligand–receptor pairing, NMF and
 TME clustering, the full `tme_profile` chain, RNA-seq file merging, and the
 FASTQ→TME orchestration stages (fastp / salmon / STAR / TRUST4 / SpecHLA).
 
+**Omicos:** the harness now exposes 27 typed analysis identifiers (the four signature modes are separate identifiers), including 16 new adapters. HLA and custom-reference BayesPrism remain direct-API capabilities. [Input contracts and limits](agent-harness/omicos/skills/iobrx/references/extended-workflows.md).
+
+**Evidence scope:** R3–R6 timings below are imported campaign measurements. Some raw campaign scripts/logs are not archived here, so these numbers are not independently reproducible from this PR alone. New local validation separates numerical tests, stub-tool contracts and actual tutorial timings.
+
 ### What's new in 0.3.0
 
-- **19 IOBRpy workflows ported** (campaign rounds R3–R6): `nmf`,
+- **18 additional workflow APIs** (campaign rounds R3–R6): `nmf`,
   `merge_salmon`, `merge_star_count`, `prepare_salmon`, `log2_eset`, `ips`,
   `mouse2human`, `lr_cal`, `tme_cluster`, `bayesprism`, `tme_profile`,
   `fastq_qc`, `batch_salmon`, `batch_star_count`, `trust4`, `runall`,
@@ -43,79 +47,68 @@ FASTQ→TME orchestration stages (fastp / salmon / STAR / TRUST4 / SpecHLA).
 - **`tme_profile` end-to-end 10.59×** vs the original CLI on the frozen STAD
   fixture — the endpoint of a measured bottleneck-shift chain
   1.12× → 8.44× → 10.59× ([BENCHMARKS.md Part II](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)).
-- **Formal blind benchmark (R6)**: 14 core candidates re-measured under one
+- **Campaign-reported benchmark (R6)**: 14 core candidates re-measured under one
   unified cold-start protocol against the unmodified original CLI; every
-  parity contract PASS. Test suite: **188 passed**.
+  parity contract reported PASS. The original submission recorded 188 default tests; current checks and limitations are tracked in [validation](docs/VALIDATION_0.3.md).
 
 ![Example: CIBERSORT composition and all 22 LM22 populations](https://raw.githubusercontent.com/LCGaoZzz/iobrx/main/tutorials/figures/07_cibersort.png)
 
+## Additional executed tutorials
+
+Eleven new notebooks cover IPS, LR scores, NMF, TME clustering, conditional
+log transforms, mouse mapping, Salmon/STAR merging, Salmon preparation,
+`tme_profile` and BayesPrism. Each includes actual outputs and an embedded
+figure with two reviewed revisions. The table reports one final notebook API
+call on the local WSL/Omicos interpreter, two requested threads, excluding
+input preparation. These are small tutorial observations, not speedup claims.
+NMF's BLAS parallelism is not governed solely by the requested thread count.
+The BayesPrism example uses a short demo chain; file-merging examples are synthetic.
+
+| Tutorial | Input shape | API call time |
+| --- | --- | --- |
+| [13_ips](tutorials/13_ips.ipynb) | 48058 × 4 | 0.016 s |
+| [14_lr_cal](tutorials/14_lr_cal.ipynb) | 48058 × 4 | 0.143 s |
+| [15_nmf](tutorials/15_nmf.ipynb) | 10 × 22 | 0.465 s |
+| [16_tme_cluster](tutorials/16_tme_cluster.ipynb) | 10 × 22 | 0.044 s |
+| [17_log2_eset](tutorials/17_log2_eset.ipynb) | 48058 × 4 | 0.235 s |
+| [18_mouse2human](tutorials/18_mouse2human.ipynb) | 4 × 3 | 0.020 s |
+| [19_merge_salmon](tutorials/19_merge_salmon.ipynb) | 3 × 3 | 0.076 s |
+| [20_prepare_salmon](tutorials/20_prepare_salmon.ipynb) | 3 × 4 | 0.014 s |
+| [21_merge_star_count](tutorials/21_merge_star_count.ipynb) | 3 × 3 | 0.073 s |
+| [22_tme_profile](tutorials/22_tme_profile.ipynb) | 48058 × 2 | 4.828 s |
+| [23_bayesprism](tutorials/23_bayesprism.ipynb) | 128 × 3 | 0.351 s |
+
 ## Install
 
-**Validated: Python 3.11, Linux x86-64 / WSL2, including an AVX2-only desktop CPU.**
-The 0.2.0 release provides a precompiled wheel. In a Python 3.11 environment:
+**0.3.0 is a development release under review in PR #5.** On 2026-09-09,
+GitHub's latest release was v0.1.0 without binary attachments. The repository
+contains a wheel/PyPI/container release workflow; that is not evidence that
+those distributions have been published. Do not rely on a PyPI or Tsinghua
+mirror install until a tested version appears on the public release page.
 
-```bash
-python -m pip install --only-binary=:all: iobrx==0.2.0
-python -c "import iobrx; print(iobrx.backend_info())"
-```
-
-No Rust or C++ compiler is needed. Numerical dependencies are pinned to the
-validated versions so a normal install does not silently change the reference
-algorithms. For the Tsinghua mirror, after it has synchronized from PyPI:
-
-```bash
-python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.2.0
-```
-
-If a new release has not reached the mirror yet, use the first command with
-`--index-url https://pypi.org/simple`. `--only-binary=:all:` makes unsupported
-environments fail clearly instead of starting a source compilation.
-
-To work through the notebooks, get the matching public data and tutorials:
-
-```bash
-git clone --branch v0.2.0 https://github.com/LCGaoZzz/iobrx.git
-cd iobrx
-python -m pip install --only-binary=:all: "iobrx[tutorials,test]==0.2.0"
-python -m jupyterlab tutorials
-```
-
-For an existing Omicos environment, use its Python executable for the commands
-above and select that same environment as the Jupyter kernel. Prefer a separate
-environment if its existing numerical dependencies need different versions.
-Developers can still build with `python -m pip install ".[tutorials,test]"`,
-which requires Cargo and a C++17 compiler.
-
-A versioned container supplies the analysis environment and example data:
-
-```bash
-docker run --rm ghcr.io/lcgaozzz/iobrx:0.2.0
-docker run --rm -v "$PWD:/work" -w /work ghcr.io/lcgaozzz/iobrx:0.2.0 python analysis.py
-```
-
-The tutorials are in `/opt/iobrx/tutorials` inside the container. GitHub
-[Release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.2.0) supplies the
-wheel, source archive, checksums and immutable container digest. The container
-uses locked dependencies and does not start a Jupyter server.
-### Development version (0.3.0) — build from source
-
-The 0.3.0 workflow ports on `main` are ahead of the released 0.2.0 wheel.
-Building them needs a Rust toolchain (cargo) and a C++17 compiler;
-[maturin](https://www.maturin.rs) drives the hybrid Python+Rust build:
+Validated source-build target: **Python 3.11, Linux x86-64 / WSL2**. Install
+Cargo and a C++17 compiler, then use an isolated Python environment:
 
 ```bash
 git clone https://github.com/LCGaoZzz/iobrx.git
 cd iobrx
-
-# Option 1 — pip (PEP 517: maturin builds the Rust extension automatically)
+# While 0.3.0 is under review, select the PR's source:
+git fetch origin pull/5/head
+git switch --detach FETCH_HEAD
 python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
-
-# Option 2 — build a wheel explicitly with maturin
-maturin build --release -i python3.11
-python -m pip install target/wheels/iobrx-0.3.0-*.whl
-
 python -c "import iobrx; print(iobrx.backend_info())"
+python -m jupyterlab tutorials
 ```
+
+Use the same interpreter as the Jupyter kernel. In an existing Omicos
+environment, first check dependency compatibility; use an isolated environment
+when the required numerical versions conflict. `pip install` from this source
+builds the extension; it is not an installation without compilation.
+
+The release workflow builds and tests a Linux CPython 3.11 wheel, source
+archive and versioned container. Publication and mirror synchronization are
+separate steps. See [release notes](docs/releases/0.3.0.md) and
+[current releases](https://github.com/LCGaoZzz/iobrx/releases).
 
 **Why the dependency pins** (details and measurements in
 [BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)):

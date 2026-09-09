@@ -1,0 +1,11 @@
+{
+  "analysis": "19_merge_salmon",
+  "input_shape": [
+    3,
+    3
+  ],
+  "seconds": 0.07625106000341475,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Synthetic quant.sf tables demonstrate the file contract. This notebook does not run Salmon or establish alignment accuracy."
+}

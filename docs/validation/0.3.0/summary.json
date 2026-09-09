@@ -1,0 +1,69 @@
+{
+  "date": "2026-09-09",
+  "base_pr_commit": "186a15dea41543d3ca2ae97f57bcfbf08b6710ae",
+  "python_source_sha256": "cf3728f9323596163ea82d06aed3cb3fdc54e4abb0353e262e09bc3e3cea9666",
+  "python": "3.11.15",
+  "platform": "Linux",
+  "cpu": "13th Gen Intel(R) Core(TM) i9-13900KF",
+  "versions": {
+    "iobrpy": "0.2.1",
+    "numpy": "2.2.6",
+    "pandas": "2.3.3",
+    "scipy": "1.16.3",
+    "scikit-learn": "1.7.2",
+    "gseapy": "1.3.1",
+    "pyarrow": "20.0.0"
+  },
+  "suites": [
+    {
+      "suite": "default_and_harness",
+      "tests": "246",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "68.278"
+    },
+    {
+      "suite": "full_parity",
+      "tests": "15",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "257.458"
+    },
+    {
+      "suite": "installed_wheel_native_disabled",
+      "tests": "19",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "8.575"
+    },
+    {
+      "suite": "installed_harness_adapters",
+      "tests": "16",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "2.382"
+    }
+  ],
+  "tutorials": {
+    "executed": 23,
+    "new": 11,
+    "figure_revisions": [
+      0,
+      1,
+      2
+    ],
+    "interpreter": "existing Omicos Python 3.11 with isolated validated dependency overlay"
+  },
+  "external_tool_evidence": "contract tests use fake binaries; no new real FASTQ/BAM alignment or HLA run in this audit",
+  "release_status": {
+    "pypi_http_status": 404,
+    "latest_github_release": "v0.1.0",
+    "binary_assets": 0
+  },
+  "local_wheel_tag": "cp311-cp311-manylinux_2_34_x86_64",
+  "release_wheel_target": "cp311 manylinux2014 x86_64; tested by GitHub Actions"
+}

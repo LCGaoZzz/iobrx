@@ -72,6 +72,11 @@ INPUT_SCHEMA = {
 }
 
 
+LEGACY_ANALYSES = tuple(CATALOG)
+from .extended_catalog import extend
+extend(CATALOG, INPUT_SCHEMA, choice, boolean, integer)
+
+
 def request_schema():
     base = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -79,18 +84,19 @@ def request_schema():
         "required": ["schema_version", "analysis", "input", "output_dir"],
         "properties": {
             "schema_version": {"const": "1.0"}, "analysis": choice(list(CATALOG)),
-            "input": deepcopy(INPUT_SCHEMA), "output_dir": {"type": "string", "minLength": 1},
+            "input": {"type": "object"}, "output_dir": {"type": "string", "minLength": 1},
             "threads": {"type": "integer", "minimum": 1, "maximum": 1024},
             "parameters": {"type": "object"},
         },
         "allOf": [],
     }
     for name, spec in CATALOG.items():
+        schema = deepcopy(spec.get("input_schema", INPUT_SCHEMA))
+        if name in LEGACY_ANALYSES:
+            schema["properties"].update(scale={"enum": spec["scales"]}, gene_id={"enum": spec["gene_ids"]},
+                                        organism={"enum": spec["organisms"]})
         base["allOf"].append({"if": {"properties": {"analysis": {"const": name}}},
-            "then": {"properties": {"parameters": deepcopy(spec["parameters"]), "input": {
-                "properties": {"scale": {"enum": spec["scales"]}, "gene_id": {"enum": spec["gene_ids"]},
-                               "organism": {"enum": spec["organisms"]}},
-            }}}})
+            "then": {"properties": {"parameters": deepcopy(spec["parameters"]), "input": schema}}})
     return base
 
 

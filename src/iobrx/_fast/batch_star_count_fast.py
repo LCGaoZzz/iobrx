@@ -56,6 +56,8 @@ import os
 import random
 import subprocess
 import sys
+from pathlib import Path
+from iobrx._run_state import signature, completed, complete
 
 try:
     import resource
@@ -118,13 +120,18 @@ def process_sample(f1, path_out, index, suffix1, num_threads, star_bin="STAR",
     # Extract sample ID assuming no other underscores in the filename
     sample_id = os.path.basename(f1).replace(suffix1, "")
 
-    # Check if task.complete and BAM files already exist and are not empty
-    if os.path.exists(os.path.join(path_out, f"{sample_id}.task.complete")) and \
-            os.path.exists(os.path.join(path_out, f"{sample_id}_Aligned.sortedByCoord.out.bam")) and \
-            os.path.getsize(os.path.join(path_out, f"{sample_id}_Aligned.sortedByCoord.out.bam")) > 0:
+    marker = Path(path_out) / f"{sample_id}.task.complete"
+    outputs = [Path(path_out) / f"{sample_id}_Aligned.sortedByCoord.out.bam",
+               Path(path_out) / f"{sample_id}_ReadsPerGene.out.tab"]
+    run_signature = signature([f1, f2, index],
+                              {"threads": num_threads, "suffix1": suffix1,
+                               "twopassMode": "Basic", "limitBAMsortRAM": 137438953472},
+                              [star_bin])
+    if completed(marker, run_signature, outputs):
         if verbose:
             print(f"[Skip] {sample_id} already finished; skipping.")
     else:
+        marker.unlink(missing_ok=True)
         if verbose:
             print(f"[Start] {sample_id} is running...")
 
@@ -157,7 +164,7 @@ def process_sample(f1, path_out, index, suffix1, num_threads, star_bin="STAR",
 
         # Create task.complete file
         os.makedirs(os.path.join(path_out, sample_id), exist_ok=True)
-        open(os.path.join(path_out, f"{sample_id}.task.complete"), 'w').close()
+        complete(marker, run_signature, outputs, "")
         if verbose:
             print(f"[Done] {sample_id} finished successfully.")
     return sample_id

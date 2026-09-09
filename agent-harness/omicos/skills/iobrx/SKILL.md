@@ -1,7 +1,7 @@
 ---
 id: iobrx
 name: iobrx
-description: Run iobrx bulk-expression annotation, counts-to-TPM, PCA/zscore/ssGSEA/integrated signature scoring, CIBERSORT, EPIC, quanTIseq, MCP-counter or ESTIMATE with explicit input scale and JSON result manifests; inspect existing results without rerunning.
+description: Run iobrx expression scoring, deconvolution, IPS, ligand-receptor scores, NMF/TME clustering, bundled-reference BayesPrism, matrix utilities, FASTQ QC, Salmon/STAR, TRUST4 or runall through typed requests and JSON result manifests; inspect existing results without rerunning.
 tier: community
 category: general_omics_analysis
 summary: iobrx bulk tumor microenvironment analysis with portable execution and traceable results.
@@ -13,9 +13,11 @@ runtime_entrypoint: scripts/run_iobrx.py
 
 Use this Skill for the named bulk-expression analyses or an explicit iobrx
 request. It uses the public iobrx API, its acceleration/fallback behavior and
-the reference resources installed with IOBRpy. It does not provide FASTQ
-alignment, HLA/TCR reconstruction, single-cell reference deconvolution,
-differential-expression testing or ligand–receptor analysis.
+the reference resources installed with IOBRpy. The catalog exposes 27 analysis
+identifiers, including 16 additional adapters in harness 0.2.0. Read
+`references/extended-workflows.md` for their input types and limitations.
+HLA/SpecHLA and custom BayesPrism references remain Python API capabilities;
+this harness does not expose them or differential-expression testing.
 
 ## Resolve and prepare
 
@@ -55,7 +57,7 @@ settings. Relative paths resolve beside the request file. Then:
 <python> <resolved scripts/run_iobrx.py> status <run-directory>
 ```
 
-Validation reads the matrix without analysis or output writes. It checks
+Validation reads the declared files without analysis or output writes. It checks
 supported scale/ID/species declarations, uniqueness and finite numeric values;
 it cannot establish that the declared biological scale is true. Inspect the
 result and error before making any corrective change. A failed analysis is

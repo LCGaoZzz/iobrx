@@ -1,0 +1,11 @@
+{
+  "analysis": "20_prepare_salmon",
+  "input_shape": [
+    3,
+    4
+  ],
+  "seconds": 0.013533135002944618,
+  "threads": 2,
+  "scope": "one API call; excludes input preparation",
+  "fixture": "Synthetic GENCODE-style annotations. Transcript-to-symbol aggregation follows the upstream mean rule; it is not a new gene-level quantification method."
+}
