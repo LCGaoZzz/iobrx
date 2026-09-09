@@ -9,7 +9,7 @@ description = "JSON CLI and Omicos Agent/Skill harness for iobrx"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
-dependencies = ["iobrx>=0.2.0,<0.3", "jsonschema>=4.23,<5"]
+dependencies = ["iobrx>=0.2.0,<0.4", "jsonschema>=4.23,<5"]
 
 [project.optional-dependencies]
 mcp = ["mcp>=1.28,<2"]
