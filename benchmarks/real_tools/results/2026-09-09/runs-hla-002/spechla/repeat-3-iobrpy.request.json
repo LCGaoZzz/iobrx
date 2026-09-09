@@ -1,0 +1,11 @@
+{
+  "function": "spechla",
+  "parameters": {
+    "name": "NA06985",
+    "read1": "<WORK>/data/NA06985_1.filter.fastq.gz",
+    "read2": "<WORK>/data/NA06985_2.filter.fastq.gz",
+    "outdir": "<WORK>/runs-hla-002/spechla/active",
+    "threads": 4,
+    "use_exon": 1
+  }
+}

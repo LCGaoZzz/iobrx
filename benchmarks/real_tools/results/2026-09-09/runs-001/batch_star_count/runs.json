@@ -1,0 +1,221 @@
+[
+  {
+    "arm": "iobrpy",
+    "repeat": 1,
+    "wall_seconds": 8.80181660100061,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "-m",
+      "iobrpy.main",
+      "batch_star_count",
+      "--path_fq",
+      "<WORK>/data/yeast/reads",
+      "--path_out",
+      "<WORK>/runs-001/batch_star_count/active",
+      "--num_threads",
+      "4",
+      "--batch_size",
+      "1",
+      "--index",
+      "<WORK>/data/yeast/index"
+    ],
+    "output": "<WORK>/runs-001/batch_star_count/repeat-1-iobrpy",
+    "products": {
+      "files": {
+        "sampleA_ReadsPerGene.out.tab": "4c0cd467445752579c337d5bb3e77f8633071a6fdb5450482dc53eaf7b82aa2b",
+        "sampleB_ReadsPerGene.out.tab": "9a5f8d04e80e4b7389600853185661856a4c12de6625a38f43d9a7e27328abc2",
+        "sampleA_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "01bca8cb0fed6f005ab3dac67cbc3ae2f22257b4f1e0c4d00c3a4ffeffd11278",
+        "sampleB_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "6fda61940d7b46494fbeb4661ce36162fa5ef3310812063bd27e821c6273a7ef"
+      },
+      "metrics": {
+        "sampleA_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 72626,
+          "mapped_records": 72626
+        },
+        "sampleB_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 68046,
+          "mapped_records": 68046
+        }
+      }
+    },
+    "peak_rss_kib": 1064612
+  },
+  {
+    "arm": "iobrx",
+    "repeat": 1,
+    "wall_seconds": 7.8755621680011245,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "<REPO>/benchmarks/real_tools/arm.py",
+      "<WORK>/runs-001/batch_star_count/repeat-1-iobrx.request.json"
+    ],
+    "output": "<WORK>/runs-001/batch_star_count/repeat-1-iobrx",
+    "products": {
+      "files": {
+        "sampleA_ReadsPerGene.out.tab": "4c0cd467445752579c337d5bb3e77f8633071a6fdb5450482dc53eaf7b82aa2b",
+        "sampleB_ReadsPerGene.out.tab": "9a5f8d04e80e4b7389600853185661856a4c12de6625a38f43d9a7e27328abc2",
+        "sampleA_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "01bca8cb0fed6f005ab3dac67cbc3ae2f22257b4f1e0c4d00c3a4ffeffd11278",
+        "sampleB_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "6fda61940d7b46494fbeb4661ce36162fa5ef3310812063bd27e821c6273a7ef"
+      },
+      "metrics": {
+        "sampleA_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 72626,
+          "mapped_records": 72626
+        },
+        "sampleB_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 68046,
+          "mapped_records": 68046
+        }
+      }
+    },
+    "peak_rss_kib": 1064724
+  },
+  {
+    "arm": "iobrx",
+    "repeat": 2,
+    "wall_seconds": 7.962305076000121,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "<REPO>/benchmarks/real_tools/arm.py",
+      "<WORK>/runs-001/batch_star_count/repeat-2-iobrx.request.json"
+    ],
+    "output": "<WORK>/runs-001/batch_star_count/repeat-2-iobrx",
+    "products": {
+      "files": {
+        "sampleA_ReadsPerGene.out.tab": "4c0cd467445752579c337d5bb3e77f8633071a6fdb5450482dc53eaf7b82aa2b",
+        "sampleB_ReadsPerGene.out.tab": "9a5f8d04e80e4b7389600853185661856a4c12de6625a38f43d9a7e27328abc2",
+        "sampleA_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "01bca8cb0fed6f005ab3dac67cbc3ae2f22257b4f1e0c4d00c3a4ffeffd11278",
+        "sampleB_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "6fda61940d7b46494fbeb4661ce36162fa5ef3310812063bd27e821c6273a7ef"
+      },
+      "metrics": {
+        "sampleA_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 72626,
+          "mapped_records": 72626
+        },
+        "sampleB_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 68046,
+          "mapped_records": 68046
+        }
+      }
+    },
+    "peak_rss_kib": 1064420
+  },
+  {
+    "arm": "iobrpy",
+    "repeat": 2,
+    "wall_seconds": 8.691668429999481,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "-m",
+      "iobrpy.main",
+      "batch_star_count",
+      "--path_fq",
+      "<WORK>/data/yeast/reads",
+      "--path_out",
+      "<WORK>/runs-001/batch_star_count/active",
+      "--num_threads",
+      "4",
+      "--batch_size",
+      "1",
+      "--index",
+      "<WORK>/data/yeast/index"
+    ],
+    "output": "<WORK>/runs-001/batch_star_count/repeat-2-iobrpy",
+    "products": {
+      "files": {
+        "sampleA_ReadsPerGene.out.tab": "4c0cd467445752579c337d5bb3e77f8633071a6fdb5450482dc53eaf7b82aa2b",
+        "sampleB_ReadsPerGene.out.tab": "9a5f8d04e80e4b7389600853185661856a4c12de6625a38f43d9a7e27328abc2",
+        "sampleA_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "01bca8cb0fed6f005ab3dac67cbc3ae2f22257b4f1e0c4d00c3a4ffeffd11278",
+        "sampleB_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "6fda61940d7b46494fbeb4661ce36162fa5ef3310812063bd27e821c6273a7ef"
+      },
+      "metrics": {
+        "sampleA_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 72626,
+          "mapped_records": 72626
+        },
+        "sampleB_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 68046,
+          "mapped_records": 68046
+        }
+      }
+    },
+    "peak_rss_kib": 1064536
+  },
+  {
+    "arm": "iobrpy",
+    "repeat": 3,
+    "wall_seconds": 8.557293021000078,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "-m",
+      "iobrpy.main",
+      "batch_star_count",
+      "--path_fq",
+      "<WORK>/data/yeast/reads",
+      "--path_out",
+      "<WORK>/runs-001/batch_star_count/active",
+      "--num_threads",
+      "4",
+      "--batch_size",
+      "1",
+      "--index",
+      "<WORK>/data/yeast/index"
+    ],
+    "output": "<WORK>/runs-001/batch_star_count/repeat-3-iobrpy",
+    "products": {
+      "files": {
+        "sampleA_ReadsPerGene.out.tab": "4c0cd467445752579c337d5bb3e77f8633071a6fdb5450482dc53eaf7b82aa2b",
+        "sampleB_ReadsPerGene.out.tab": "9a5f8d04e80e4b7389600853185661856a4c12de6625a38f43d9a7e27328abc2",
+        "sampleA_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "01bca8cb0fed6f005ab3dac67cbc3ae2f22257b4f1e0c4d00c3a4ffeffd11278",
+        "sampleB_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "6fda61940d7b46494fbeb4661ce36162fa5ef3310812063bd27e821c6273a7ef"
+      },
+      "metrics": {
+        "sampleA_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 72626,
+          "mapped_records": 72626
+        },
+        "sampleB_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 68046,
+          "mapped_records": 68046
+        }
+      }
+    },
+    "peak_rss_kib": 1064576
+  },
+  {
+    "arm": "iobrx",
+    "repeat": 3,
+    "wall_seconds": 7.787913572999969,
+    "exit_code": 0,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "<REPO>/benchmarks/real_tools/arm.py",
+      "<WORK>/runs-001/batch_star_count/repeat-3-iobrx.request.json"
+    ],
+    "output": "<WORK>/runs-001/batch_star_count/repeat-3-iobrx",
+    "products": {
+      "files": {
+        "sampleA_ReadsPerGene.out.tab": "4c0cd467445752579c337d5bb3e77f8633071a6fdb5450482dc53eaf7b82aa2b",
+        "sampleB_ReadsPerGene.out.tab": "9a5f8d04e80e4b7389600853185661856a4c12de6625a38f43d9a7e27328abc2",
+        "sampleA_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "01bca8cb0fed6f005ab3dac67cbc3ae2f22257b4f1e0c4d00c3a4ffeffd11278",
+        "sampleB_Aligned.sortedByCoord.out.bam:sorted-SAM-records": "6fda61940d7b46494fbeb4661ce36162fa5ef3310812063bd27e821c6273a7ef"
+      },
+      "metrics": {
+        "sampleA_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 72626,
+          "mapped_records": 72626
+        },
+        "sampleB_Aligned.sortedByCoord.out.bam": {
+          "alignment_records": 68046,
+          "mapped_records": 68046
+        }
+      }
+    },
+    "peak_rss_kib": 1064532
+  }
+]

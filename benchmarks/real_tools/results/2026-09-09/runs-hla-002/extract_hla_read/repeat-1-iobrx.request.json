@@ -1,0 +1,10 @@
+{
+  "function": "extract_hla_read",
+  "parameters": {
+    "sample_id": "NA06985",
+    "bam_path": "<WORK>/data/NA06985.GRCh38.chr6.bam",
+    "ref": "hg38",
+    "outdir": "<WORK>/runs-hla-002/extract_hla_read/active",
+    "auto_install": false
+  }
+}

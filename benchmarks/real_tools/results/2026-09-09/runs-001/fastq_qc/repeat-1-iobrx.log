@@ -1,0 +1,25 @@
+### FASTQ files quality control using fastp ###
+[Start] ERR188044 is running...
+[Done] ERR188044 finished successfully.
+[Start] ERR188104 is running...
+[Done] ERR188104 finished successfully.
+
+Saved/Existing output files:
+<WORK>/runs-001/fastq_qc/active/ERR188044_1.fastq.gz
+<WORK>/runs-001/fastq_qc/active/ERR188044_2.fastq.gz
+<WORK>/runs-001/fastq_qc/active/ERR188104_1.fastq.gz
+<WORK>/runs-001/fastq_qc/active/ERR188104_2.fastq.gz
+
+MultiQC report saved to:
+<WORK>/runs-001/fastq_qc/active/multiqc_report/multiqc_fastp_report.html
+   
+#########################################################
+ IOBRpy: Immuno-Oncology Biological Research using Python 
+ If you encounter any issues, please report them at 
+ https://github.com/IOBR/IOBRpy/issues 
+#########################################################
+ Author: Haonan Huang, Dongqiang Zeng
+ Email: interlaken@smu.edu.cn 
+#########################################################
+   
+{"api_seconds": 2.3665522089995648, "return_code": 0, "iobrx": "0.3.0", "backend": {"native_available": true, "native_reason": null, "sorting": "numpy CPU dispatch", "requires_avx512": false, "bundled_openblas_found": true}}

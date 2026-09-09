@@ -1,0 +1,26 @@
+[
+  {
+    "arm": "iobrpy",
+    "repeat": 1,
+    "wall_seconds": 1.6689829279985133,
+    "exit_code": 1,
+    "command": [
+      "<TOOLCHAIN>/bin/python",
+      "-m",
+      "iobrpy.main",
+      "extract_hla_read",
+      "-s",
+      "NA06985",
+      "-b",
+      "<WORK>/data/NA06985.GRCh38.chr6.bam",
+      "-r",
+      "hg38",
+      "-o",
+      "<WORK>/runs-001/extract_hla_read/active",
+      "--no-auto-install"
+    ],
+    "output": "<WORK>/runs-001/extract_hla_read/repeat-1-iobrpy",
+    "products": null,
+    "peak_rss_kib": 332848
+  }
+]

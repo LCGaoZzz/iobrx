@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml/badge.svg)](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml)
 [![version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/LCGaoZzz/iobrx/blob/main/CHANGELOG.md)
-[![tutorials](https://img.shields.io/badge/executed_notebooks-23-teal)](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md)
+[![tutorials](https://img.shields.io/badge/executed_notebooks-28-teal)](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md)
 [![license](https://img.shields.io/badge/code-MIT-black)](https://github.com/LCGaoZzz/iobrx/blob/main/LICENSE)
 
 English · [中文说明](https://github.com/LCGaoZzz/iobrx/blob/main/README.zh-CN.md) · [Tutorial gallery](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md) · [CPU compatibility](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md) · [Benchmarks](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)
@@ -31,6 +31,12 @@ FASTQ→TME orchestration stages (fastp / salmon / STAR / TRUST4 / SpecHLA).
 **Omicos:** the harness now exposes 27 typed analysis identifiers (the four signature modes are separate identifiers), including 16 new adapters. HLA and custom-reference BayesPrism remain direct-API capabilities. [Input contracts and limits](agent-harness/omicos/skills/iobrx/references/extended-workflows.md).
 
 **Evidence scope:** R3–R6 timings below are imported campaign measurements. Some raw campaign scripts/logs are not archived here, so these numbers are not independently reproducible from this PR alone. New local validation separates numerical tests, stub-tool contracts and actual tutorial timings.
+
+**New real-data evidence:** [FASTQ/BAM/HLA recipe, repeated timings and logs](benchmarks/real_tools/README.md)
+and tutorials 24–28 use public sequencing reads and actual tools. Four-thread
+Salmon varies between repeated original runs as well as across wrappers;
+HLA extraction was slower in this small fixture. These results do not support
+a claim that every workflow is faster or universally byte-identical.
 
 ### What's new in 0.3.0
 
@@ -82,21 +88,35 @@ The BayesPrism example uses a short demo chain; file-merging examples are synthe
 
 ## Install
 
-**0.3.0 is a development release under review in PR #5.** On 2026-09-09,
-GitHub's latest release was v0.1.0 without binary attachments. The repository
-contains a wheel/PyPI/container release workflow; that is not evidence that
-those distributions have been published. Do not rely on a PyPI or Tsinghua
-mirror install until a tested version appears on the public release page.
+Validated target: **Python 3.11, Linux x86-64 / WSL2**. Use an isolated
+environment. Versioned wheels, source archives, checksums and the container
+digest are delivered through the [v0.3.0 release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.0).
+After downloading its CPython 3.11 wheel:
 
-Validated source-build target: **Python 3.11, Linux x86-64 / WSL2**. Install
-Cargo and a C++17 compiler, then use an isolated Python environment:
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --only-binary=:all: ./iobrx-0.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+python -c "import iobrx; print(iobrx.backend_info())"
+```
+
+This wheel path does not require Cargo or a C++ compiler. When **0.3.0 appears
+on [PyPI](https://pypi.org/project/iobrx/)**, the index-based equivalent is:
+
+```bash
+python -m pip install --only-binary=:all: iobrx==0.3.0
+# Tsinghua mirrors PyPI asynchronously; wait until the same version is listed.
+python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.0
+```
+
+PyPI publication and mirror synchronization are independent of GitHub assets.
+If an index has not synchronized, install the release wheel directly.
+
+For source development, install Cargo and a C++17 compiler:
 
 ```bash
 git clone https://github.com/LCGaoZzz/iobrx.git
 cd iobrx
-# While 0.3.0 is under review, select the PR's source:
-git fetch origin pull/5/head
-git switch --detach FETCH_HEAD
 python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
 python -c "import iobrx; print(iobrx.backend_info())"
 python -m jupyterlab tutorials
@@ -107,10 +127,10 @@ environment, first check dependency compatibility; use an isolated environment
 when the required numerical versions conflict. `pip install` from this source
 builds the extension; it is not an installation without compilation.
 
-The release workflow builds and tests a Linux CPython 3.11 wheel, source
-archive and versioned container. Publication and mirror synchronization are
-separate steps. See [release notes](docs/releases/0.3.0.md) and
-[current releases](https://github.com/LCGaoZzz/iobrx/releases).
+The core-analysis container uses `ghcr.io/lcgaozzz/iobrx:0.3.0`; for immutable
+execution use the digest in the release's `container-digest.txt`.
+Alignment and HLA binaries require the separate external-tool environment.
+See [release notes](docs/releases/0.3.0.md).
 
 **Why the dependency pins** (details and measurements in
 [BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)):
@@ -352,8 +372,9 @@ cross-platform floating-point guarantee ([details](https://github.com/LCGaoZzz/i
 
 iobrx orchestrates the heavy binaries but does not bundle them. Install them
 yourself and put them on `PATH` (or pass the per-stage `*_bin` overrides);
-iobrx reproduces the upstream command lines token-for-token, so with the
-same binary and inputs the products are byte-identical to the original's.
+iobrx preserves the upstream command parameters. Equality still depends on
+the tool's determinism and the declared comparison target; see the measured
+Salmon variability and scoped FASTQ/BAM/HLA comparisons in the new recipe.
 
 | Stage | External tools |
 | --- | --- |

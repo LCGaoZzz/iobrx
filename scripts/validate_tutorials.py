@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     tutorial_dir = ROOT / "tutorials"
     notebooks = sorted(tutorial_dir.glob("*.ipynb"))
-    assert len(notebooks) == 23, f"Expected 23 tutorials, found {len(notebooks)}"
+    assert len(notebooks) == 28, f"Expected 28 tutorials, found {len(notebooks)}"
     for path in notebooks:
         text = path.read_text(encoding="utf-8")
         notebook = json.loads(text)

@@ -1,0 +1,332 @@
+{
+  "case": {
+    "name": "batch_salmon",
+    "function": "batch_salmon",
+    "parameters": {
+      "path_fq": "<WORK>/data/geuvadis",
+      "path_out": "{output}",
+      "num_threads": 1,
+      "batch_size": 1,
+      "index": "<WORK>/data/gencode-v44-salmon"
+    },
+    "upstream_cli": [
+      "batch_salmon",
+      "--path_fq",
+      "<WORK>/data/geuvadis",
+      "--path_out",
+      "{output}",
+      "--num_threads",
+      "1",
+      "--batch_size",
+      "1",
+      "--index",
+      "<WORK>/data/gencode-v44-salmon"
+    ]
+  },
+  "repeats": 3,
+  "runs": [
+    {
+      "arm": "iobrpy",
+      "repeat": 1,
+      "wall_seconds": 63.80415804800032,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "batch_salmon",
+        "--path_fq",
+        "<WORK>/data/geuvadis",
+        "--path_out",
+        "<WORK>/runs-single-thread/batch_salmon/active",
+        "--num_threads",
+        "1",
+        "--batch_size",
+        "1",
+        "--index",
+        "<WORK>/data/gencode-v44-salmon"
+      ],
+      "output": "<WORK>/runs-single-thread/batch_salmon/repeat-1-iobrpy",
+      "products": {
+        "files": {
+          "ERR188044/quant.sf": "7348332bbd7a1b0b4c6cb13b3536e35125848250cd624fe30da405671d0caf46",
+          "ERR188104/quant.sf": "c38ab9caeef09b4f31bac21be4297304224e1924ee2252faaeb74c191bf587df"
+        },
+        "metrics": {
+          "ERR188044/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 10931,
+            "assigned_fragments": 46748.996999999996,
+            "tpm_sum": 1000000.000028
+          },
+          "ERR188104/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 11139,
+            "assigned_fragments": 47516.00499999999,
+            "tpm_sum": 1000000.000006
+          }
+        }
+      },
+      "peak_rss_kib": 3691912
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 1,
+      "wall_seconds": 64.22749011700034,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-single-thread/batch_salmon/repeat-1-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-single-thread/batch_salmon/repeat-1-iobrx",
+      "products": {
+        "files": {
+          "ERR188044/quant.sf": "35b4130ab6e0f9ec35429225931b49df477478496a2c508940c918e0fb4a5934",
+          "ERR188104/quant.sf": "b57e1af66e6bbb3f8d5a8db2b85a2841bb7127c91d3d9817fbcaee2f806ba32b"
+        },
+        "metrics": {
+          "ERR188044/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 10928,
+            "assigned_fragments": 46749.00600000001,
+            "tpm_sum": 999999.9999930001
+          },
+          "ERR188104/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 11137,
+            "assigned_fragments": 47516.00499999999,
+            "tpm_sum": 1000000.0000159999
+          }
+        }
+      },
+      "peak_rss_kib": 3707184
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 2,
+      "wall_seconds": 65.47449745700033,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-single-thread/batch_salmon/repeat-2-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-single-thread/batch_salmon/repeat-2-iobrx",
+      "products": {
+        "files": {
+          "ERR188044/quant.sf": "08aec8b2e9e9ab591c897e6fda689e3782329de230d9c2133a9bc8f9bd0bd3ba",
+          "ERR188104/quant.sf": "2f5007747188311ffe40c9437662a3b3f77b1872001f8d658ad4efde524392e3"
+        },
+        "metrics": {
+          "ERR188044/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 10929,
+            "assigned_fragments": 46749.00100000001,
+            "tpm_sum": 999999.999967
+          },
+          "ERR188104/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 11140,
+            "assigned_fragments": 47516.003000000004,
+            "tpm_sum": 999999.9999739999
+          }
+        }
+      },
+      "peak_rss_kib": 3707508
+    },
+    {
+      "arm": "iobrpy",
+      "repeat": 2,
+      "wall_seconds": 70.20771645599962,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "batch_salmon",
+        "--path_fq",
+        "<WORK>/data/geuvadis",
+        "--path_out",
+        "<WORK>/runs-single-thread/batch_salmon/active",
+        "--num_threads",
+        "1",
+        "--batch_size",
+        "1",
+        "--index",
+        "<WORK>/data/gencode-v44-salmon"
+      ],
+      "output": "<WORK>/runs-single-thread/batch_salmon/repeat-2-iobrpy",
+      "products": {
+        "files": {
+          "ERR188044/quant.sf": "96aeada8a86650f2322a34609c8f9612870f1d73b8e830a06cad3713d2dcbf1b",
+          "ERR188104/quant.sf": "530a9ba3d68b85f46a51c37cb4bf3d06c30746fb30a4077a14c852975365f80d"
+        },
+        "metrics": {
+          "ERR188044/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 10932,
+            "assigned_fragments": 46749.00000000001,
+            "tpm_sum": 1000000.0000159997
+          },
+          "ERR188104/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 11137,
+            "assigned_fragments": 47516.013000000006,
+            "tpm_sum": 999999.999979
+          }
+        }
+      },
+      "peak_rss_kib": 3691772
+    },
+    {
+      "arm": "iobrpy",
+      "repeat": 3,
+      "wall_seconds": 69.09350268200069,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "batch_salmon",
+        "--path_fq",
+        "<WORK>/data/geuvadis",
+        "--path_out",
+        "<WORK>/runs-single-thread/batch_salmon/active",
+        "--num_threads",
+        "1",
+        "--batch_size",
+        "1",
+        "--index",
+        "<WORK>/data/gencode-v44-salmon"
+      ],
+      "output": "<WORK>/runs-single-thread/batch_salmon/repeat-3-iobrpy",
+      "products": {
+        "files": {
+          "ERR188044/quant.sf": "406b15b4505e3bb86106eb717d8ec584360eef6f3e94ef9fc58e6f29e06b6d89",
+          "ERR188104/quant.sf": "d0120878c8326d7b7f2608ad81b7837cbec0df98bf511c612744f45c3cf6a6c7"
+        },
+        "metrics": {
+          "ERR188044/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 10922,
+            "assigned_fragments": 46748.992,
+            "tpm_sum": 999999.999985
+          },
+          "ERR188104/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 11141,
+            "assigned_fragments": 47516.00099999999,
+            "tpm_sum": 999999.999994
+          }
+        }
+      },
+      "peak_rss_kib": 3692200
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 3,
+      "wall_seconds": 67.05572288800067,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-single-thread/batch_salmon/repeat-3-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-single-thread/batch_salmon/repeat-3-iobrx",
+      "products": {
+        "files": {
+          "ERR188044/quant.sf": "2a963347ccbc5aded68ed579a237bccdba967e5d9b017d0df367045587c42c92",
+          "ERR188104/quant.sf": "18acd452d6b0eb337fe576c13fd8d65a23a29561a42bf7f73fc5511ed2e9eaac"
+        },
+        "metrics": {
+          "ERR188044/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 10929,
+            "assigned_fragments": 46749.006000000016,
+            "tpm_sum": 1000000.0
+          },
+          "ERR188104/quant.sf": {
+            "transcripts": 251955,
+            "positive_transcripts": 11141,
+            "assigned_fragments": 47515.988,
+            "tpm_sum": 1000000.0000029998
+          }
+        }
+      },
+      "peak_rss_kib": 3691636
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "repeat": 1,
+      "equal": false,
+      "compared_products": 2,
+      "different_products": [
+        "ERR188044/quant.sf",
+        "ERR188104/quant.sf"
+      ]
+    },
+    {
+      "repeat": 2,
+      "equal": false,
+      "compared_products": 2,
+      "different_products": [
+        "ERR188044/quant.sf",
+        "ERR188104/quant.sf"
+      ]
+    },
+    {
+      "repeat": 3,
+      "equal": false,
+      "compared_products": 2,
+      "different_products": [
+        "ERR188044/quant.sf",
+        "ERR188104/quant.sf"
+      ]
+    }
+  ],
+  "within_arm_repeatability": {
+    "iobrpy": [
+      {
+        "equal": false,
+        "compared_products": 2,
+        "different_products": [
+          "ERR188044/quant.sf",
+          "ERR188104/quant.sf"
+        ]
+      },
+      {
+        "equal": false,
+        "compared_products": 2,
+        "different_products": [
+          "ERR188044/quant.sf",
+          "ERR188104/quant.sf"
+        ]
+      }
+    ],
+    "iobrx": [
+      {
+        "equal": false,
+        "compared_products": 2,
+        "different_products": [
+          "ERR188044/quant.sf",
+          "ERR188104/quant.sf"
+        ]
+      },
+      {
+        "equal": false,
+        "compared_products": 2,
+        "different_products": [
+          "ERR188044/quant.sf",
+          "ERR188104/quant.sf"
+        ]
+      }
+    ]
+  },
+  "median_wall_seconds": {
+    "iobrpy": 69.09350268200069,
+    "iobrx": 65.47449745700033
+  },
+  "speedup_original_over_iobrx": 1.0552735090082532
+}

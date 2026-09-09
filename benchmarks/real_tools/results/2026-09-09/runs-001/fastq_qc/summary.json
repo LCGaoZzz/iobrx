@@ -1,0 +1,638 @@
+{
+  "case": {
+    "name": "fastq_qc",
+    "function": "fastq_qc",
+    "parameters": {
+      "path1_fastq": "<WORK>/data/geuvadis",
+      "path2_fastp": "{output}",
+      "num_threads": 4,
+      "batch_size": 1
+    },
+    "upstream_cli": [
+      "fastq_qc",
+      "--path1_fastq",
+      "<WORK>/data/geuvadis",
+      "--path2_fastp",
+      "{output}",
+      "--num_threads",
+      "4",
+      "--batch_size",
+      "1"
+    ]
+  },
+  "repeats": 3,
+  "runs": [
+    {
+      "arm": "iobrpy",
+      "repeat": 1,
+      "wall_seconds": 4.066143504000138,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "fastq_qc",
+        "--path1_fastq",
+        "<WORK>/data/geuvadis",
+        "--path2_fastp",
+        "<WORK>/runs-001/fastq_qc/active",
+        "--num_threads",
+        "4",
+        "--batch_size",
+        "1"
+      ],
+      "output": "<WORK>/runs-001/fastq_qc/repeat-1-iobrpy",
+      "products": {
+        "files": {
+          "ERR188044_1.fastq.gz": "473408d5ee20685e64a2bd87622c918b2344df42ccfc8562640801532a211d3f",
+          "ERR188044_2.fastq.gz": "2414c58aa2374efda0718e41d4d2578c4f42e17508161d53c6198141fbecfb53",
+          "ERR188104_1.fastq.gz": "71c00bc50c9e862ef7b01f4389278cc1790eb8d0f9498e817608d3b50ec0e297",
+          "ERR188104_2.fastq.gz": "c1f172dbeaaa0d1f82fcd645a4e685ffc1803cd07301a53d554d900704ea905c",
+          "ERR188044_fastp.json": "030da45648e43744dc10818a7fec3fb942ed6ff907011c891c1f850d053a8908",
+          "ERR188104_fastp.json": "c9e2904628d547dcad0a4c192d21a1c395614165202ff9f1bb2e6ad879de97e2"
+        },
+        "metrics": {
+          "ERR188044_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (76 cycles + 76 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15200000,
+              "q20_bases": 14717207,
+              "q30_bases": 14119265,
+              "q20_rate": 0.968237,
+              "q30_rate": 0.928899,
+              "read1_mean_length": 76,
+              "read2_mean_length": 76,
+              "gc_content": 0.496708
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15186840,
+              "q20_bases": 14705303,
+              "q30_bases": 14108611,
+              "q20_rate": 0.968292,
+              "q30_rate": 0.929002,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.4967
+            }
+          },
+          "ERR188104_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (75 cycles + 75 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15000000,
+              "q20_bases": 14728447,
+              "q30_bases": 14254874,
+              "q20_rate": 0.981896,
+              "q30_rate": 0.950325,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.475454
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 14987150,
+              "q20_bases": 14716428,
+              "q30_bases": 14244026,
+              "q20_rate": 0.981936,
+              "q30_rate": 0.950416,
+              "read1_mean_length": 74,
+              "read2_mean_length": 74,
+              "gc_content": 0.475433
+            }
+          }
+        }
+      },
+      "peak_rss_kib": 1161188
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 1,
+      "wall_seconds": 2.41806403100054,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-001/fastq_qc/repeat-1-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-001/fastq_qc/repeat-1-iobrx",
+      "products": {
+        "files": {
+          "ERR188044_1.fastq.gz": "473408d5ee20685e64a2bd87622c918b2344df42ccfc8562640801532a211d3f",
+          "ERR188044_2.fastq.gz": "2414c58aa2374efda0718e41d4d2578c4f42e17508161d53c6198141fbecfb53",
+          "ERR188104_1.fastq.gz": "71c00bc50c9e862ef7b01f4389278cc1790eb8d0f9498e817608d3b50ec0e297",
+          "ERR188104_2.fastq.gz": "c1f172dbeaaa0d1f82fcd645a4e685ffc1803cd07301a53d554d900704ea905c",
+          "ERR188044_fastp.json": "030da45648e43744dc10818a7fec3fb942ed6ff907011c891c1f850d053a8908",
+          "ERR188104_fastp.json": "c9e2904628d547dcad0a4c192d21a1c395614165202ff9f1bb2e6ad879de97e2"
+        },
+        "metrics": {
+          "ERR188044_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (76 cycles + 76 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15200000,
+              "q20_bases": 14717207,
+              "q30_bases": 14119265,
+              "q20_rate": 0.968237,
+              "q30_rate": 0.928899,
+              "read1_mean_length": 76,
+              "read2_mean_length": 76,
+              "gc_content": 0.496708
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15186840,
+              "q20_bases": 14705303,
+              "q30_bases": 14108611,
+              "q20_rate": 0.968292,
+              "q30_rate": 0.929002,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.4967
+            }
+          },
+          "ERR188104_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (75 cycles + 75 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15000000,
+              "q20_bases": 14728447,
+              "q30_bases": 14254874,
+              "q20_rate": 0.981896,
+              "q30_rate": 0.950325,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.475454
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 14987150,
+              "q20_bases": 14716428,
+              "q30_bases": 14244026,
+              "q20_rate": 0.981936,
+              "q30_rate": 0.950416,
+              "read1_mean_length": 74,
+              "read2_mean_length": 74,
+              "gc_content": 0.475433
+            }
+          }
+        }
+      },
+      "peak_rss_kib": 1161188
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 2,
+      "wall_seconds": 2.4564954150009726,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-001/fastq_qc/repeat-2-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-001/fastq_qc/repeat-2-iobrx",
+      "products": {
+        "files": {
+          "ERR188044_1.fastq.gz": "473408d5ee20685e64a2bd87622c918b2344df42ccfc8562640801532a211d3f",
+          "ERR188044_2.fastq.gz": "2414c58aa2374efda0718e41d4d2578c4f42e17508161d53c6198141fbecfb53",
+          "ERR188104_1.fastq.gz": "71c00bc50c9e862ef7b01f4389278cc1790eb8d0f9498e817608d3b50ec0e297",
+          "ERR188104_2.fastq.gz": "c1f172dbeaaa0d1f82fcd645a4e685ffc1803cd07301a53d554d900704ea905c",
+          "ERR188044_fastp.json": "030da45648e43744dc10818a7fec3fb942ed6ff907011c891c1f850d053a8908",
+          "ERR188104_fastp.json": "c9e2904628d547dcad0a4c192d21a1c395614165202ff9f1bb2e6ad879de97e2"
+        },
+        "metrics": {
+          "ERR188044_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (76 cycles + 76 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15200000,
+              "q20_bases": 14717207,
+              "q30_bases": 14119265,
+              "q20_rate": 0.968237,
+              "q30_rate": 0.928899,
+              "read1_mean_length": 76,
+              "read2_mean_length": 76,
+              "gc_content": 0.496708
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15186840,
+              "q20_bases": 14705303,
+              "q30_bases": 14108611,
+              "q20_rate": 0.968292,
+              "q30_rate": 0.929002,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.4967
+            }
+          },
+          "ERR188104_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (75 cycles + 75 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15000000,
+              "q20_bases": 14728447,
+              "q30_bases": 14254874,
+              "q20_rate": 0.981896,
+              "q30_rate": 0.950325,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.475454
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 14987150,
+              "q20_bases": 14716428,
+              "q30_bases": 14244026,
+              "q20_rate": 0.981936,
+              "q30_rate": 0.950416,
+              "read1_mean_length": 74,
+              "read2_mean_length": 74,
+              "gc_content": 0.475433
+            }
+          }
+        }
+      },
+      "peak_rss_kib": 1160596
+    },
+    {
+      "arm": "iobrpy",
+      "repeat": 2,
+      "wall_seconds": 3.7810571390000405,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "fastq_qc",
+        "--path1_fastq",
+        "<WORK>/data/geuvadis",
+        "--path2_fastp",
+        "<WORK>/runs-001/fastq_qc/active",
+        "--num_threads",
+        "4",
+        "--batch_size",
+        "1"
+      ],
+      "output": "<WORK>/runs-001/fastq_qc/repeat-2-iobrpy",
+      "products": {
+        "files": {
+          "ERR188044_1.fastq.gz": "473408d5ee20685e64a2bd87622c918b2344df42ccfc8562640801532a211d3f",
+          "ERR188044_2.fastq.gz": "2414c58aa2374efda0718e41d4d2578c4f42e17508161d53c6198141fbecfb53",
+          "ERR188104_1.fastq.gz": "71c00bc50c9e862ef7b01f4389278cc1790eb8d0f9498e817608d3b50ec0e297",
+          "ERR188104_2.fastq.gz": "c1f172dbeaaa0d1f82fcd645a4e685ffc1803cd07301a53d554d900704ea905c",
+          "ERR188044_fastp.json": "030da45648e43744dc10818a7fec3fb942ed6ff907011c891c1f850d053a8908",
+          "ERR188104_fastp.json": "c9e2904628d547dcad0a4c192d21a1c395614165202ff9f1bb2e6ad879de97e2"
+        },
+        "metrics": {
+          "ERR188044_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (76 cycles + 76 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15200000,
+              "q20_bases": 14717207,
+              "q30_bases": 14119265,
+              "q20_rate": 0.968237,
+              "q30_rate": 0.928899,
+              "read1_mean_length": 76,
+              "read2_mean_length": 76,
+              "gc_content": 0.496708
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15186840,
+              "q20_bases": 14705303,
+              "q30_bases": 14108611,
+              "q20_rate": 0.968292,
+              "q30_rate": 0.929002,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.4967
+            }
+          },
+          "ERR188104_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (75 cycles + 75 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15000000,
+              "q20_bases": 14728447,
+              "q30_bases": 14254874,
+              "q20_rate": 0.981896,
+              "q30_rate": 0.950325,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.475454
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 14987150,
+              "q20_bases": 14716428,
+              "q30_bases": 14244026,
+              "q20_rate": 0.981936,
+              "q30_rate": 0.950416,
+              "read1_mean_length": 74,
+              "read2_mean_length": 74,
+              "gc_content": 0.475433
+            }
+          }
+        }
+      },
+      "peak_rss_kib": 1160676
+    },
+    {
+      "arm": "iobrpy",
+      "repeat": 3,
+      "wall_seconds": 3.5981403440000577,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "-m",
+        "iobrpy.main",
+        "fastq_qc",
+        "--path1_fastq",
+        "<WORK>/data/geuvadis",
+        "--path2_fastp",
+        "<WORK>/runs-001/fastq_qc/active",
+        "--num_threads",
+        "4",
+        "--batch_size",
+        "1"
+      ],
+      "output": "<WORK>/runs-001/fastq_qc/repeat-3-iobrpy",
+      "products": {
+        "files": {
+          "ERR188044_1.fastq.gz": "473408d5ee20685e64a2bd87622c918b2344df42ccfc8562640801532a211d3f",
+          "ERR188044_2.fastq.gz": "2414c58aa2374efda0718e41d4d2578c4f42e17508161d53c6198141fbecfb53",
+          "ERR188104_1.fastq.gz": "71c00bc50c9e862ef7b01f4389278cc1790eb8d0f9498e817608d3b50ec0e297",
+          "ERR188104_2.fastq.gz": "c1f172dbeaaa0d1f82fcd645a4e685ffc1803cd07301a53d554d900704ea905c",
+          "ERR188044_fastp.json": "030da45648e43744dc10818a7fec3fb942ed6ff907011c891c1f850d053a8908",
+          "ERR188104_fastp.json": "c9e2904628d547dcad0a4c192d21a1c395614165202ff9f1bb2e6ad879de97e2"
+        },
+        "metrics": {
+          "ERR188044_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (76 cycles + 76 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15200000,
+              "q20_bases": 14717207,
+              "q30_bases": 14119265,
+              "q20_rate": 0.968237,
+              "q30_rate": 0.928899,
+              "read1_mean_length": 76,
+              "read2_mean_length": 76,
+              "gc_content": 0.496708
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15186840,
+              "q20_bases": 14705303,
+              "q30_bases": 14108611,
+              "q20_rate": 0.968292,
+              "q30_rate": 0.929002,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.4967
+            }
+          },
+          "ERR188104_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (75 cycles + 75 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15000000,
+              "q20_bases": 14728447,
+              "q30_bases": 14254874,
+              "q20_rate": 0.981896,
+              "q30_rate": 0.950325,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.475454
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 14987150,
+              "q20_bases": 14716428,
+              "q30_bases": 14244026,
+              "q20_rate": 0.981936,
+              "q30_rate": 0.950416,
+              "read1_mean_length": 74,
+              "read2_mean_length": 74,
+              "gc_content": 0.475433
+            }
+          }
+        }
+      },
+      "peak_rss_kib": 1160752
+    },
+    {
+      "arm": "iobrx",
+      "repeat": 3,
+      "wall_seconds": 2.52728062299866,
+      "exit_code": 0,
+      "command": [
+        "<TOOLCHAIN>/bin/python",
+        "<REPO>/benchmarks/real_tools/arm.py",
+        "<WORK>/runs-001/fastq_qc/repeat-3-iobrx.request.json"
+      ],
+      "output": "<WORK>/runs-001/fastq_qc/repeat-3-iobrx",
+      "products": {
+        "files": {
+          "ERR188044_1.fastq.gz": "473408d5ee20685e64a2bd87622c918b2344df42ccfc8562640801532a211d3f",
+          "ERR188044_2.fastq.gz": "2414c58aa2374efda0718e41d4d2578c4f42e17508161d53c6198141fbecfb53",
+          "ERR188104_1.fastq.gz": "71c00bc50c9e862ef7b01f4389278cc1790eb8d0f9498e817608d3b50ec0e297",
+          "ERR188104_2.fastq.gz": "c1f172dbeaaa0d1f82fcd645a4e685ffc1803cd07301a53d554d900704ea905c",
+          "ERR188044_fastp.json": "030da45648e43744dc10818a7fec3fb942ed6ff907011c891c1f850d053a8908",
+          "ERR188104_fastp.json": "c9e2904628d547dcad0a4c192d21a1c395614165202ff9f1bb2e6ad879de97e2"
+        },
+        "metrics": {
+          "ERR188044_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_1.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188104_2.fastq.gz": {
+            "reads": 100000
+          },
+          "ERR188044_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (76 cycles + 76 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15200000,
+              "q20_bases": 14717207,
+              "q30_bases": 14119265,
+              "q20_rate": 0.968237,
+              "q30_rate": 0.928899,
+              "read1_mean_length": 76,
+              "read2_mean_length": 76,
+              "gc_content": 0.496708
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15186840,
+              "q20_bases": 14705303,
+              "q30_bases": 14108611,
+              "q20_rate": 0.968292,
+              "q30_rate": 0.929002,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.4967
+            }
+          },
+          "ERR188104_fastp.json": {
+            "fastp_version": "1.3.6",
+            "sequencing": "paired end (75 cycles + 75 cycles)",
+            "before_filtering": {
+              "total_reads": 200000,
+              "total_bases": 15000000,
+              "q20_bases": 14728447,
+              "q30_bases": 14254874,
+              "q20_rate": 0.981896,
+              "q30_rate": 0.950325,
+              "read1_mean_length": 75,
+              "read2_mean_length": 75,
+              "gc_content": 0.475454
+            },
+            "after_filtering": {
+              "total_reads": 200000,
+              "total_bases": 14987150,
+              "q20_bases": 14716428,
+              "q30_bases": 14244026,
+              "q20_rate": 0.981936,
+              "q30_rate": 0.950416,
+              "read1_mean_length": 74,
+              "read2_mean_length": 74,
+              "gc_content": 0.475433
+            }
+          }
+        }
+      },
+      "peak_rss_kib": 1160936
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "repeat": 1,
+      "equal": true,
+      "compared_products": 6,
+      "different_products": []
+    },
+    {
+      "repeat": 2,
+      "equal": true,
+      "compared_products": 6,
+      "different_products": []
+    },
+    {
+      "repeat": 3,
+      "equal": true,
+      "compared_products": 6,
+      "different_products": []
+    }
+  ],
+  "within_arm_repeatability": {
+    "iobrpy": [
+      {
+        "equal": true,
+        "compared_products": 6,
+        "different_products": []
+      },
+      {
+        "equal": true,
+        "compared_products": 6,
+        "different_products": []
+      }
+    ],
+    "iobrx": [
+      {
+        "equal": true,
+        "compared_products": 6,
+        "different_products": []
+      },
+      {
+        "equal": true,
+        "compared_products": 6,
+        "different_products": []
+      }
+    ]
+  },
+  "median_wall_seconds": {
+    "iobrpy": 3.7810571390000405,
+    "iobrx": 2.4564954150009726
+  },
+  "speedup_original_over_iobrx": 1.5392078958952762
+}

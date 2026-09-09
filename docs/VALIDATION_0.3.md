@@ -1,5 +1,20 @@
 # iobrx 0.3 hardening: validation and limits
 
+## Release follow-up: real external tools
+
+After PR #5 was merged, the release follow-up added actual FASTQ, BAM and HLA
+comparisons, three repetitions per arm, and tutorials 24–28. The full input,
+tool, timing and output record is in [the real-tool evidence](../benchmarks/real_tools/README.md).
+This supersedes the external-tool evidence gap in the earlier audit below;
+it does not extend that evidence to TRUST4, CRAM, every reference layout or
+independent HLA genotype accuracy. Salmon variability and the slower small
+HLA extraction case are explicitly retained. No scientific kernel was changed
+by this release/evidence work.
+
+The remaining sections describe their historical audit snapshots. Public
+distribution status is tracked on the release and PyPI pages, independently
+of those earlier checks.
+
 Audit date: 2026-09-09. Starting PR commit: `186a15d`.
 Machine-readable results and sanitized JUnit records are in
 [validation/0.3.0](validation/0.3.0/summary.json). They include a digest of the

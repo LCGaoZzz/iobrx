@@ -1,0 +1,19 @@
+[Plan] Processing 2 samples (Order: RANDOM SHUFFLED).
+       Batch size: 1
+       Threads per job: 1
+[Start] ERR188104 is running...
+[Done] ERR188104 finished successfully. Saved to: <WORK>/runs-single-thread/batch_salmon/active/ERR188104/quant.sf
+[Start] ERR188044 is running...
+[Done] ERR188044 finished successfully. Saved to: <WORK>/runs-single-thread/batch_salmon/active/ERR188044/quant.sf
+
+[summary] All samples finished successfully.
+   
+#########################################################
+ IOBRpy: Immuno-Oncology Biological Research using Python 
+ If you encounter any issues, please report them at 
+ https://github.com/IOBR/IOBRpy/issues 
+#########################################################
+ Author: Haonan Huang, Dongqiang Zeng
+ Email: interlaken@smu.edu.cn 
+#########################################################
+   

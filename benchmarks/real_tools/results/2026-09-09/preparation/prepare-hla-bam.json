@@ -1,0 +1,50 @@
+{
+  "seconds": 1.3863804060001712,
+  "flagstat": {
+    "QC-passed reads": {
+      "total": 105544,
+      "primary": 105542,
+      "secondary": 0,
+      "supplementary": 2,
+      "duplicates": 0,
+      "primary duplicates": 0,
+      "mapped": 54542,
+      "mapped %": 51.68,
+      "primary mapped": 54540,
+      "primary mapped %": 51.68,
+      "paired in sequencing": 105542,
+      "read1": 52771,
+      "read2": 52771,
+      "properly paired": 53836,
+      "properly paired %": 51.01,
+      "with itself and mate mapped": 54516,
+      "singletons": 24,
+      "singletons %": 0.02,
+      "with mate mapped to a different chr": 0,
+      "with mate mapped to a different chr (mapQ >= 5)": 0
+    },
+    "QC-failed reads": {
+      "total": 0,
+      "primary": 0,
+      "secondary": 0,
+      "supplementary": 0,
+      "duplicates": 0,
+      "primary duplicates": 0,
+      "mapped": 0,
+      "mapped %": null,
+      "primary mapped": 0,
+      "primary mapped %": null,
+      "paired in sequencing": 0,
+      "read1": 0,
+      "read2": 0,
+      "properly paired": 0,
+      "properly paired %": null,
+      "with itself and mate mapped": 0,
+      "singletons": 0,
+      "singletons %": null,
+      "with mate mapped to a different chr": 0,
+      "with mate mapped to a different chr (mapQ >= 5)": 0
+    }
+  },
+  "reference": "GRCh38 chromosome 6 only; prepared from the public NA06985 HLA-enriched paired example"
+}

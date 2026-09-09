@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/main.py", line 925, in <module>
+    main()
+  File "<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/main.py", line 882, in main
+    return extract_hla_read_main(unknown)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/extract_hla_read.py", line 335, in main
+    ensure_dependencies(auto_install=not args.no_auto_install)
+  File "<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/extract_hla_read.py", line 121, in ensure_dependencies
+    current_version = _get_conda_package_version(conda_exe, pkg_name)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<TOOLCHAIN>/lib/python3.11/site-packages/iobrpy/SpecHLA/extract_hla_read.py", line 80, in _get_conda_package_version
+    if rec.get("name") == pkg_name and "version" in rec:
+       ^^^^^^^
+AttributeError: 'str' object has no attribute 'get'

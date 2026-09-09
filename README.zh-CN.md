@@ -14,7 +14,7 @@ iobrx 的新增工作主要是 Rust 内核、并行与向量化加速、pandas �
 [原版 IOBRpy 仓库](https://github.com/IOBR/IOBRpy) · [IOBRpy 官方文档](https://iobr.github.io/IOBRpy/)
 
 - **不再强制要求 AVX-512**。已在没有 AVX-512 的 i9-13900KF 上实际运行；排序交给本机 NumPy 选择兼容实现。
-- **23 本已执行的 Notebook**：原有 12 本，加上 11 本新增矩阵分析与文件处理教程，均含教程代码、结果和内嵌图；同时提供 PNG、PDF、SVG。
+- **28 本已执行的 Notebook**：原有 12 本、11 本新增矩阵/文件教程，以及 5 本真实 FASTQ、BAM、HLA 教程，均含代码、结果和内嵌图；同时提供 PNG、PDF、SVG。
 - 每张分析图经历初稿、第一轮版式调整、第二轮精修，采用白底、低饱和配色、细轴线和可编辑矢量文字。参见[逐图修改记录](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/FIGURE_REVIEW.md)。
 
 **29 个公共 API** —— 27 个工作流函数（另含 `deconvolute_quantiseq` 别名与
@@ -27,6 +27,11 @@ FASTQ→TME 编排阶段（fastp / salmon / STAR / TRUST4 / SpecHLA）。
 **Omicos 接入：** harness 现有 27 个带输入契约的分析标识（四种签名评分分别计数），其中 16 个为本轮新增适配器。HLA 与自定义参考 BayesPrism 仍通过 Python API 使用。[输入与边界](agent-harness/omicos/skills/iobrx/references/extended-workflows.md)。
 
 **证据范围：** 下方 R3–R6 耗时沿用原科学智能体报告；部分原始脚本和日志尚未入库，不能仅凭本 PR 独立复现全部倍率。本轮数值测试、模拟工具测试与实际教程耗时分别记录。
+
+**新增真实数据证据：** [FASTQ/BAM/HLA 复现步骤、重复计时与日志](benchmarks/real_tools/README.md)
+及教程 24–28 使用公开测序 reads 和真实工具。4 线程 Salmon 在原版自身重跑时
+也有差异；本次小规模 HLA 提取中 iobrx 更慢。这些结果不支持“每项都更快”或
+“所有输入逐字节一致”的结论。
 
 ### 0.3.0 新增
 
@@ -71,19 +76,32 @@ NMF 的 BLAS 并行度不只由请求线程数控制。BayesPrism 使用缩短�
 
 ## 安装
 
-**0.3.0 目前是 PR #5 中待审核的开发版。** 2026-09-09 核实时，GitHub 最新
-Release 为 v0.1.0，且没有二进制附件。仓库具备 wheel、PyPI 和容器的构建发布
-工作流，但这不等于已经发布；请勿把尚不可用的 PyPI／清华镜像命令当作当前安装方案。
+已验证目标为 **Python 3.11、Linux x86-64／WSL2**，建议使用独立环境。
+固定版本 wheel、源码包、校验文件与容器 digest 通过
+[v0.3.0 发行页面](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.0)交付。
+下载其中的 CPython 3.11 wheel 后，无需 Cargo 或 C++ 编译器即可安装：
 
-已验证源码构建目标为 **Python 3.11、Linux x86-64／WSL2**。准备 Cargo 和
-C++17 编译器，在独立 Python 环境执行：
+```bash
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --only-binary=:all: ./iobrx-0.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+python -c "import iobrx; print(iobrx.backend_info())"
+```
+
+当 [PyPI 页面](https://pypi.org/project/iobrx/)出现 **0.3.0** 后，可直接通过索引安装：
+
+```bash
+python -m pip install --only-binary=:all: iobrx==0.3.0
+# 清华镜像异步同步 PyPI；确认它已列出相同版本后使用。
+python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.0
+```
+
+PyPI 发布、清华镜像同步与 GitHub 附件是独立状态；索引尚未同步时可以直接安装
+发行页面的 wheel。源码开发仍需 Cargo 和 C++17 编译器：
 
 ```bash
 git clone https://github.com/LCGaoZzz/iobrx.git
 cd iobrx
-# 0.3.0 审核期间，检出 PR 对应源码：
-git fetch origin pull/5/head
-git switch --detach FETCH_HEAD
 python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
 python -c "import iobrx; print(iobrx.backend_info())"
 python -m jupyterlab tutorials
@@ -92,9 +110,9 @@ python -m jupyterlab tutorials
 Jupyter 内核应使用同一个解释器。已有 Omicos 环境若存在数值依赖冲突，应使用
 独立环境。这条源码安装命令会编译扩展，不能称为免编译安装。
 
-发行工作流会构建和检查 Linux CPython 3.11 wheel、源码包和固定版本容器。
-正式发布与镜像同步是后续步骤，请以[发行页面](https://github.com/LCGaoZzz/iobrx/releases)
-和 [0.3.0 发行说明](docs/releases/0.3.0.md) 为准。
+核心分析容器使用 `ghcr.io/lcgaozzz/iobrx:0.3.0`；需要不可变版本时，使用发行
+附件 `container-digest.txt` 中的 digest。比对与 HLA 工具链需单独准备。
+详见 [0.3.0 发行说明](docs/releases/0.3.0.md)。
 
 **依赖钉版原因**（测量细节见 [BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)）：
 
@@ -309,8 +327,8 @@ NaN 掩码完全一致且每个数值单元 `max_abs_diff == 0.0`，或输出文
 ## 外部工具（需自备）
 
 iobrx 只调度重型二进制，不捆绑它们。请自行安装并放入 `PATH`（或用各阶段
-的 `*_bin` 参数覆盖）；iobrx 逐 token 复现上游命令行，因此同一二进制 +
-同一输入下产物与原版逐字节一致。
+的 `*_bin` 参数覆盖）；iobrx 保留上游命令参数。结果一致性仍取决于工具自身
+是否确定、以及比较了哪些产物，详见新增真实对照中的 Salmon 波动与比较范围。
 
 | 阶段 | 外部工具 |
 | --- | --- |
