@@ -85,7 +85,9 @@ def normalize_request(request, base, workspace=None):
     for name, field in spec["parameters"]["properties"].items():
         if name not in params and "default" in field:
             params[name] = deepcopy(field["default"])
-    result.setdefault("threads", min(8, os.cpu_count() or 1))
+    if "threads" not in result:
+        from iobrx import get_threads
+        result["threads"] = get_threads()
     result.setdefault("provenance", "metadata")
     result["input"]["path"] = str(resolve_path(result["input"]["path"], base, workspace))
     result["output_dir"] = str(resolve_path(result["output_dir"], base, workspace))
@@ -109,6 +111,8 @@ def load_matrix(spec, provenance="metadata"):
     if not path.is_file():
         reject(f"Input file does not exist: {path}")
     source = file_metadata(path, provenance)
+    if "h5ad" in spec and path.suffix.lower() != ".h5ad":
+        reject("input.h5ad options require a .h5ad input file")
     if path.suffix.lower() in {".csv", ".tsv"}:
         delimiter = "\t" if path.suffix.lower() == ".tsv" else ","
         with path.open(encoding="utf-8-sig", newline="") as handle:
@@ -126,8 +130,11 @@ def load_matrix(spec, provenance="metadata"):
         matrix = pd.read_parquet(path)
         if isinstance(matrix.index, pd.RangeIndex):
             reject("Parquet must store feature/sample identifiers in its index")
+    elif path.suffix.lower() == ".h5ad":
+        from .h5ad import read_matrix
+        matrix, source["h5ad"] = read_matrix(spec)
     else:
-        reject("Supported matrix formats are .csv, .tsv and .parquet; pickle is not accepted")
+        reject("Supported matrix formats are .csv, .tsv, .parquet and .h5ad; pickle is not accepted")
     if spec["orientation"] == "samples_by_genes":
         matrix = matrix.T
     if matrix.empty:

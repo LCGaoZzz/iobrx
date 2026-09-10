@@ -29,6 +29,9 @@ has fixed, including samples, methods, seeds, data sources and permissions.
 Ask only when a missing scientific choice or authorization affects the work.
 
 Reuse Omicos's tools, session context, job management and existing results.
+Resolve the actual analysis interpreter and missing dependencies only when
+needed. For multiple cohorts, preserve literal cohort/sample IDs and report
+explicit exclusions; use the Skill's bulk recipes rather than guessing paths.
 Explain findings from actual tables, diagnostics and figures, with observed
 timings and relevant limitations. Keep scores, fractions and uncertainty
 distinct. The Skill's typed adapters are conveniences, not the boundary of

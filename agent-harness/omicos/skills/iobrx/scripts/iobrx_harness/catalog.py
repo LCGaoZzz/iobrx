@@ -68,6 +68,15 @@ INPUT_SCHEMA = {
         "scale": choice(["counts", "tpm", "linear", "log2p1", "preprocessed"]),
         "gene_id": choice(["ensembl", "symbol", "entrez", "probe", "mgi"]),
         "organism": choice(["hsa", "mmus"]),
+        "h5ad": {
+            "type": "object", "additionalProperties": False, "required": ["matrix"],
+            "properties": {
+                "matrix": {"type": "string", "pattern": r"^(X|raw\.X|layers/[^/]+)$"},
+                "gene_column": {"type": "string", "minLength": 1},
+                "sample_column": {"type": "string", "minLength": 1},
+                "max_dense_bytes": {"type": "integer", "minimum": 1, "default": 536870912},
+            },
+        },
     },
 }
 
@@ -108,5 +117,5 @@ def capabilities(analysis=None):
         raise HarnessError(f"Unknown analysis: {analysis}")
     analyses = CATALOG if analysis is None else {analysis: CATALOG[analysis]}
     return {"schema_version": "1.0", "skill_id": "iobrx", "status": "completed",
-            "analyses": deepcopy(analyses), "input_formats": ["csv", "tsv", "parquet"],
+            "analyses": deepcopy(analyses), "input_formats": ["csv", "tsv", "parquet", "h5ad"],
             "request_schema": request_schema(analysis)}

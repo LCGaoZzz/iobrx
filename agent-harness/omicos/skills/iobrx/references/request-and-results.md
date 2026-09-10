@@ -26,7 +26,9 @@ not a capability limit on the library or the agent.
 ```
 
 - Files: CSV/TSV with identifiers in the first column; Parquet with a stored
-  index (not an unlabeled RangeIndex). No pickle or executable request format.
+  index (not an unlabeled RangeIndex). Expression adapters also accept h5ad with
+  an explicit `input.h5ad.matrix`; see [bulk recipes](bulk-cohorts.md).
+  No pickle or executable request format.
 - Orientation: `genes_by_samples` or `samples_by_genes`; only an explicitly
   requested transpose is performed. Sample and gene IDs must be unique,
   nonempty, and have no surrounding whitespace. Literal text IDs are retained.
@@ -40,8 +42,10 @@ not a capability limit on the library or the agent.
   adapter. File-only APIs can require CSV serialization; see extended workflows. Upstream method preprocessing remains controlled by its parameters.
 - IDs/species: the capability catalog lists valid combinations. Packaged
   references are human except count-to-TPM, which also supports `mmus`.
-- `threads`: positive integer, default min(8, CPU count). It is passed to
-  iobrx's threading API, not a hard memory/CPU limit for BLAS or the OS.
+- `threads`: positive integer. If omitted, reuse `iobrx.get_threads()` (normally
+  at most 8, or a process default set through the Python API). Explicit request
+  values win. It is not a hard CPU/memory limit for BLAS or the OS. For large
+  cohorts choose the allocated CPU budget; see [thread guidance](bulk-cohorts.md).
 - `provenance`: `metadata` by default (paths, size/mtime, input shape, parameters
   and versions). Set `sha256` only when a content audit is useful; it reads
   input/reference contents and tool binaries, checks input stability through

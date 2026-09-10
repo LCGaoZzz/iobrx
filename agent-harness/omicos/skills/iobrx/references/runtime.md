@@ -26,5 +26,37 @@ Use the pinned numerical environment from the repository when numerical
 parity matters. The existing official parity gates concern matched versions
 and fixtures; an arbitrary package upgrade does not inherit that guarantee.
 Upstream binary availability still limits native Windows, macOS, ARM and
-other Python versions. Follow the main repository's current installation
-status; adding a harness does not imply PyPI/wheel publication has happened.
+other Python versions. Use the released 0.3.0 numerical baseline for this
+integration, or the explicitly selected source revision for development.
+Do not claim a later source revision is a published wheel.
+
+
+## Prepare once, not inside every run
+
+Resolve the analysis interpreter through Omicos first (not whichever `pip`
+happens to be on PATH). An available Skill is not evidence that its runtime
+dependencies are installed. Use the host's package-install tool when available;
+the equivalent shell commands for the released baseline are:
+
+```bash
+"$ANALYSIS_PYTHON" -m pip install --only-binary=:all: "iobrx==0.3.0" "jsonschema>=4.23,<5"
+# Only for h5ad inputs:
+"$ANALYSIS_PYTHON" -m pip install "anndata>=0.11"
+"$ANALYSIS_PYTHON" -m pip check
+```
+
+`ANALYSIS_PYTHON` denotes the resolved existing interpreter. Do not substitute
+a host path from another machine. Honor the host's configured, trusted index;
+retry a network failure using its approved mirror, not an arbitrary index.
+`--only-binary` prevents an accidental Rust source build on unsupported hosts.
+A failed installation/check is not permission to change the numerical pins.
+Resolve conflicts against the existing environment lock, or use a host-managed
+isolated environment. Never use `--no-deps` as a conflict workaround.
+
+For deployment images, provision this baseline during image/environment build
+and reuse the existing package/wheel cache across sessions. This avoids paying
+for IOBRpy's resource dependency in each fresh analysis kernel. The dependency
+is retained here: resources and Python fallbacks still use it. An extra cannot
+relax an exact requirement already declared by a base package. Splitting that
+dependency needs its own resource-license/fallback and parity validation.
+Do not edit the shared environment lock from an analysis Skill.
