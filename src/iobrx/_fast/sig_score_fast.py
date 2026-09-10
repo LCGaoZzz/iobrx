@@ -83,12 +83,24 @@ from importlib.resources import files
 from joblib import Parallel, delayed
 from sklearn.decomposition import PCA
 
-from iobrpy.workflow.calculate_sig_score import (  # noqa: E402  (upstream, read-only)
-    preprocess_eset,
-    filter_signatures,
-    _merge_signature_groups,
-    sig_score_ssgsea as _sig_score_ssgsea_original,
-)
+try:
+    from iobrpy.workflow.calculate_sig_score import (  # noqa: E402  (upstream, read-only)
+        preprocess_eset,
+        filter_signatures,
+        _merge_signature_groups,
+        sig_score_ssgsea as _sig_score_ssgsea_original,
+    )
+except ModuleNotFoundError:
+    preprocess_eset = filter_signatures = None
+    _merge_signature_groups = _sig_score_ssgsea_original = None
+
+
+def _require_upstream():
+    if preprocess_eset is None:
+        raise ImportError(
+            "signature scoring reuses upstream IOBRpy helpers; install the Python "
+            "fallback backend with `pip install 'iobrx[python]'`."
+        )
 from iobrx._sites import find_bundled_openblas as _find_bundled_openblas
 
 try:
@@ -557,6 +569,7 @@ def calculate_sig_score_fast(eset, signature_names, method, mini_gene_count=3,
     via ssgsea_fast — bit-exact vs refs for both the ssgsea and integration
     semantics on the official data; False forces the original gp.ssgsea leg).
     """
+    _require_upstream()
     resource_pkg = 'iobrpy.resources'
     resource_path = files(resource_pkg).joinpath('calculate_data.pkl')
     all_sigs = pd.read_pickle(resource_path)

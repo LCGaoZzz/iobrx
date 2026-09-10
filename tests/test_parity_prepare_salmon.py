@@ -35,7 +35,8 @@ import pandas as pd
 import pytest
 
 from iobrx._fast import prepare_salmon_fast as F
-from iobrpy.workflow.prepare_salmon import prepare_salmon_tpm as orig_tpm
+
+orig_tpm = pytest.importorskip("iobrpy.workflow.prepare_salmon").prepare_salmon_tpm
 
 
 # ---------------------------------------------------------------------------

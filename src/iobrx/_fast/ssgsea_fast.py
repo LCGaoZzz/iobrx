@@ -36,10 +36,21 @@ from pandas.api.types import is_object_dtype, is_string_dtype
 import iobrx._rust as _ir
 
 # upstream IOBRpy workflow helpers (read-only import; identical semantics)
-from iobrpy.workflow.calculate_sig_score import (  # noqa: E402
-    preprocess_eset,
-    filter_signatures,
-)
+try:
+    from iobrpy.workflow.calculate_sig_score import (  # noqa: E402
+        preprocess_eset,
+        filter_signatures,
+    )
+except ModuleNotFoundError:
+    preprocess_eset = filter_signatures = None
+
+
+def _require_upstream():
+    if preprocess_eset is None:
+        raise ImportError(
+            "signature scoring reuses upstream IOBRpy helpers; install the Python "
+            "fallback backend with `pip install 'iobrx[python]'`."
+        )
 
 # sample_norm enum values understood by iobrx_rust.ssgsea_core
 _SAMPLE_NORM = {None: 0, "custom": 0, "rank": 1, "log_rank": 2, "log": 3}
@@ -169,6 +180,7 @@ def ssgsea_fast(
     Returns a res2d-equivalent DataFrame with columns Name, Term, ES, NES
     (rows re-indexed like GSEAbase.to_df: sorted by |NES| desc, RangeIndex).
     """
+    _require_upstream()
     data = gseapy_load_data(eset2)
     filtered, gene_dict, gene_names = gseapy_filter_gene_sets(
         sigs, data.index.tolist(), min_size, max_size
@@ -210,6 +222,7 @@ def ssgsea_fast(
 
 def sig_score_ssgsea_fast(eset, sig_dict, mini_gene_count, adjust_eset, parallel_size):
     """IDENTICAL-output replacement for calculate_sig_score.sig_score_ssgsea."""
+    _require_upstream()
     # Preprocess like R (upstream functions, unchanged semantics)
     eset2 = preprocess_eset(eset, adjust_eset)
     # First filter with original threshold

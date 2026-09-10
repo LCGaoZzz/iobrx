@@ -42,6 +42,8 @@ import pickle
 
 import numpy as np
 import pandas as pd
+from iobrx._resources import resource_path as _resource_path
+from pathlib import Path
 
 __all__ = ["anno_eset", "invalidate_cache"]
 
@@ -84,7 +86,7 @@ def _prepare_annotation(annotation, symbol: str, probe: str):
             )
         ckey = ("key", annotation, symbol, probe)
         cent = _prep_cache.get(ckey)
-        resource_path = files("iobrpy.resources").joinpath("anno_eset.pkl")
+        resource_path = Path(_resource_path("anno_eset.pkl"))
         if cent is not None and cent["path"] == str(resource_path):
             return cent["prep"], cent["shape"]
         rkey = str(resource_path)

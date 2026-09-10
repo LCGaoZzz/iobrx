@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - Unreleased
+## [0.4.0] - Unreleased
+
+### Changed
+
+- Reference data is bundled inside the wheel (``iobrx/_resources``); IOBRpy is demoted to the optional ``python`` extra. The default install no longer pulls IOBRpy's transitive dependencies or its exact pins, and ``import iobrx`` no longer imports IOBRpy. quanTIseq and signature scoring reuse upstream IOBRpy helpers and fail with an actionable ``pip install 'iobrx[python]'`` message when it is absent.
+- Dependency pins relaxed to ranges so iobrx coexists with shared environments (e.g. the Omicos kernel). The validated bit-exact numerical environment is published as the ``strict`` extra and remains what the parity gates and CI assert.
+- Document thread guidance for large cohorts (explicit ``n_threads``; single-call batching for CIBERSORT's fixed per-call overhead).
+- Remove committed development artifacts from the repository root.
+
+## [0.3.0] - 2026-09-09
 
 ### Reliability and Omicos hardening
 

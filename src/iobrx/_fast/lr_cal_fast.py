@@ -78,6 +78,7 @@ end-of-run banner (iobrx library convention); the verbose filter-count and
 [LOG] lines are preserved.
 """
 from __future__ import annotations
+from iobrx._resources import resource_path
 
 import os
 import pickle
@@ -107,7 +108,7 @@ def _lr_data() -> dict:
     if _LR_DATA is None:
         from importlib.resources import files
 
-        with open(files("iobrpy.resources").joinpath("lr_data.pkl"), "rb") as f:
+        with open(resource_path("lr_data.pkl"), "rb") as f:
             _LR_DATA = pickle.load(f)
     return _LR_DATA
 

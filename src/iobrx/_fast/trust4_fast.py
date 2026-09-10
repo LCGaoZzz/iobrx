@@ -171,12 +171,18 @@ atexit.register(_cleanup_tmp_dirs)
 
 
 def _extract_resource_to_tmp(name: str) -> Optional[str]:
-    """Read a resource file from iobrpy.resources and write it to a temp file."""
+    """Read a resource file from bundled data (or iobrpy.resources) to a temp file."""
     from importlib.resources import files
+    data = None
     try:
-        data = files(RES_PKG).joinpath(name).read_bytes()
+        from iobrx._resources import resource_path
+        with open(resource_path(name), "rb") as handle:
+            data = handle.read()
     except Exception:
-        return None
+        try:
+            data = files(RES_PKG).joinpath(name).read_bytes()
+        except Exception:
+            return None
     tmpdir = tempfile.mkdtemp(prefix="iobrpy_trust4_")
     _TRUST4_TMP_DIRS.append(tmpdir)
     outp = os.path.join(tmpdir, name)

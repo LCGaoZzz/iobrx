@@ -119,6 +119,7 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
+from iobrx._resources import resource_path
 
 __all__ = [
     "bayesprism",
@@ -169,13 +170,13 @@ def _bp_data_path(filename: str) -> Path:
     ``importlib.resources.files`` on the iobrpy package)."""
     from importlib.resources import files
 
-    return Path(str(files("iobrpy.bayesprism").joinpath("BP_data", filename)))
+    return Path(resource_path(f"BP_data/{filename}"))
 
 
 def _txt_path(filename: str) -> str:
     from importlib.resources import files
 
-    return str(files("iobrpy.bayesprism").joinpath("txt", filename))
+    return resource_path(f"txt/{filename}")
 
 
 def _gencode_table() -> pd.DataFrame:

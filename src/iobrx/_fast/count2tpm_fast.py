@@ -39,6 +39,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from pandas.api.types import infer_dtype, is_numeric_dtype
+from iobrx._resources import resource_path
 
 __all__ = ["count2tpm", "feature_manipulation", "remove_duplicate_genes"]
 
@@ -68,7 +69,7 @@ def _packaged_source_ident() -> tuple:
     global _PACKAGED_SRC_IDENT
     if _PACKAGED_SRC_IDENT is None:
         from importlib.resources import files
-        path = os.path.realpath(str(files('iobrpy.resources').joinpath('count2tpm_data.pkl')))
+        path = os.path.realpath(resource_path('count2tpm_data.pkl'))
         st = os.stat(path)
         _PACKAGED_SRC_IDENT = (path, int(st.st_size), int(st.st_mtime_ns))
     return _PACKAGED_SRC_IDENT

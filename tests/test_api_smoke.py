@@ -16,7 +16,7 @@ from importlib.resources import files
 
 import iobrx
 
-RES = files("iobrpy.resources")
+RES = files("iobrx").joinpath("_resources")
 
 
 # ---------------------------------------------------------------------------
@@ -56,7 +56,7 @@ def _lognormal_matrix(rng, index, columns, scale=8.0):
 # cibersort
 # ---------------------------------------------------------------------------
 def test_cibersort_shape_and_original_parity(rng, lm22):
-    from iobrpy.workflow import cibersort as orig
+    orig = pytest.importorskip("iobrpy.workflow.cibersort")
 
     # real LM22 genes so the overlap is healthy; 4 synthetic mixtures
     genes = lm22.index[:400]
@@ -97,7 +97,7 @@ def test_cibersort_absolute_shape(rng, lm22):
 # ---------------------------------------------------------------------------
 @pytest.mark.parametrize("method", ["pca", "zscore", "ssgsea", "integration"])
 def test_calculate_sig_score_parity(method, rng, sig_collection):
-    from iobrpy.workflow.calculate_sig_score import calculate_sig_score as orig
+    orig = pytest.importorskip("iobrpy.workflow.calculate_sig_score").calculate_sig_score
 
     genes = sorted({g for gl in sig_collection.values() for g in gl})
     eset = _lognormal_matrix(rng, genes[:2500], [f"P{i}" for i in range(12)])
@@ -115,7 +115,7 @@ def test_calculate_sig_score_parity(method, rng, sig_collection):
 # count2tpm
 # ---------------------------------------------------------------------------
 def test_count2tpm_parity_and_packaged_mode(rng, anno_grch38_df):
-    from iobrpy.workflow.count2tpm import count2tpm as orig
+    orig = pytest.importorskip("iobrpy.workflow.count2tpm").count2tpm
 
     anno = anno_grch38_df
     ids = anno["id"].dropna().sample(2000, random_state=7).tolist()
@@ -140,7 +140,7 @@ def test_count2tpm_parity_and_packaged_mode(rng, anno_grch38_df):
 # quanTIseq
 # ---------------------------------------------------------------------------
 def test_quantiseq_alias_builder_and_run(rng):
-    from iobrpy.workflow import quantiseq as _qs
+    _qs = pytest.importorskip("iobrpy.workflow.quantiseq")
     from iobrx._fast.quantiseq_fast import (
         _vectorized_build_hgnc_alias_map, _orig_build, deconvolute_quantiseq_default,
     )
@@ -166,7 +166,7 @@ def test_quantiseq_alias_builder_and_run(rng):
 # EPIC
 # ---------------------------------------------------------------------------
 def test_epic_parity(rng):
-    from iobrpy.workflow.epic import EPIC as orig
+    orig = pytest.importorskip("iobrpy.workflow.epic").EPIC
     from iobrx._fast.epic_fast import invalidate_cache
 
     tref = pd.read_pickle(str(RES.joinpath("epic_TRef_BRef.pkl")))["TRef"]
@@ -185,7 +185,7 @@ def test_epic_parity(rng):
 # MCP-counter
 # ---------------------------------------------------------------------------
 def test_mcpcounter_parity(rng):
-    from iobrpy.workflow.mcpcounter import MCPcounter_estimate as orig
+    orig = pytest.importorskip("iobrpy.workflow.mcpcounter").MCPcounter_estimate
 
     md = pd.read_pickle(str(RES.joinpath("mcp_data.pkl")))
     markers = md["genes"]["HUGO symbols"].astype(str).tolist()
@@ -202,7 +202,7 @@ def test_mcpcounter_parity(rng):
 # ESTIMATE
 # ---------------------------------------------------------------------------
 def test_estimate_parity(rng):
-    from iobrpy.workflow.estimate import estimate_score as orig
+    orig = pytest.importorskip("iobrpy.workflow.estimate").estimate_score
 
     common = pd.read_csv(RES.joinpath("common_genes.txt"), sep="\t", header=0, dtype=str)
     import pickle
@@ -225,7 +225,7 @@ def test_estimate_parity(rng):
 # anno_eset
 # ---------------------------------------------------------------------------
 def test_anno_eset_parity_and_builtin(rng, anno_grch38_df):
-    from iobrpy.workflow.anno_eset import anno_eset as orig
+    orig = pytest.importorskip("iobrpy.workflow.anno_eset").anno_eset
 
     sub = anno_grch38_df.head(4000)
     probes = sub["id"].astype(str).tolist()

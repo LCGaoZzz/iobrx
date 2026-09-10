@@ -36,8 +36,9 @@ import sys
 from iobrx._threads import get_threads, resolve_threads, set_threads
 from iobrx._backend import backend_info, select_backend
 from iobrx._testdata import MIRRORS, OfficialDataUnavailable, load_official
+from iobrx._resources import bundled_names, resource_path  # noqa: E402
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 # The optional native module and historical alias are managed by _backend.
 
@@ -76,6 +77,7 @@ __all__ = [
     "set_threads",
     "get_threads",
     "backend_info",
+    "resource_path",
     "__version__",
 ]
 
@@ -90,11 +92,8 @@ def _quantiseq_data():
     global _QUANTISEQ_DATA
     if _QUANTISEQ_DATA is None:
         import pandas as pd
-        from importlib.resources import files
 
-        _QUANTISEQ_DATA = pd.read_pickle(
-            str(files("iobrpy.resources").joinpath("quantiseq_data.pkl"))
-        )
+        _QUANTISEQ_DATA = pd.read_pickle(resource_path("quantiseq_data.pkl"))
     return _QUANTISEQ_DATA
 
 
@@ -102,11 +101,8 @@ def _epic_tref():
     global _EPIC_TREF
     if _EPIC_TREF is None:
         import pandas as pd
-        from importlib.resources import files
 
-        _EPIC_TREF = pd.read_pickle(
-            str(files("iobrpy.resources").joinpath("epic_TRef_BRef.pkl"))
-        )["TRef"]
+        _EPIC_TREF = pd.read_pickle(resource_path("epic_TRef_BRef.pkl"))["TRef"]
     return _EPIC_TREF
 
 

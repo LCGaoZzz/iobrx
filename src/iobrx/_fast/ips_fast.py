@@ -55,6 +55,7 @@ BUG-COMPATIBILITY (upstream defects deliberately preserved, module_spec
 from __future__ import annotations
 
 import os
+from iobrx._resources import resource_path as _resource_path
 
 __all__ = ["ips"]
 
@@ -68,7 +69,7 @@ def _ips_genes():
         import pandas as pd
         from importlib.resources import files
 
-        resource_path = files("iobrpy.resources").joinpath("IPS_genes.txt")
+        resource_path = _resource_path("IPS_genes.txt")
         _IPS_GENES = pd.read_csv(str(resource_path), sep="\t")
     return _IPS_GENES
 

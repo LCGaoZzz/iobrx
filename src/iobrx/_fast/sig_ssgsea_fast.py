@@ -32,10 +32,13 @@ relative error (achieved: bit-exact / last-ulp; see
 iobrx/bench/rust_ssgsea_results.json for the measured value).
 """
 # surrounding semantics come from the ORIGINAL module (read-only import)
-from iobrpy.workflow.calculate_sig_score import (  # noqa: E402,F401
-    preprocess_eset,
-    filter_signatures,
-)
+try:
+    from iobrpy.workflow.calculate_sig_score import (  # noqa: E402,F401
+        preprocess_eset,
+        filter_signatures,
+    )
+except ModuleNotFoundError:
+    preprocess_eset = filter_signatures = None
 
 # the gseapy->Rust core replacement (gseapy load_data/load_gmt literal ports
 # + iobrx_rust.ssgsea_core + res2d reconstruction)
@@ -68,6 +71,11 @@ def sig_ssgsea_fast(eset_df, sig_dict, mini_gene_count=3, adjust_eset=True, n_th
     ``TMEscore_CIR`` / ``TMEscore_plus`` contrasts when both constituents
     are present.
     """
+    if preprocess_eset is None:
+        raise ImportError(
+            "signature scoring reuses upstream IOBRpy helpers; install the Python "
+            "fallback backend with `pip install 'iobrx[python]'`."
+        )
     return _sig_score_ssgsea_fast(
         eset_df, sig_dict, mini_gene_count, adjust_eset, n_threads
     )

@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "iobrx"
-version = "0.3.0"
+version = "0.4.0"
 description = "Accelerated IOBRpy workflows with a pandas API, Rust kernels and scoped numerical parity validation"
 readme = "README.md"
 license = { text = "MIT" }
@@ -21,28 +21,42 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
-    "iobrpy==0.2.1",
-    # Parity line: the ORIGINAL's reduction semantics moved in numpy 2.4
-    # (e.g. a global X.mean() differs by 1 ulp from 2.2.x, which flips NuSVR
-    # support sets in CIBERSORT). iobrx reproduces the frozen 2.2.x numbers;
-    # Publish the validated version rather than selecting a new numerical
-    # implementation implicitly (see docs/PORTABILITY.md).
-    "numpy==2.2.6",
+    # Reference data for the bundled kernels ships inside the wheel
+    # (src/iobrx/_resources/NOTICE.md); IOBRpy itself is demoted to the
+    # optional `python` extra (Python fallback backend + parity tests).
+    # Ranges below let iobrx coexist with shared environments such as the
+    # Omicos kernel. The EXACT validated numerical versions are published
+    # as the `strict` extra and remain what the official bit-exact parity
+    # gates and CI assert (see docs/PORTABILITY.md and
+    # tests/constraints-validated.txt).
+    "numpy>=2.2,<3",
     "pandas>=2.3,<3",
-    "scipy==1.16.3",
-    # The vendored libsvm kernel is scikit-learn 1.7.2's svm.cpp; the
-    # ORIGINAL's NuSVR numerics drifted in sklearn 1.9.0, which would make
-    # iobrx bit-exact vs the frozen 1.7.2 references but NOT vs a >=1.8
-    # original. Publish the exact validated version.
-    "scikit-learn==1.7.2",
-    "gseapy==1.3.1",
+    "scipy>=1.16,<2",
+    # The vendored libsvm kernel is scikit-learn 1.7.2's svm.cpp; newer
+    # versions keep CIBERSORT numerics on the validated fixture, but only
+    # 1.7.x is asserted bit-exact (install `iobrx[strict]` for the gates).
+    "scikit-learn>=1.7,<2",
+    "gseapy>=1.3,<2",
     "joblib>=1.3",
     "pyarrow>=20,<21",
     "pyreadr>=0.5.6,<0.6",
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=7.0"]
+# Python fallback backend, quanTIseq and signature scoring (which reuse
+# upstream IOBRpy modules) and the official parity tests.
+python = ["iobrpy==0.2.1"]
+# The exact numerical versions the official bit-exact parity gates are run
+# on; see tests/constraints-validated.txt.
+strict = [
+    "numpy==2.2.6",
+    "scipy==1.16.3",
+    "scikit-learn==1.7.2",
+    "gseapy==1.3.1",
+]
+# The parity gates compare the accelerated paths against the ORIGINAL
+# implementation, so the test extra includes the Python fallback package.
+test = ["pytest>=7.0", "iobrpy==0.2.1"]
 tutorials = ["matplotlib>=3.7", "nbformat>=5.9", "nbclient>=0.10", "ipykernel>=6", "jupyterlab>=4"]
 
 [project.urls]

@@ -79,9 +79,9 @@ def _make_unique(index):
 
 
 def _default_lm22() -> pd.DataFrame:
-    from importlib.resources import files
+    from iobrx._resources import resource_path
 
-    lm22_path = files("iobrpy.resources").joinpath("lm22.txt")
+    lm22_path = resource_path("lm22.txt")
     return pd.read_csv(lm22_path, sep=r"\s+", engine="python", index_col=0)
 
 

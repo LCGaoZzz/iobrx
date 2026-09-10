@@ -77,58 +77,56 @@ NMF 的 BLAS 并行度不只由请求线程数控制。BayesPrism 使用缩短�
 ## 安装
 
 已验证目标为 **Python 3.11、Linux x86-64／WSL2**，建议使用独立环境。
+iobrx 的参考数据已内置在 wheel 中，默认安装即完整可用——不再依赖 IOBRpy，
+也无需额外的约 90 MB 下载：
+
+```bash
+python -m pip install iobrx
+# 清华镜像：python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx
+```
+
+可选 extras：
+
+| Extra | 内容 | 适用场景 |
+| --- | --- | --- |
+| `iobrx[python]` | `iobrpy==0.2.1` | Python 回退后端、quanTIseq 与签名打分（它们复用上游 IOBRpy 模块）、官方 parity 测试。 |
+| `iobrx[strict]` | `numpy==2.2.6`、`scipy==1.16.3`、`scikit-learn==1.7.2`、`gseapy==1.3.1` | 已验证的精确数值环境；官方 bit-exact parity 门与 CI 以此版本断言。 |
+| `iobrx[test]`、`iobrx[tutorials]` | pytest／notebook 栈 | 开发与已执行教程。 |
+
+默认安装使用版本范围，可与共享环境（如 Omicos 内核）共存而无需强制钉版。
+已发布的参考数字以 `iobrx[strict]` 为验证依据；在更新的 numpy 上，native
+求解器可能相差最后一个 ulp——细节与测量见
+[BENCHMARKS.md](BENCHMARKS.md) 与 [docs/PORTABILITY.md](docs/PORTABILITY.md)。
+
+### 大队列与线程
+
+`n_threads=None`（默认）解析为 `min(8, os.cpu_count())`，是保守的桌面选择。
+在更大机器上应显式传入物理核数——16–64 线程在全转录组输入上仍有实质增益：
+
+```python
+import iobrx
+iobrx.set_threads(os.cpu_count())          # 进程级
+iobrx.cibersort(eset, n_threads=32)        # 单次调用
+```
+
+每次 `cibersort()` 调用另有约 26 s 的固定一次性开销（签名加载 + BLAS 握手）。
+多个队列共用同一签名矩阵时，应合并为一次调用后再拆分权重，而不是逐队列调用。
+
 固定版本 wheel、源码包、校验文件与容器 digest 通过
 [v0.3.0 发行页面](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.0)交付。
-下载其中的 CPython 3.11 wheel 后，无需 Cargo 或 C++ 编译器即可安装：
-
-```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
-python -m pip install --only-binary=:all: ./iobrx-0.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-python -c "import iobrx; print(iobrx.backend_info())"
-```
-
-当 [PyPI 页面](https://pypi.org/project/iobrx/)出现 **0.3.0** 后，可直接通过索引安装：
-
-```bash
-python -m pip install --only-binary=:all: iobrx==0.3.0
-# 清华镜像异步同步 PyPI；确认它已列出相同版本后使用。
-python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.0
-```
-
-PyPI 发布、清华镜像同步与 GitHub 附件是独立状态；索引尚未同步时可以直接安装
-发行页面的 wheel。源码开发仍需 Cargo 和 C++17 编译器：
+源码开发需要 Cargo 和 C++17 编译器：
 
 ```bash
 git clone https://github.com/LCGaoZzz/iobrx.git
 cd iobrx
-python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
+python -m pip install -c tests/constraints-validated.txt ".[test,python]"
 python -c "import iobrx; print(iobrx.backend_info())"
 python -m jupyterlab tutorials
 ```
 
-Jupyter 内核应使用同一个解释器。已有 Omicos 环境若存在数值依赖冲突，应使用
-独立环境。这条源码安装命令会编译扩展，不能称为免编译安装。
-
-核心分析容器使用 `ghcr.io/lcgaozzz/iobrx:0.3.0`；需要不可变版本时，使用发行
-附件 `container-digest.txt` 中的 digest。比对与 HLA 工具链需单独准备。
-详见 [0.3.0 发行说明](docs/releases/0.3.0.md)。
-
-**依赖钉版原因**（测量细节见 [BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)）：
-
-| 钉版 | 原因 |
-| --- | --- |
-| `iobrpy==0.2.1` | 提供参考资源与原版工作流回退路线。当前安装和数值对照使用这个精确的 PyPI 版本；此前科学智能体的报告还比较了 0.2.0。 |
-| `numpy==2.2.6` | 使用已验证的归约与排序实现。此前报告在新版 NumPy 中观察到不同舍入和 CIBERSORT 支持向量集，不能承诺更宽版本范围的结果一致性。 |
-| `scikit-learn==1.7.2` | 与内置 `svm.cpp` 及测试中的参考求解器保持一致。新版 sklearn 需要单独进行数值验证。 |
-| `scipy==1.16.3`、`gseapy==1.3.1` | 将优化与富集计算固定到已验证的实现。 |
-
-以上是[包元数据](pyproject.toml)中的精确依赖，不是最低版本要求。
-其他依赖范围和完整测试环境见[验证约束](tests/constraints-validated.txt)。
-
-**CPU 指令集兼容不等于所有平台都已验证。** IOBRpy 的发行包仍限制了部分
-系统和 Python 版本的便捷安装。Windows 推荐 WSL2；macOS、ARM 和原生
-Windows 尚未完成全栈验证。详见[兼容性说明](https://github.com/LCGaoZzz/iobrx/blob/main/docs/PORTABILITY.md)。
+Jupyter 内核应使用同一个解释器。这条源码安装命令会编译扩展，不能称为免编译
+安装。核心分析容器使用 `ghcr.io/lcgaozzz/iobrx:0.3.0`；需要不可变版本时，
+使用发行附件 `container-digest.txt` 中的 digest。
 
 ## 快速开始
 

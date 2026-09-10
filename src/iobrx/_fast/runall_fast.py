@@ -26,6 +26,7 @@ import threading
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from iobrx._run_state import artifact_records, file_hash, signature, write_json
+from iobrx._resources import resource_path
 
 _RUN_LOCK = threading.RLock()
 
@@ -500,7 +501,7 @@ def _exec_epic(args, verbose):
     sep_in = infer_sep(args.input)
     bulk = pd.read_csv(args.input, sep=sep_in, index_col=0)
 
-    ref_pkg = files('iobrpy').joinpath('resources', 'epic_TRef_BRef.pkl')
+    ref_pkg = resource_path('epic_TRef_BRef.pkl')
     with ref_pkg.open('rb') as f:
         ref_data = pickle.load(f)
 

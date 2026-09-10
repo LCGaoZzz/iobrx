@@ -30,6 +30,7 @@ Cache invalidation: mcpcounter_fast.invalidate_cache().
 import numpy as np
 import pandas as pd
 from importlib.resources import files
+from iobrx._resources import resource_path as _resource_path
 
 __all__ = ["MCPcounter_estimate", "invalidate_cache"]
 
@@ -51,7 +52,7 @@ def _load_markers(features_type: str):
     if ent is not None:
         return ent
 
-    resource_path = files('iobrpy.resources').joinpath('mcp_data.pkl')
+    resource_path = _resource_path('mcp_data.pkl')
     data = pd.read_pickle(resource_path)
     probesets = data.get('probesets')
     genes_df = data.get('genes')

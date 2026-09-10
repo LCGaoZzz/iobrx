@@ -34,7 +34,7 @@ import pickle
 
 import numpy as np
 import pandas as pd
-from importlib.resources import files
+from iobrx._resources import resource_path
 
 __all__ = ["estimate_score"]
 
@@ -43,9 +43,9 @@ _cache = {}
 
 def _load_resources():
     if not _cache:
-        txt_path = files("iobrpy.resources").joinpath("common_genes.txt")
+        txt_path = resource_path("common_genes.txt")
         common_genes = pd.read_csv(txt_path, sep="\t", header=0, dtype=str)
-        pkl_path = files("iobrpy.resources").joinpath("estimate_data.pkl")
+        pkl_path = resource_path("estimate_data.pkl")
         with open(pkl_path, "rb") as f:
             data = pickle.load(f)
         SI_geneset = data["SI_geneset"]

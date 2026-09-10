@@ -29,3 +29,22 @@ def pytest_configure(config):
     if config.getoption("--run-full"):
         # overrides the default addopts "-m 'not full'" deselect
         config.option.markexpr = "full"
+
+
+def pytest_collection_modifyitems(config, items):
+    """Skip comparison modules when the original IOBRpy is not installed.
+
+    iobrx 0.4.0 no longer requires IOBRpy: the bundled kernels run on the
+    reference data shipped inside the wheel. The parity suites compare the
+    accelerated paths against the ORIGINAL IOBRpy implementation and cannot
+    run without it; skip them with an explicit reason instead of failing.
+    CI installs the ``python`` extra, so nothing is skipped there.
+    """
+    import importlib.util
+    if importlib.util.find_spec("iobrpy") is not None:
+        return
+    reason = "iobrpy (the original implementation) is not installed; parity comparison unavailable"
+    for item in items:
+        name = item.path.parts[-1]
+        if name.startswith("test_parity") or name in {"test_extract_hla_read.py", "test_portability.py"}:
+            item.add_marker(pytest.mark.skip(reason=reason))

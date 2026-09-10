@@ -68,9 +68,20 @@ import weakref
 import numpy as np
 import pandas as pd
 
-from iobrpy.workflow import quantiseq as _qs  # original, untouched upstream module
+try:
+    from iobrpy.workflow import quantiseq as _qs  # original, untouched upstream module
+    _orig_build = _qs._build_hgnc_alias_map  # pristine builder, kept for baseline/gating
+except ModuleNotFoundError:
+    _qs = None
+    _orig_build = None
 
-_orig_build = _qs._build_hgnc_alias_map  # pristine builder, kept for baseline/gating
+
+def _require_iobrpy():
+    if _qs is None:
+        raise ImportError(
+            "quanTIseq reuses the upstream IOBRpy module; install the Python "
+            "fallback backend with `pip install 'iobrx[python]'`."
+        )
 
 
 def _vectorized_build_hgnc_alias_map(hgnc):
@@ -189,11 +200,13 @@ def _memoized_build_hgnc_alias_map(hgnc):
 
 def enable_cache() -> None:
     """Activate the memoizing builder on the original module (default state)."""
+    _require_iobrpy()
     _qs._build_hgnc_alias_map = _memoized_build_hgnc_alias_map
 
 
 def disable_cache() -> None:
     """Restore the pristine original builder (exactly upstream behaviour)."""
+    _require_iobrpy()
     _qs._build_hgnc_alias_map = _orig_build
 
 
@@ -206,6 +219,7 @@ def clear_cache() -> None:
 
 
 def cache_info() -> dict:
+    _require_iobrpy()
     return {
         "cached_hgnc_objects": len(_cache),
         "hits": _hits,
@@ -226,6 +240,7 @@ def deconvolute_quantiseq_default(mix, data, arrays=False, signame="TIL10",
     All computation happens in the original module's code; only the alias-map
     builder inside it is the memoizing shim (when the cache is enabled).
     """
+    _require_iobrpy()
     return _qs.deconvolute_quantiseq_default(
         mix=mix, data=data, arrays=arrays, signame=signame, tumor=tumor,
         mRNAscale=mRNAscale, method=method, rmgenes=rmgenes,

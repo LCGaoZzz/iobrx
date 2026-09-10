@@ -89,62 +89,65 @@ The BayesPrism example uses a short demo chain; file-merging examples are synthe
 ## Install
 
 Validated target: **Python 3.11, Linux x86-64 / WSL2**. Use an isolated
-environment. Versioned wheels, source archives, checksums and the container
-digest are delivered through the [v0.3.0 release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.0).
-After downloading its CPython 3.11 wheel:
+environment. iobrx ships its reference data inside the wheel, so a default
+install is self-contained — no IOBRpy, no 90 MB extra download:
 
 ```bash
-python3.11 -m venv .venv
-source .venv/bin/activate
-python -m pip install --only-binary=:all: ./iobrx-0.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-python -c "import iobrx; print(iobrx.backend_info())"
+python -m pip install iobrx
+# Tsinghua mirror: python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx
 ```
 
-This wheel path does not require Cargo or a C++ compiler. When **0.3.0 appears
-on [PyPI](https://pypi.org/project/iobrx/)**, the index-based equivalent is:
+Optional extras:
 
-```bash
-python -m pip install --only-binary=:all: iobrx==0.3.0
-# Tsinghua mirrors PyPI asynchronously; wait until the same version is listed.
-python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.0
+| Extra | Contents | When to use |
+| --- | --- | --- |
+| `iobrx[python]` | `iobrpy==0.2.1` | Python fallback backend, quanTIseq and signature scoring (they reuse upstream IOBRpy modules), and the official parity tests. |
+| `iobrx[strict]` | `numpy==2.2.6`, `scipy==1.16.3`, `scikit-learn==1.7.2`, `gseapy==1.3.1` | The exact validated numerical environment; the bit-exact parity gates and CI assert these versions. |
+| `iobrx[test]`, `iobrx[tutorials]` | pytest / notebook stack | Development and the executed tutorials. |
+
+The default install uses version ranges so iobrx coexists with shared
+environments (e.g. the Omicos kernel) instead of forcing exact pins. The
+published reference digits are validated against `iobrx[strict]`; on newer
+numpy the native solvers may differ by the last ulp — details and measurements
+in [BENCHMARKS.md](BENCHMARKS.md) and [docs/PORTABILITY.md](docs/PORTABILITY.md).
+
+### Large cohorts and threads
+
+`n_threads=None` (the default) resolves to `min(8, os.cpu_count())`, a
+conservative desktop choice. On larger machines pass the physical core count
+explicitly — the 16–64 thread range still yields real gains on
+full-transcriptome inputs:
+
+```python
+import iobrx
+iobrx.set_threads(os.cpu_count())          # process-wide
+iobrx.cibersort(eset, n_threads=32)        # per call
 ```
 
-PyPI publication and mirror synchronization are independent of GitHub assets.
-If an index has not synchronized, install the release wheel directly.
+Every `cibersort()` call also carries a fixed one-time overhead of roughly
+26 s (signature load + BLAS handshake). When several cohorts share one
+signature, concatenate them into a single call and split the returned
+weights afterwards instead of calling once per cohort.
 
+Versioned wheels, source archives, checksums and the container digest are
+delivered through the [v0.3.0 release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.0).
 For source development, install Cargo and a C++17 compiler:
 
 ```bash
 git clone https://github.com/LCGaoZzz/iobrx.git
 cd iobrx
-python -m pip install -c tests/constraints-validated.txt ".[tutorials,test]"
+python -m pip install -c tests/constraints-validated.txt ".[test,python]"
 python -c "import iobrx; print(iobrx.backend_info())"
 python -m jupyterlab tutorials
 ```
 
-Use the same interpreter as the Jupyter kernel. In an existing Omicos
-environment, first check dependency compatibility; use an isolated environment
-when the required numerical versions conflict. `pip install` from this source
-builds the extension; it is not an installation without compilation.
+Use the same interpreter as the Jupyter kernel. `pip install` from this
+source builds the extension; it is not an installation without compilation.
 
 The core-analysis container uses `ghcr.io/lcgaozzz/iobrx:0.3.0`; for immutable
 execution use the digest in the release's `container-digest.txt`.
 Alignment and HLA binaries require the separate external-tool environment.
 See [release notes](docs/releases/0.3.0.md).
-
-**Why the dependency pins** (details and measurements in
-[BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)):
-
-| Pin | Reason |
-| --- | --- |
-| `iobrpy==0.2.1` | Supplies reference resources and the original-workflow fallback. Current package and parity tests use this exact PyPI version; the earlier campaign also compared with 0.2.0. |
-| `numpy==2.2.6` | Uses the validated reduction and sorting implementation. The campaign observed different rounding and CIBERSORT support sets with newer NumPy; broader version ranges are not promised. |
-| `scikit-learn==1.7.2` | Matches the vendored `svm.cpp` and the tested reference solver. Newer sklearn versions require separate numerical validation. |
-| `scipy==1.16.3`, `gseapy==1.3.1` | Keeps optimization and enrichment calculations on the validated implementations. |
-
-These are the exact requirements in [package metadata](pyproject.toml), not
-minimum versions. Remaining dependency bounds and the complete test environment
-are recorded in [the validation constraints](tests/constraints-validated.txt).
 
 **CPU compatibility and operating-system packaging are separate.** Upstream
 IOBRpy's binary distribution limits straightforward installation on other

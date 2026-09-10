@@ -111,6 +111,7 @@ import warnings
 from pathlib import Path
 
 import pandas as pd
+from iobrx._resources import resource_path
 
 __all__ = ["tme_profile_fast"]
 
@@ -169,7 +170,7 @@ def _compose_epic_reference(reference: str) -> dict:
 
     from iobrpy.workflow.epic import _to_df, merge_duplicates, mRNA_cell_default
 
-    ref_pkg = files("iobrpy").joinpath("resources", "epic_TRef_BRef.pkl")
+    ref_pkg = resource_path("epic_TRef_BRef.pkl")
     with ref_pkg.open("rb") as f:
         ref_data = pickle.load(f)
 
@@ -473,7 +474,7 @@ def _step_sig_score_split(in_path, out_file, threads, signature, method,
 
     eset = _read_sig_score(str(in_path))
     names = [signature] if isinstance(signature, str) else list(signature)
-    all_sigs = pd.read_pickle(files("iobrpy.resources").joinpath("calculate_data.pkl"))
+    all_sigs = pd.read_pickle(resource_path("calculate_data.pkl"))
     sig_dict = _merge_signature_groups(all_sigs, names)
     if not isinstance(sig_dict, dict) or len(sig_dict) == 0:
         raise KeyError(f"No valid signatures found from groups: {names}")

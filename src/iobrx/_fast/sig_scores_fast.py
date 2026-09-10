@@ -67,12 +67,24 @@ import numpy as np
 import pandas as pd
 import scipy.linalg as _sla
 
-from iobrpy.workflow.calculate_sig_score import (
-    preprocess_eset,
-    filter_signatures,
-    sig_score_pca as _sig_score_pca_original,
-    sig_score_zscore as _sig_score_zscore_original,
-)
+try:
+    from iobrpy.workflow.calculate_sig_score import (
+        preprocess_eset,
+        filter_signatures,
+        sig_score_pca as _sig_score_pca_original,
+        sig_score_zscore as _sig_score_zscore_original,
+    )
+except ModuleNotFoundError:
+    preprocess_eset = filter_signatures = None
+    _sig_score_pca_original = _sig_score_zscore_original = None
+
+
+def _require_upstream():
+    if preprocess_eset is None:
+        raise ImportError(
+            "signature scoring reuses upstream IOBRpy helpers; install the Python "
+            "fallback backend with `pip install 'iobrx[python]'`."
+        )
 
 
 def _pc1_full_lean(X):
@@ -144,6 +156,7 @@ def sig_score_pca_fast(eset, sig_dict, mini_gene_count, adjust_eset, parallel_si
     """Bit-exact drop-in for calculate_sig_score.sig_score_pca (parallel_size
     accepted for signature compatibility; execution is serial - see module
     docstring)."""
+    _require_upstream()
     pdata = pd.DataFrame({"ID": eset.columns})
     eset2 = preprocess_eset(eset, adjust_eset)
 
@@ -188,6 +201,7 @@ def sig_score_pca_fast(eset, sig_dict, mini_gene_count, adjust_eset, parallel_si
 
 def sig_score_zscore_fast(eset, sig_dict, mini_gene_count, adjust_eset, parallel_size=1):
     """Bit-exact drop-in for calculate_sig_score.sig_score_zscore."""
+    _require_upstream()
     pdata = pd.DataFrame({"ID": eset.columns})
     eset2 = preprocess_eset(eset, adjust_eset)
 

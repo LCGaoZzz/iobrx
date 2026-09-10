@@ -58,6 +58,7 @@ import gzip
 import os
 import pickle
 from pathlib import Path
+from iobrx._resources import resource_path as _resource_path
 
 __all__ = ["mouse2human"]
 
@@ -157,7 +158,7 @@ def _load_mus_human_df():
     import pandas as pd
     from importlib.resources import files as ir_files
 
-    resource_path = ir_files("iobrpy.resources").joinpath("mus_human.pkl")
+    resource_path = Path(_resource_path("mus_human.pkl"))
     with resource_path.open("rb") as f:
         obj = pickle.load(f)
 

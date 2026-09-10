@@ -93,8 +93,17 @@ import pandas as pd
 try:
     from tqdm.auto import tqdm
 except ImportError:  # pragma: no cover
-    def tqdm(x, **kwargs):
-        return x
+    class _NoopBar:
+        """tqdm stand-in: no progress is drawn when tqdm is not installed."""
+
+        def update(self, n=1):
+            pass
+
+        def close(self):
+            pass
+
+    def tqdm(x=None, **kwargs):
+        return x if x is not None else _NoopBar()
 
 __all__ = ["merge_salmon", "merge_salmon_original"]
 
