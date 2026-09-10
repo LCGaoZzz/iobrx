@@ -1,4 +1,4 @@
-# Additional workflows (harness 0.2.0 / iobrx 0.3.0)
+# Additional workflows (harness 0.3.0 / iobrx 0.3.0+)
 
 The original 11 requests retain schema version `1.0`. Sixteen new identifiers
 use the same direct `run` interface, with optional validation and result inspection.

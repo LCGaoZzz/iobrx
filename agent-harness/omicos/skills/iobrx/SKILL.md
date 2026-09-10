@@ -23,6 +23,11 @@ a filename or successful schema check cannot establish those semantics.
 Record meaningful transformations. Ordinary implementation choices and small
 checks within the task do not need another approval.
 
+If `import iobrx` fails in the kernel, install the pinned version (with the
+mirror fallback from the Runtime reference) — environment preparation is
+ordinary task work. Multi-cohort runs can use `batch` to execute several
+requests and receive sample-id-aligned merged tables.
+
 ## Portable entrypoint
 
 For the bundled CLI, resolve `scripts/run_iobrx.py` with `skill_resource`,

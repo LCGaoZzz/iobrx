@@ -22,9 +22,21 @@ numerical correctness. `auto` may use the upstream Python implementation for
 signature/CIBERSORT; manifests record the actual selected backend. Explicit
 `rust` does not silently fall back.
 
+Install iobrx in the analysis environment (Python 3.11, Linux x86-64/WSL2):
+
+```bash
+python -m pip install 'iobrx==0.3.0'
+# mirror fallback when PyPI is slow or unreachable:
+python -m pip install -i https://pypi.tuna.tsinghua.edu.cn/simple 'iobrx==0.3.0'
+```
+
+iobrx 0.4.0 (bundled reference data, optional IOBRpy) is compatible with this
+harness; the catalog's `doctor` and the EPIC adapter resolve references from
+either layout. If `import iobrx` fails, install it with the command above —
+preparing the environment is ordinary task work, not an approval item.
+
 Use the pinned numerical environment from the repository when numerical
 parity matters. The existing official parity gates concern matched versions
 and fixtures; an arbitrary package upgrade does not inherit that guarantee.
 Upstream binary availability still limits native Windows, macOS, ARM and
-other Python versions. Follow the main repository's current installation
-status; adding a harness does not imply PyPI/wheel publication has happened.
+other Python versions.

@@ -68,6 +68,7 @@ INPUT_SCHEMA = {
         "scale": choice(["counts", "tpm", "linear", "log2p1", "preprocessed"]),
         "gene_id": choice(["ensembl", "symbol", "entrez", "probe", "mgi"]),
         "organism": choice(["hsa", "mmus"]),
+        "layer": {"type": ["string", "null"], "default": None},
     },
 }
 
@@ -108,5 +109,5 @@ def capabilities(analysis=None):
         raise HarnessError(f"Unknown analysis: {analysis}")
     analyses = CATALOG if analysis is None else {analysis: CATALOG[analysis]}
     return {"schema_version": "1.0", "skill_id": "iobrx", "status": "completed",
-            "analyses": deepcopy(analyses), "input_formats": ["csv", "tsv", "parquet"],
+            "analyses": deepcopy(analyses), "input_formats": ["csv", "tsv", "parquet", "h5ad"],
             "request_schema": request_schema(analysis)}

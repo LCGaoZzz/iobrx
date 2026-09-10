@@ -170,7 +170,7 @@ def _compose_epic_reference(reference: str) -> dict:
 
     from iobrpy.workflow.epic import _to_df, merge_duplicates, mRNA_cell_default
 
-    ref_pkg = resource_path("epic_TRef_BRef.pkl")
+    ref_pkg = Path(resource_path("epic_TRef_BRef.pkl"))
     with ref_pkg.open("rb") as f:
         ref_data = pickle.load(f)
 

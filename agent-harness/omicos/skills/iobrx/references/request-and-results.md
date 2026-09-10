@@ -26,7 +26,12 @@ not a capability limit on the library or the agent.
 ```
 
 - Files: CSV/TSV with identifiers in the first column; Parquet with a stored
-  index (not an unlabeled RangeIndex). No pickle or executable request format.
+  index (not an unlabeled RangeIndex); `.h5ad` (AnnData) — its `X` is read as
+  the expression matrix (or `input.layer` when named), `obs_names` become
+  samples and `var_names` become features, and the natural declaration is
+  `orientation: samples_by_genes`. Reading `.h5ad` needs the optional
+  `anndata` package in the analysis environment. No pickle or executable
+  request format.
 - Orientation: `genes_by_samples` or `samples_by_genes`; only an explicitly
   requested transpose is performed. Sample and gene IDs must be unique,
   nonempty, and have no surrounding whitespace. Literal text IDs are retained.
@@ -42,6 +47,12 @@ not a capability limit on the library or the agent.
   references are human except count-to-TPM, which also supports `mmus`.
 - `threads`: positive integer, default min(8, CPU count). It is passed to
   iobrx's threading API, not a hard memory/CPU limit for BLAS or the OS.
+  That default is a conservative desktop choice; for large cohorts (roughly
+  500+ samples) pass the physical core count explicitly — the 16–64 thread
+  range still yields real gains on full-transcriptome inputs. CIBERSORT also
+  carries a fixed ~26 s per-call overhead (signature load + BLAS handshake):
+  prefer concatenating cohorts into one request and splitting the weights
+  afterwards over one request per cohort.
 - `provenance`: `metadata` by default (paths, size/mtime, input shape, parameters
   and versions). Set `sha256` only when a content audit is useful; it reads
   input/reference contents and tool binaries, checks input stability through
@@ -96,3 +107,24 @@ against edits of both data and manifest. Metadata alone does not prove inputs
 were unchanged during a run; preserve or snapshot sources when that matters.
 
 For the 16 new adapters, see [extended-workflows.md](extended-workflows.md). Their typed file/directory inputs replace the expression matrix fields when applicable.
+
+## Batch alignment
+
+`batch --batch <batch.json>` runs several requests (each with its own
+`output_dir`), then aligns the completed result tables by sample id:
+
+```json
+{"schema_version": "1.0",
+ "requests": [{"analysis": "cibersort", "...": "..."},
+              {"analysis": "cibersort", "...": "..."}],
+ "align_output_dir": "runs/aligned"}
+```
+
+All requests are schema-validated before any run starts; output directories
+must be distinct and may not collide with `align_output_dir`. Completed
+tables with identical column sets merge into one table (outer join on the
+sample index; samples missing from a run become NaN). Differing column sets
+are disambiguated with `::<run-dir-name>` suffixes. `batch_manifest.json`
+records per-run status plus a sample-by-run presence matrix, so missing or
+excluded samples are reported rather than silently dropped. Alignment never
+modifies the individual run directories.

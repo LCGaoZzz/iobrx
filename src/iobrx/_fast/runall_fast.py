@@ -501,7 +501,7 @@ def _exec_epic(args, verbose):
     sep_in = infer_sep(args.input)
     bulk = pd.read_csv(args.input, sep=sep_in, index_col=0)
 
-    ref_pkg = resource_path('epic_TRef_BRef.pkl')
+    ref_pkg = Path(resource_path('epic_TRef_BRef.pkl'))
     with ref_pkg.open('rb') as f:
         ref_data = pickle.load(f)
 

@@ -126,8 +126,32 @@ def load_matrix(spec, provenance="metadata"):
         matrix = pd.read_parquet(path)
         if isinstance(matrix.index, pd.RangeIndex):
             reject("Parquet must store feature/sample identifiers in its index")
+    elif path.suffix.lower() == ".h5ad":
+        try:
+            import anndata as ad
+        except ImportError as exc:
+            reject("Reading .h5ad inputs needs the optional `anndata` package; install it in the analysis environment")
+        layer = spec.get("layer")
+        try:
+            adata = ad.read_h5ad(path)
+        except Exception as exc:  # corrupted file, foreign format, wrong version
+            reject(f"Could not read the .h5ad file: {exc}")
+        if layer is not None and layer not in adata.layers:
+            reject(f"Layer '{layer}' is not present in the .h5ad file")
+        values = adata.layers[layer] if layer else adata.X
+        try:
+            import scipy.sparse as sp
+            if sp.issparse(values):
+                values = values.toarray()
+        except ImportError:
+            pass
+        matrix = pd.DataFrame(
+            values,
+            index=pd.Index([str(x) for x in adata.obs_names]),
+            columns=pd.Index([str(x) for x in adata.var_names]),
+        )
     else:
-        reject("Supported matrix formats are .csv, .tsv and .parquet; pickle is not accepted")
+        reject("Supported matrix formats are .csv, .tsv, .parquet and .h5ad; pickle is not accepted")
     if spec["orientation"] == "samples_by_genes":
         matrix = matrix.T
     if matrix.empty:
@@ -168,8 +192,12 @@ def load_matrix(spec, provenance="metadata"):
 def environment_info():
     import iobrx
 
-    versions = {name: importlib.metadata.version(name) for name in
-                ("iobrpy", "numpy", "pandas", "scipy", "scikit-learn", "gseapy", "pyarrow")}
+    versions = {}
+    for name in ("iobrpy", "numpy", "pandas", "scipy", "scikit-learn", "gseapy", "pyarrow"):
+        try:
+            versions[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            versions[name] = None  # optional (IOBRpy is not required by iobrx 0.4.0+)
     if not callable(getattr(iobrx, "backend_info", None)):
         raise HarnessError("This interpreter does not import a complete iobrx installation", "environment_error", 3)
     return {"harness_version": __version__, "iobrx_version": iobrx.__version__,
@@ -179,17 +207,41 @@ def environment_info():
             "backend": iobrx.backend_info()}
 
 
+def reference_path(filename):
+    """Resolve a bundled reference file: iobrx 0.4.0+ ships them inside the
+    wheel (iobrx.resource_path); iobrx 0.3.0 exposes them through IOBRpy."""
+    import iobrx
+    resolver = getattr(iobrx, "resource_path", None)
+    if resolver is not None:
+        try:
+            resolved = resolver(filename)
+        except FileNotFoundError:
+            resolved = None
+        if resolved and Path(resolved).is_file():
+            return Path(resolved)
+    try:
+        from importlib.resources import files
+        return Path(str(files("iobrpy.resources").joinpath(filename)))
+    except ModuleNotFoundError:
+        raise FileNotFoundError(
+            f"Reference data '{filename}' is not available: install iobrx (0.4.0+ bundles it) "
+            "or add the Python fallback backend with `pip install 'iobrx[python]'`."
+        )
+
+
 def doctor():
     """Optional installation diagnostics; normal runs inspect only their inputs/tools."""
     import shutil
-    from importlib.resources import files
 
     environment = environment_info()
-    resources = files("iobrpy.resources")
     for filename in ("lm22.txt", "calculate_data.pkl", "epic_TRef_BRef.pkl", "quantiseq_data.pkl",
                      "mcp_data.pkl", "estimate_data.pkl", "anno_eset.pkl", "count2tpm_data.pkl"):
-        if not resources.joinpath(filename).is_file():
-            raise HarnessError(f"Missing bundled IOBRpy reference: {filename}", "environment_error", 3)
+        try:
+            available = reference_path(filename).is_file()
+        except Exception:
+            available = False
+        if not available:
+            raise HarnessError(f"Missing bundled reference: {filename}", "environment_error", 3)
     source = Path(__file__).resolve().parent
     source_hash = hashlib.sha256()
     for path in sorted(source.glob("*.py")):
@@ -257,10 +309,9 @@ def dispatch(request, matrix):
                                 org=request["input"]["organism"], **params)
     elif name == "epic":
         import pandas as pd
-        from importlib.resources import files
 
-        # Only the trusted, installed IOBRpy reference is unpickled, never user input.
-        reference = pd.read_pickle(str(files("iobrpy.resources").joinpath("epic_TRef_BRef.pkl")))[params.pop("reference")]
+        # Only the trusted, installed reference is unpickled, never user input.
+        reference = pd.read_pickle(str(reference_path("epic_TRef_BRef.pkl")))[params.pop("reference")]
         result = iobrx.epic(matrix, reference=reference, **params)
     elif name == "mcpcounter":
         feature_types = {"symbol": "HUGO_symbols", "entrez": "ENTREZ_ID", "probe": "affy133P2_probesets"}
@@ -371,6 +422,107 @@ def run(request, base, workspace=None):
     manifest.update(finished_at=utcnow(), elapsed_seconds=time.perf_counter() - started)
     write_json(manifest_path, manifest)
     return manifest
+
+
+def batch(batch_request, base, workspace=None):
+    """Run several requests, then align their result tables by sample id.
+
+    The batch contract is a JSON document::
+
+        {"schema_version": "1.0",
+         "requests": [<request>, ...],
+         "align_output_dir": "aligned"}
+
+    Every request keeps its own output directory and manifest (normal run
+    semantics). After all runs finish, completed result tables are aligned
+    per table name with an outer join on the sample index: identical column
+    sets across runs merge into one table (missing samples become NaN);
+    differing column sets are disambiguated with ``::<run-dir-name>`` column
+    suffixes. ``batch_manifest.json`` records per-run status and a
+    sample-by-run presence matrix, so excluded or missing samples are
+    reported rather than silently dropped.
+    """
+    import pandas as pd
+
+    requests = batch_request.get("requests")
+    if not isinstance(requests, list) or not requests:
+        reject("Batch needs a non-empty 'requests' list")
+    align_dir = resolve_path(batch_request.get("align_output_dir") or "aligned", base, workspace)
+    # Validate everything before running anything.
+    normalized = [normalize_request(request, base, workspace) for request in requests]
+    run_dirs = {Path(request["output_dir"]).resolve() for request in normalized}
+    if len(run_dirs) != len(normalized):
+        reject("Batch requests must use distinct output directories")
+    if align_dir.resolve() in run_dirs or output_conflicts(align_dir):
+        reject("align_output_dir must not collide with run directories or existing run files")
+    manifests = [run(request, base, workspace) for request in normalized]
+
+    align_dir.mkdir(parents=True, exist_ok=True)
+    batch_manifest = {"schema_version": "1.0", "skill_id": SKILL_ID, "status": "running",
+                      "started_at": utcnow(), "align_output_dir": str(align_dir), "artifacts": []}
+    batch_manifest_path = align_dir / "batch_manifest.json"
+    write_json(batch_manifest_path, batch_manifest)
+
+    tables = {}  # table name -> [(run_tag, frame)]
+    runs = []
+    for request, manifest in zip(normalized, manifests):
+        run_tag = Path(request["output_dir"]).name
+        runs.append({"output_dir": str(Path(request["output_dir"])), "run_tag": run_tag,
+                     "status": manifest.get("status"), "exit_code": manifest.get("exit_code"),
+                     "error": manifest.get("error")})
+        if manifest.get("status") != "completed":
+            continue
+        output = Path(request["output_dir"])
+        for artifact in manifest.get("artifacts", []):
+            name = artifact["table"]
+            path = output / artifact["path"]
+            if not path.is_file():
+                continue
+            frame = (pd.read_parquet(path) if artifact["format"] == "parquet"
+                     else pd.read_csv(path, index_col=0))
+            tables.setdefault(name, []).append((run_tag, frame))
+
+    alignment = {}
+    artifacts = []
+    for name, frames in sorted(tables.items()):
+        column_sets = [tuple(frame.columns) for _, frame in frames]
+        same_columns = len(set(column_sets)) == 1
+        presence = {}
+        for run_tag, frame in frames:
+            presence[run_tag] = sorted(str(sample) for sample in frame.index)
+        if same_columns:
+            # Row-wise union: identical columns merge into one table; when a
+            # sample appears in several runs, the first run in batch order wins.
+            merged = pd.concat([frame for _, frame in frames], axis=0)
+            merged = merged[~merged.index.duplicated(keep="first")]
+        else:
+            # Differing column sets: outer join on the sample index with
+            # run-tagged columns.
+            merged = None
+            for run_tag, frame in frames:
+                tagged = frame.add_suffix(f"::{run_tag}")
+                merged = tagged if merged is None else merged.join(tagged, how="outer")
+        merged.index = pd.Index([str(sample) for sample in merged.index])
+        for extension in ("parquet", "csv"):
+            path = align_dir / f"{name}.{extension}"
+            with path.open("wb") as handle:
+                if extension == "parquet":
+                    merged.to_parquet(handle)
+                else:
+                    merged.to_csv(handle)
+            artifacts.append({"table": name, "path": path.name, "format": extension,
+                              "rows": len(merged), "columns": len(merged.columns),
+                              **file_metadata(path, batch_request.get("provenance", "metadata"))})
+        missing = {run_tag: int(len(merged.index) - len(samples)) for run_tag, samples in presence.items()}
+        alignment[name] = {"samples": int(len(merged.index)), "columns": int(len(merged.columns)),
+                           "same_columns_merged": bool(same_columns), "missing_per_run": missing,
+                           "runs": list(presence)}
+    if not artifacts:
+        raise HarnessError("Batch produced no aligned tables; every run failed or wrote no results", "invalid_result", 3)
+    batch_manifest.update(status="completed", finished_at=utcnow(), runs=runs, alignment=alignment,
+                          artifacts=artifacts)
+    write_json(batch_manifest_path, batch_manifest)
+    return batch_manifest
 
 
 def status(path, base, workspace=None, verify_hashes=False):

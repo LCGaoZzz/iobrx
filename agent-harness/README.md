@@ -87,6 +87,9 @@ remain. Never treat that state as successful completion.
 
 The original 11 matrix-analysis identifiers below retain their request contracts.
 Harness 0.2.0 adds 16 identifiers, for 27 in total; see the
+Harness 0.3.0 adds `.h5ad` matrix inputs (optional `input.layer`), the
+`batch` command with sample-id-aligned merged tables, and reference
+resolution compatible with both iobrx 0.3.0 and the bundled 0.4.0 layout.
 [extended workflow contracts](omicos/skills/iobrx/references/extended-workflows.md)
 for their inputs, parameters and output artifacts.
 

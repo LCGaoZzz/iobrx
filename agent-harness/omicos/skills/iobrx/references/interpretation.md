@@ -29,3 +29,9 @@ clear units, thin axes and editable vector text. Choose stacked bars for
 fractions, heatmaps for within-method scores and diagnostic panels for fit
 metrics. Avoid pooling incomparable methods on one numerical axis. Read
 results from the manifest's Parquet files; plotting need not rerun solvers.
+
+When vision tools are unavailable for reviewing a generated figure, write
+the plotted data to a CSV beside the figure (same base name) and verify every
+quantitative claim against that CSV — row counts, column sums, extrema and
+group orderings. This data-driven self-review is the standard fallback and
+often catches axis or subset mistakes the figure itself would not show.
