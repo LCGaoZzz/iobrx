@@ -29,3 +29,12 @@ clear units, thin axes and editable vector text. Choose stacked bars for
 fractions, heatmaps for within-method scores and diagnostic panels for fit
 metrics. Avoid pooling incomparable methods on one numerical axis. Read
 results from the manifest's Parquet files; plotting need not rerun solvers.
+
+
+When image inspection is unavailable, review the plotted source tables instead:
+verify sample/order alignment, labels, units, missing values and method-specific
+diagnostics. Relative fraction sums can be useful checks, but exclude diagnostic
+columns and do not apply fraction rules to ESTIMATE/MCP/signature scores.
+Record that data-level checks were performed; they do not establish that the
+rendered figure is unclipped, legible or visually reviewed. Do not rerun a solver
+just to recreate a plot from existing result tables.

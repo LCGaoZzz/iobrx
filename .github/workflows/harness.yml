@@ -19,7 +19,7 @@ jobs:
       - name: Install validated iobrx and test dependencies
         run: |
           python -m pip install -c tests/constraints-validated.txt .
-          python -m pip install build pytest PyYAML 'mcp>=1.28,<2' 'jsonschema>=4.23,<5'
+          python -m pip install -c tests/constraints-validated.txt build pytest PyYAML 'mcp>=1.28,<2' 'jsonschema>=4.23,<5' 'anndata>=0.11'
       - name: Build companion wheel and source distribution
         run: python -m build agent-harness
       - name: Install the built wheel

@@ -12,6 +12,7 @@ license = "MIT"
 dependencies = ["iobrx>=0.3.0,<0.4", "jsonschema>=4.23,<5"]
 
 [project.optional-dependencies]
+h5ad = ["anndata>=0.11"]
 mcp = ["mcp>=1.28,<2"]
 test = ["pytest>=8", "PyYAML>=6"]
 

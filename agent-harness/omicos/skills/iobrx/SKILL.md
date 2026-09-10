@@ -12,6 +12,8 @@ runtime_entrypoint: scripts/run_iobrx.py
 # iobrx analysis
 
 Use the existing iobrx/Omicos Python environment and available results.
+When that interpreter lacks iobrx, prepare it with the host's existing package
+tools; see runtime guidance rather than installing packages on every run.
 The public Python API supports exploratory and custom calls; the portable
 CLI/MCP adapters provide 27 typed analyses with consistent files and timings.
 Choose either interface, consult its API when needed, and complete authorized
@@ -47,5 +49,6 @@ biological correctness. Use Omicos's job/session tools for long runs and recover
 
 - [Request and results](references/request-and-results.md): JSON fields, paths, outputs and optional auditing.
 - [Additional workflows](references/extended-workflows.md): feature tables, FASTQ/tools, custom-reference and file-only API details.
+- [Bulk h5ad and cohorts](references/bulk-cohorts.md): explicit slots, sample-ID alignment and batch recipes.
 - [Runtime](references/runtime.md): installation, environment failures and backend compatibility.
 - [Interpretation and figures](references/interpretation.md): score/fraction meaning, uncertainty and existing notebooks.
