@@ -3,7 +3,7 @@
 **Fast, faithful tumor microenvironment analysis with a pandas API.**
 
 [![CI](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml/badge.svg)](https://github.com/LCGaoZzz/iobrx/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.3.0-blue)](https://github.com/LCGaoZzz/iobrx/blob/main/CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.3.1-blue)](https://github.com/LCGaoZzz/iobrx/blob/main/CHANGELOG.md)
 [![tutorials](https://img.shields.io/badge/executed_notebooks-28-teal)](https://github.com/LCGaoZzz/iobrx/blob/main/tutorials/README.md)
 [![license](https://img.shields.io/badge/code-MIT-black)](https://github.com/LCGaoZzz/iobrx/blob/main/LICENSE)
 
@@ -90,23 +90,23 @@ The BayesPrism example uses a short demo chain; file-merging examples are synthe
 
 Validated target: **Python 3.11, Linux x86-64 / WSL2**. Use an isolated
 environment. Versioned wheels, source archives, checksums and the container
-digest are delivered through the [v0.3.0 release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.0).
+digest are delivered through the [v0.3.1 release](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.1).
 After downloading its CPython 3.11 wheel:
 
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install --only-binary=:all: ./iobrx-0.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+python -m pip install --only-binary=:all: ./iobrx-0.3.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 python -c "import iobrx; print(iobrx.backend_info())"
 ```
 
-This wheel path does not require Cargo or a C++ compiler. When **0.3.0 appears
+This wheel path does not require Cargo or a C++ compiler. When **0.3.1 appears
 on [PyPI](https://pypi.org/project/iobrx/)**, the index-based equivalent is:
 
 ```bash
-python -m pip install --only-binary=:all: iobrx==0.3.0
+python -m pip install --only-binary=:all: iobrx==0.3.1
 # Tsinghua mirrors PyPI asynchronously; wait until the same version is listed.
-python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.0
+python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.1
 ```
 
 PyPI publication and mirror synchronization are independent of GitHub assets.
@@ -127,10 +127,10 @@ environment, first check dependency compatibility; use an isolated environment
 when the required numerical versions conflict. `pip install` from this source
 builds the extension; it is not an installation without compilation.
 
-The core-analysis container uses `ghcr.io/lcgaozzz/iobrx:0.3.0`; for immutable
+The core-analysis container uses `ghcr.io/lcgaozzz/iobrx:0.3.1`; for immutable
 execution use the digest in the release's `container-digest.txt`.
 Alignment and HLA binaries require the separate external-tool environment.
-See [release notes](docs/releases/0.3.0.md).
+See [release notes](docs/releases/0.3.1.md).
 
 **Why the dependency pins** (details and measurements in
 [BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)):

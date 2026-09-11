@@ -2,8 +2,8 @@ FROM python:3.11.15-slim-bookworm@sha256:d29f48a31a8b408ed19272ca1e7b10ebae13b24
 
 ARG REVISION=unknown
 LABEL org.opencontainers.image.source="https://github.com/LCGaoZzz/iobrx" \
-      org.opencontainers.image.description="iobrx 0.3.0: portable tumor microenvironment analysis" \
-      org.opencontainers.image.version="0.3.0" \
+      org.opencontainers.image.description="iobrx 0.3.1: portable tumor microenvironment analysis" \
+      org.opencontainers.image.version="0.3.1" \
       org.opencontainers.image.revision=$REVISION
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
