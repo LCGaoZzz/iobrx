@@ -25,7 +25,7 @@ desktop timings are provided in the repository's executed tutorials.
 Every function accepts DataFrames in the same orientation as IOBRpy
 (genes/samples x samples/genes as documented per function) and returns frames
 with the original layout, index, column order and dtypes. ``n_threads=None``
-(the default) resolves to ``min(8, os.cpu_count())``; change it per call or
+(the default) resolves to ``min(8, available_cpu_count())``; change it per call or
 process-wide with :func:`set_threads`.
 """
 from __future__ import annotations
@@ -37,7 +37,7 @@ from iobrx._threads import get_threads, resolve_threads, set_threads
 from iobrx._backend import backend_info, select_backend
 from iobrx._testdata import MIRRORS, OfficialDataUnavailable, load_official
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 # The optional native module and historical alias are managed by _backend.
 

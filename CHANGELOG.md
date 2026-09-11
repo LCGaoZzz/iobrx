@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] - Unreleased
+## [0.3.1] - 2026-09-11
+
+### Omicos bulk-input compatibility
+
+- Publish the post-0.3.0 runtime state containing the affinity-aware default
+  thread policy from the merged Omicos bulk-input integration.
+- Keep explicit and user-configured thread budgets unchanged while exposing
+  the detected process CPU availability for callers and the companion harness.
+- Include the companion harness h5ad input, cohort alignment and batch
+  integration updates from the merged Omicos integration.
+
+## [0.3.0] - 2026-09-09
 
 ### Reliability and Omicos hardening
 

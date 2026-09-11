@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "iobrx"
-version = "0.3.0"
+version = "0.3.1"
 description = "Accelerated IOBRpy workflows with a pandas API, Rust kernels and scoped numerical parity validation"
 readme = "README.md"
 license = { text = "MIT" }

@@ -78,22 +78,22 @@ NMF 的 BLAS 并行度不只由请求线程数控制。BayesPrism 使用缩短�
 
 已验证目标为 **Python 3.11、Linux x86-64／WSL2**，建议使用独立环境。
 固定版本 wheel、源码包、校验文件与容器 digest 通过
-[v0.3.0 发行页面](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.0)交付。
+[v0.3.1 发行页面](https://github.com/LCGaoZzz/iobrx/releases/tag/v0.3.1)交付。
 下载其中的 CPython 3.11 wheel 后，无需 Cargo 或 C++ 编译器即可安装：
 
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install --only-binary=:all: ./iobrx-0.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+python -m pip install --only-binary=:all: ./iobrx-0.3.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 python -c "import iobrx; print(iobrx.backend_info())"
 ```
 
-当 [PyPI 页面](https://pypi.org/project/iobrx/)出现 **0.3.0** 后，可直接通过索引安装：
+当 [PyPI 页面](https://pypi.org/project/iobrx/)出现 **0.3.1** 后，可直接通过索引安装：
 
 ```bash
-python -m pip install --only-binary=:all: iobrx==0.3.0
+python -m pip install --only-binary=:all: iobrx==0.3.1
 # 清华镜像异步同步 PyPI；确认它已列出相同版本后使用。
-python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.0
+python -m pip install --only-binary=:all: -i https://pypi.tuna.tsinghua.edu.cn/simple iobrx==0.3.1
 ```
 
 PyPI 发布、清华镜像同步与 GitHub 附件是独立状态；索引尚未同步时可以直接安装
@@ -110,9 +110,9 @@ python -m jupyterlab tutorials
 Jupyter 内核应使用同一个解释器。已有 Omicos 环境若存在数值依赖冲突，应使用
 独立环境。这条源码安装命令会编译扩展，不能称为免编译安装。
 
-核心分析容器使用 `ghcr.io/lcgaozzz/iobrx:0.3.0`；需要不可变版本时，使用发行
+核心分析容器使用 `ghcr.io/lcgaozzz/iobrx:0.3.1`；需要不可变版本时，使用发行
 附件 `container-digest.txt` 中的 digest。比对与 HLA 工具链需单独准备。
-详见 [0.3.0 发行说明](docs/releases/0.3.0.md)。
+详见 [0.3.1 发行说明](docs/releases/0.3.1.md)。
 
 **依赖钉版原因**（测量细节见 [BENCHMARKS.md §I.7](https://github.com/LCGaoZzz/iobrx/blob/main/BENCHMARKS.md)）：
 
